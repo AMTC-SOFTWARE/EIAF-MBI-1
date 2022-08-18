@@ -12,6 +12,17 @@
 > 
 > 
 > 
+> 
+> 
+> 
+> 
+> ON GRIPP
+> 
+> 
+> 
+> 
+> 
+> 
 !!Error: 4025, Cannot execute a motion command during emergency stop condition.
 > 
 !!Error: 4025, Cannot execute a motion command during emergency stop condition.

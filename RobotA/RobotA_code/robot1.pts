@@ -1,4 +1,4 @@
-ENVT0100,LM:2022/07/17 14:50:23:726,DS:0000018044,CS:03891,MA:10-63-C8-F3-F6-30,EI:           
+ENVT0100,LM:2022/08/09 20:52:38:047,DS:0000018046,CS:14338,MA:10-63-C8-F3-F6-30,EI:           
 sVersion="2.0.0"
 bDisplayR=False
 bDisplayS=False
@@ -1362,10 +1362,10 @@ Point53 {
 	sLabel="ATO15_db_up"
 	sDescription="ATO5 Punto con Piston B (nueva ventosa)"
 	nUndefined=0
-	rX=426.034
-	rY=-302.046
+	rX=426.003
+	rY=-301.504
 	rZ=-50
-	rU=-103.127
+	rU=-103.151
 	rV=0
 	rW=0
 	rR=0
@@ -1388,10 +1388,10 @@ Point54 {
 	sLabel="ATO15_db_load"
 	sDescription="Punto con Piston B (nueva ventosa)"
 	nUndefined=0
-	rX=426.034
-	rY=-302.6
-	rZ=-144.113
-	rU=-103.127
+	rX=426.003
+	rY=-301.504
+	rZ=-145.167
+	rU=-103.151
 	rV=0
 	rW=0
 	rR=0

@@ -13,6 +13,7 @@ Function FindHome_w
 	actualizar_zona
 	Find_Hand
 	Go home_R
+	Print #202, "HOME"
 	On vacio_rl
 	Off vacio
 	'On aire
@@ -29,7 +30,7 @@ Function FindHome_w
 	Reset_Grippers_PLC
 	
 	
-	Print #202, "HOME"
+	
 	On AVAILABLE 'Negado
 	
 Fend

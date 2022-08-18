@@ -1,4 +1,4 @@
-ENVT0100,LM:2022/07/17 14:37:37:011,DS:0000018040,CS:00046,MA:10-63-C8-F3-F6-30,EI:           
+ENVT0100,LM:2022/07/17 14:50:23:726,DS:0000018044,CS:03891,MA:10-63-C8-F3-F6-30,EI:           
 sVersion="2.0.0"
 bDisplayR=False
 bDisplayS=False
@@ -453,7 +453,7 @@ Point18 {
 	sDescription="Posicion superior mini 10 y 7.5"
 	nUndefined=0
 	rX=-543.412
-	rY=-0.481
+	rY=-0.932
 	rZ=-20
 	rU=147.835
 	rV=0
@@ -478,10 +478,10 @@ Point19 {
 	sLabel="MINI75_bw_load"
 	sDescription=""
 	nUndefined=0
-	rX=-543.413
-	rY=-2.088
-	rZ=-133
-	rU=147.827
+	rX=-543.531
+	rY=-0.932
+	rZ=-132.441
+	rU=147.852
 	rV=0
 	rW=0
 	rR=0

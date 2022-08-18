@@ -13,6 +13,8 @@ Function Home_Speed
 	SpeedS 400;					AccelS 400, 400;
     SpeedR 90;					AccelR 90, 90;
     'Low_Speed;
+    
+    'TEST_Speed
 Fend
 
 Function Low_Speed
@@ -27,7 +29,7 @@ Function Low_Speed
 		SpeedS 600;				AccelS 2000, 2000;
 		SpeedR 30;				AccelR 30, 30;
 	EndIf
-	
+	'TEST_Speed
 Fend
 
 
@@ -37,6 +39,12 @@ Function Extra_Low_Speed
 	SpeedS 150;					AccelS 150, 150;
 	SpeedR 15;					AccelR 15, 15;
 	Low_Speed
+	
+	'TEST_Speed
+	
+	
+	
+	
 Fend
 
 
@@ -54,6 +62,7 @@ Function Work_Speed
 		SpeedR 60;				AccelR 60, 60;
 	EndIf
 	'Low_Speed;
+	'TEST_Speed
 Fend
 
 
@@ -66,4 +75,14 @@ Function Take_Speed
 		SpeedS 600;				AccelS 1000, 1000;
 	EndIf
 	'Low_Speed
+	'TEST_Speed
+Fend
+
+
+
+Function TEST_Speed
+	Power High;
+	Speed 10;					Accel 10, 10;
+	SpeedS 150;					AccelS 150, 150;
+	SpeedR 15;					AccelR 15, 15;
 Fend

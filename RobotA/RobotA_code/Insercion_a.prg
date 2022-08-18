@@ -85,12 +85,15 @@ Fend
 Function Seleccionar_Tool
 	
 	If cilindro = cilindro_a Then	  'Tool 1 para cilindro A
-		TLSet 1, XY(66.190, 63.029, 0, 0)
-		'Tool 1
+		TLSet 3, XY(1.8, -0.4, -4.5, -83)
+		'TLSet 3, XY(-1.324, 2.288, -4.5, -82.318)
+		TLSet 3, XY(2.325, 1, -4.7, -80.52)
 		Tool 3
 	ElseIf cilindro = cilindro_b Then 'Tool 2 para cilindro B
-		TLSet 2, XY(0, 0, 0, 0)
-		'Tool 2
+		TLSet 4, XY(5.275, -0.976, -4.5, -80.480)
+		'TLSet 4, XY(2.151, 1.712, -4.5, -79.798)
+		TLSet 4, XY(0, -0.19, -4.5, -79.798)
+		TLSet 4, XY(3.8, -0.6, -4.7, -78.0)
 		Tool 4
 	EndIf
 	
@@ -485,7 +488,10 @@ Function Ajustes
 			ajustU = ajustU + 1.2
 	EndIf
 	
-	
+	If cavity = 335 And fusible$ = "ATO_25" Then
+			ajustX = ajustX - 0.8
+			ajustY = ajustY + 0.4
+	EndIf
 	
 	
 
@@ -506,8 +512,15 @@ Function Ajustes
 		EndIf
 	EndIf
 	
+	If cavity = 215 And fusible$ = "ATO_30" Then
+			
+			ajustY = ajustY + 1.2
+	EndIf
 	
-	
+	If cavity = 214 And fusible$ = "ATO_30" Then
+			
+			ajustY = ajustY + 1.2
+	EndIf
 	ajustZ = ajustZ + 1
 	Print("adjustX: " + Str$(ajustX))
 	Print("adjustY: " + Str$(ajustY))

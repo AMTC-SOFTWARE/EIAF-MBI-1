@@ -28,6 +28,8 @@ Global Double Tiempo_bajada_insercion_2, Tiempo_cilindro_insercion_2, Tiempo_ins
 
 
 Function main
+	TLSet 4, XY(3.8, -0.6, -4.7, -78.0)
+	TLSet 3, XY(2.325, 1, -4.7, -80.52)
 	Xqt Estatus_Cilindro
 	Xqt Revisar_vacio
 	
