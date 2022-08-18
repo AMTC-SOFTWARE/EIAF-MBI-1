@@ -361,7 +361,7 @@ Function Toma2Fusible
 			
 			'Print #202, "TIEMPO_SUBIDA_TOMA: " + Str$((Tmr(5))) + " s"
 			'TmReset 5
-						
+			Check_Vacio = 0
 Fend
 
 

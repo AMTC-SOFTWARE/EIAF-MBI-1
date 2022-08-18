@@ -1,5 +1,5 @@
-ENVT0100,LM:2022/08/07 12:57:37:891,DS:0000004206,CS:07474,MA:10-63-C8-F3-F6-30,EI:           
-sActiveChild="TomaFusible_n.prg"
+ENVT0100,LM:2022/08/18 18:03:38:096,DS:0000004201,CS:29250,MA:C8-5B-76-56-1A-E9,EI:           
+sActiveChild="Insercion_a.prg"
 bMdiMaximized=False
 nProgramFileCount=10
 ProgramFile1 {
@@ -84,10 +84,10 @@ ProgramFile8 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=126
-		nTop=43
-		nWidth=855
-		nHeight=859
+		nLeft=45
+		nTop=-5
+		nWidth=853
+		nHeight=852
 	}
 }
 ProgramFile9 {
@@ -116,11 +116,11 @@ nIncludeFileCount=0
 nPointFileCount=1
 PointFile1 {
 	sName="robot1.pts"
-	bOpened=False
+	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=148
-		nTop=93
+		nLeft=96
+		nTop=6
 		nWidth=664
 		nHeight=661
 	}
@@ -128,7 +128,7 @@ PointFile1 {
 nForceFileCount=0
 sActiveWindow="main.prg"
 CmdWindow {
-	bOpened=True
+	bOpened=False
 	Window {
 		nLeft=113
 		nTop=257
@@ -224,8 +224,8 @@ RobotMgr {
 	Window {
 		nLeft=204
 		nTop=109
-		nWidth=748
-		nHeight=521
+		nWidth=747
+		nHeight=518
 	}
 }
 UserErrorEditor {

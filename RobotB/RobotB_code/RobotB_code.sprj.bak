@@ -1,12 +1,12 @@
-ENVT0100,LM:2022/08/05 23:24:43:941,DS:0000008154,CS:06957,MA:10-63-C8-F3-F6-30,EI:           
+ENVT0100,LM:2022/08/17 15:22:09:178,DS:0000008155,CS:22031,MA:10-63-C8-F3-F6-30,EI:           
 SystemProperties {
 	sRCVersion="7.4.5"
 	sRCRevision=""
 	sGUID="b012eed9-9601-4743-a88e-d971d6ef9842"
 	sPath="C:\\EpsonRC70\\Projects\\RobotB\\RobotB_code\\"
 	sCreated="19/2/2021 12:14:43"
-	sLastModified="8/1/2022 9:32:23 AM"
-	bBuildComplete=True
+	sLastModified="8/17/2022 10:21:57 AM"
+	bBuildComplete=False
 	bFirstBuildComplete=True
 	bRebuildRequired=False
 	bClearControllerProject=False
@@ -36,7 +36,7 @@ ProgramFile1 {
 	sName="TomaFusible_n.prg"
 	bCompiled=True
 	bStoreInController=True
-	sTimeSavedInController="7/30/2022 6:05:05 PM"
+	sTimeSavedInController="8/8/2022 9:10:18 PM"
 }
 ProgramFile2 {
 	sName="ListaFusibles.prg"
@@ -54,7 +54,7 @@ ProgramFile4 {
 	sName="Main.prg"
 	bCompiled=True
 	bStoreInController=True
-	sTimeSavedInController="3/3/2022 5:44:20 PM"
+	sTimeSavedInController="8/9/2022 12:32:46 PM"
 }
 ProgramFile5 {
 	sName="ReadMsj_w.prg"
@@ -78,7 +78,7 @@ ProgramFile8 {
 	sName="Insercion_a.prg"
 	bCompiled=True
 	bStoreInController=True
-	sTimeSavedInController="7/30/2022 4:14:52 PM"
+	sTimeSavedInController="8/11/2022 1:11:28 PM"
 }
 ProgramFile9 {
 	sName="Revisar_vacio.prg"
@@ -90,7 +90,7 @@ ProgramFile10 {
 	sName="Multi_tareas_w.prg"
 	bCompiled=True
 	bStoreInController=True
-	sTimeSavedInController="11/26/2021 10:58:33 PM"
+	sTimeSavedInController="8/8/2022 9:10:18 PM"
 }
 nIncludeFileCount=0
 nPointFileCount=1
@@ -98,7 +98,7 @@ PointFile1 {
 	sName="robot1.pts"
 	nRobot=1
 	bDefault=True
-	sTimeSavedInController="8/1/2022 2:32:33 PM"
+	sTimeSavedInController="8/17/2022 3:22:03 PM"
 }
 nForceFileCount=0
 OperatorSettings {

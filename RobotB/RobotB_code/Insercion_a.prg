@@ -941,6 +941,13 @@ Function Ajuste
 			ajustU = ajustU - 3
 	EndIf
 	
+	If fusible$ = "MINI_7.5" And cavity = 438 Then
+			ajustZ = ajustZ + 2
+	EndIf
+	
+	If fusible$ = "MINI_5" And cavity = 443 Then
+			ajustX = ajustX + 1.5
+	EndIf
 
 	Print("adjustX: " + Str$(ajustX))
 	Print("adjustY: " + Str$(ajustY))
@@ -1006,21 +1013,21 @@ Function Insercion_PistonExtendido
 	'Extra_Low_Speed	
 	FastInsertion_Speed '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	
-	Print("//////////////////////////////////////////////////////")
-	Tiempo_bajada_insercion_1 = (Tmr(5))
+	'Print("//////////////////////////////////////////////////////")
+	'Tiempo_bajada_insercion_1 = (Tmr(5))
 	
-	Print #202, "TIEMPO_BAJADA_INSERCION: " + Str$((Tmr(5))) + " s"
-	TmReset 5
+	'Print #202, "TIEMPO_BAJADA_INSERCION: " + Str$((Tmr(5))) + " s"
+	'TmReset 5
 	
 	Do Until EstatusCilindro <> EstatusC_actual 'Asegurar que salga cilindro
     Loop
 	
-	Print("//////////////////////////////////////////////////////")
-	Tiempo_cilindro_insercion_1 = (Tmr(5))
+	'Print("//////////////////////////////////////////////////////")
+	'Tiempo_cilindro_insercion_1 = (Tmr(5))
 	
-	Print #202, "TIEMPO_CILINDRO_INSERCION: " + Str$((Tmr(5))) + " s"
-	TmReset 5
-	
+	'Print #202, "TIEMPO_CILINDRO_INSERCION: " + Str$((Tmr(5))) + " s"
+	'TmReset 5
+	Check_Vacio = 0
 	Move P(cavity)
 	Monitoreo_Insercion
 	

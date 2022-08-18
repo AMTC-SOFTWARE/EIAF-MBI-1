@@ -27,6 +27,7 @@ Function main
 '	TmReset 5
 	
 	Xqt Estatus_Cilindro
+	Xqt Estatus_Vacio
 	'Xqt Monitoreo_Insercion
 	
 	'CONEXION TCP/IP
@@ -63,7 +64,7 @@ Function main
 	CA15 = Int(Rnd(1.99))    	'contador ATO 15A
 	CM15 = Int(Rnd(1.99))    	'contador MINI 15A
 	CA30 = Int(Rnd(1.99))    	'contador ATO 30A
-	
+	Check_Vacio = 0
 	shared_zone = False
 	recursividad_vacio = 0
 	Insertando = 0
