@@ -1,0 +1,11 @@
+> reset; motor on
+> go here + u(0.2)
+> reset; motor on
+> go here + y(0.3)
+> reset; motor on
+> go here + x(0.2)
+> go here - y(0.1)
+> reset; motor on
+> go here + x(0.2)
+> reset; motor on
+> 

@@ -1,0 +1,94 @@
+Function FindCodo_w
+	
+	Find_Hand 'actualizar RobotHand para saber qué codo está activo
+	actual_aux = RobotHand 'guardar el codo activo en la variable actual
+	Find_desired_aux 'preguntar cual es el codo deseado
+	
+	'Mover al codo deseado correspondiente
+	If desired_aux = 1 Then 		 	 	'Brazo deseado es codo derecho
+		If actual_aux = desired_aux Then 	'Brazo actual es codo derecho
+			SubirRobot_Z
+			Work_Speed; 'Move AUX_1R			'DEBE SER MOVE POR LA GUARDA
+			Go AUX_1R 'NUEVO
+		Else							 	'Brazo actual es codo izquierdo
+		
+		'En esta condición, cuando el deseado es el derecho... no puedes
+		'estar en los bowls, si acaso, podrías empezar en AUX_4L, entonces
+		'normalmente se usa para ir de una inserción (brazo izquierdo) 
+		'a recoger otro fusible del lado derecho
+
+			SubirRobot_Z
+			Work_Speed; Left_to_Right 	 	'termina en AUX_1R
+			
+			
+		EndIf
+		
+	ElseIf desired_aux = 2 Then			 	'Brazo deseado es codo izquierdo
+		If actual_aux = desired_aux Then 	'Brazo actual es codo izquierdo
+			SubirRobot_Z
+			Work_Speed; Go AUX_4L
+		Else						 		'Brazo actual es codo derecho
+			SubirRobot_Z
+			Work_Speed; 'Move AUX_1R			'DEBE SER MOVE POR LA GUARDA
+			Go AUX_1R 'NUEVO
+			Work_Speed; Right_to_Left 		'termina en AUX_4L
+		EndIf
+		
+	Else
+		Print "Error: Codo deseado no detectado"
+		ActualizarMensaje_w
+	EndIf
+	
+	
+Fend
+
+
+Function Find_desired_aux
+	
+	If fusible$ = "MINI_5" Then
+		desired_aux = 2
+	ElseIf fusible$ = "MINI_7.5" Then
+		desired_aux = 2
+	ElseIf fusible$ = "MINI_10" Then
+		desired_aux = 2
+	ElseIf fusible$ = "ATO_7.5" Then
+		desired_aux = 2
+	ElseIf fusible$ = "ATO_25" Then
+		desired_aux = 2
+	ElseIf fusible$ = "ATO_30" Then
+		desired_aux = 2
+	ElseIf fusible$ = "RELAY_132" Then
+		desired_aux = 2
+	ElseIf fusible$ = "RELAY_112" Then
+		desired_aux = 2
+	ElseIf fusible$ = "MINI_15" Then
+		desired_aux = 2
+	ElseIf fusible$ = "ATO_15" Then
+		desired_aux = 1
+	ElseIf fusible$ = "MAXI_50" Then
+		desired_aux = 1
+	ElseIf fusible$ = "MAXI_40" Then
+		desired_aux = 1
+	ElseIf fusible$ = "ATOC_10" Then
+		desired_aux = 1
+	ElseIf fusible$ = "ATOC_5" Then
+		desired_aux = 1
+	ElseIf fusible$ = "ATO_20" Then
+		desired_aux = 1
+	ElseIf fusible$ = "ATO_5" Then
+		desired_aux = 1
+	ElseIf fusible$ = "ATO_10" Then
+		desired_aux = 1
+	ElseIf fusible$ = "ATOC_15" Then
+		desired_aux = 1
+	ElseIf fusible$ = "ATO_15" Then
+		desired_aux = 1
+	Else
+		Print "Fusible no declarado"
+		desired_aux = 0
+	EndIf
+	
+
+Fend
+	
+

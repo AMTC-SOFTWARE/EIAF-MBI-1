@@ -1,0 +1,47 @@
+Global Integer recursividad_vacio
+
+Function revisar_vacio3
+	
+	If Sw(vacio_ok) = 0 Then
+		Reset_Grippers_PLC
+		Tool 0
+		Off cilindro
+		SubirRobot_Z
+		Off vacio
+		tomaFusible
+		P(cavity) = P(cavity) -X(ajustX) -Y(ajustY) -Z(ajustZ) -U(ajustU)
+		Print "Fusible tomado: " + fusible$
+		insertarFusible
+	EndIf
+	
+Fend
+
+
+
+Function revisar_vacio1
+	
+	If Sw(vacio_ok) = 0 Then
+		Reset_Grippers_PLC
+		Off cilindro
+		SubirRobot_Z
+		Off vacio
+		tomaFusible
+		Print "Fusible tomado: " + fusible$
+	EndIf
+	
+Fend
+
+Function revisar_vacio_RELX
+	If Sw(vacio_ok) = 0 Then
+		OpenNet #203 As Client						'Abrir conexión TCP/IP
+		WaitNet #203								'Esperar que haya conexión
+		Print #203, "ERROR_insertion"
+		On 544
+		
+		Print "______________________________________"
+		Print "Retirar Relay y reintentar inserción"
+		Print "______________________________________"
+		Pause
+	EndIf
+Fend
+

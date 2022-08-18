@@ -1,0 +1,845 @@
+Global Integer cavity, Insertando, EstatusC_actual
+Global String caja$
+Global Double ajustX, ajustY, ajustZ, ajustU
+
+'------------------------------Funcion de insercion de fusibles------------------------------------
+Function insertarFusible
+	
+	ajustX = 0; ajustY = 0; ajustZ = 0; ajustU = 0
+	 
+	Work_Speed;
+	
+	If (caja$ = "PDCR") Then
+		'-----------------------BASE PARA HACER LOS RELAY----------------------
+		If cavidad$ = "RELU" Then
+			cavity = 88 'Tienen que tener un número asignado para Move P(cavity) +Z(50)
+		ElseIf cavidad$ = "RELX" Then
+			cavity = 89
+		ElseIf cavidad$ = "RELT" Then
+			cavity = 87
+		EndIf
+		'-----------------------INSERCION---------------------
+		GoSub insertar
+		'-----------------------------------------------------------'
+		
+	ElseIf caja$ = "TBLU" Then
+		'-----------------------INSERCION---------------------
+		GoSub insertar
+		'-----------------------------------------------------------'
+		
+	ElseIf caja$ = "PDCS" Then
+		'-----------------------INSERCION---------------------
+		GoSub insertar
+		'-----------------------------------------------------------'
+		
+	ElseIf caja$ = "F96_box" Then
+		'-----------------------INSERCION---------------------
+		GoSub insertar
+		'-----------------------------------------------------------'
+		
+	Else
+		Print "Error, caja incorrecta"
+		Off vacio
+		Off cilindro
+		Go home_l
+		cavidad$ = "CAJA INVALIDA"
+		
+	EndIf
+	
+	Exit Function
+	
+	
+	insertar:
+	
+		Seleccionar_Tool	'Tool: 1 - Cilindro A, 2 - Cilindro B
+		Ajuste				'Ajustar fusibles
+'		If PDef(cavity) Then
+'			PDel cavity
+'		EndIf
+		
+		P(cavity) = P(cavity) +X(ajustX) +Y(ajustY) +Z(ajustZ) +U(ajustU)
+		
+		Go P(cavity) :Z(CZ(P210))
+		
+		Print("//////////////////////////////////////////////////////")
+		Tiempo_traslado_insercion = (Tmr(5))
+		
+		Print #202, "TIEMPO_TRASLADO_INSERCION: " + Str$((Tmr(5))) + " s"
+		TmReset 5
+		
+		'revisar_vacio3
+		Revisando_vacio = 1
+		
+		If recursividad_vacio <> 1 Then
+			
+			Print #202, "TAKE_AVAILABLE"
+			On AVAILABLE 'Negado
+			
+			If fusible$ = "RELAY_112" Then
+				Off cilindro
+				'Move P(cavity) +Z(50)
+				EstatusC_actual = EstatusCilindro
+				Extra_Low_Speed
+				
+				Print("//////////////////////////////////////////////////////")
+				Tiempo_bajada_insercion_2 = (Tmr(5))
+				
+				Print #202, "TIEMPO_BAJADA_INSERCION: " + Str$((Tmr(5))) + " s"
+				TmReset 5
+	
+				Tiempo_cilindro_insercion_2 = 0
+				
+				Move P(cavity)
+				Revisando_vacio = 0
+				Print("//////////////////////////////////////////////////////")
+				Tiempo_insercion_insercion_2 = (Tmr(5))
+				
+				Print #202, "TIEMPO_INSERCION_INSERCION: " + Str$((Tmr(5))) + " s"
+				TmReset 5
+				
+				Tiempo_bajada_insercion_1 = 0
+				Tiempo_cilindro_insercion_1 = 0
+				Tiempo_insercion_insercion_1 = 0
+	
+			ElseIf fusible$ = "RELAY_132" Then
+				
+				'Move P(cavity) +Z(40)
+				EstatusC_actual = EstatusCilindro
+				Extra_Low_Speed
+				
+				Print("//////////////////////////////////////////////////////")
+				Tiempo_bajada_insercion_2 = (Tmr(5))
+				
+				Print #202, "TIEMPO_BAJADA_INSERCION: " + Str$((Tmr(5))) + " s"
+				TmReset 5
+	
+				'On cilindro
+				Do Until EstatusCilindro <> EstatusC_actual 'Asegurar que salga cilindro
+				Loop
+				
+				Print("//////////////////////////////////////////////////////")
+				Tiempo_cilindro_insercion_2 = (Tmr(5))
+				
+				Print #202, "TIEMPO_CILINDRO_INSERCION: " + Str$((Tmr(5))) + " s"
+				TmReset 5
+				
+				Move P(cavity)
+				RELX_Speed
+				Monitoreo_Insercion
+				revisar_vacio_RELX	'<------------------<<<<
+				Move RELX2 ROT
+				Extra_Low_Speed
+				Monitoreo_Insercion
+				revisar_vacio_RELX	'<------------------<<<<
+				Move RELX3
+				Revisando_vacio = 0
+				Monitoreo_Insercion
+				
+				Print("//////////////////////////////////////////////////////")
+				Tiempo_insercion_insercion_2 = (Tmr(5))
+				
+				Print #202, "TIEMPO_INSERCION_INSERCION: " + Str$((Tmr(5))) + " s"
+				TmReset 5
+	
+				Tiempo_bajada_insercion_1 = 0
+				Tiempo_cilindro_insercion_1 = 0
+				Tiempo_insercion_insercion_1 = 0
+				
+			ElseIf fusible$ = "MAXI_40" Or fusible$ = "MAXI_50" Then
+				'On cilindro
+				If shared_zone = True Then
+					Move P(cavity) +Z(50)
+				EndIf
+				EstatusC_actual = EstatusCilindro
+				Low_Speed
+				
+				Print("//////////////////////////////////////////////////////")
+				Tiempo_bajada_insercion_2 = (Tmr(5))
+				
+				Print #202, "TIEMPO_BAJADA_INSERCION: " + Str$((Tmr(5))) + " s"
+				TmReset 5
+	
+				'On cilindro
+				Do Until EstatusCilindro <> EstatusC_actual 'Asegurar que salga cilindro
+				Loop
+				
+				Print("//////////////////////////////////////////////////////")
+				Tiempo_cilindro_insercion_2 = (Tmr(5))
+				
+				Print #202, "TIEMPO_CILINDRO_INSERCION: " + Str$((Tmr(5))) + " s"
+				TmReset 5
+				
+				Move P(cavity)
+				Revisando_vacio = 0
+				Monitoreo_Insercion
+				
+				Print("//////////////////////////////////////////////////////")
+				Tiempo_insercion_insercion_2 = (Tmr(5))
+				
+				Print #202, "TIEMPO_INSERCION_INSERCION: " + Str$((Tmr(5))) + " s"
+				TmReset 5
+	
+				Tiempo_bajada_insercion_1 = 0
+				Tiempo_cilindro_insercion_1 = 0
+				Tiempo_insercion_insercion_1 = 0
+			Else
+				
+				Insercion_PistonExtendido
+				
+			EndIf
+			
+			'Monitoreo_Insercion
+			Off vacio
+			'Off cilindro
+			'Retirarse después de insertar
+			SubirRobot_Z
+			P(cavity) = P(cavity) -X(ajustX) -Y(ajustY) -Z(ajustZ) -U(ajustU)
+			Tool 0
+			recursividad_vacio = 1
+			
+			Print("//////////////////////////////////////////////////////")
+			Tiempo_subida_insercion = (Tmr(5))
+			
+			Print #202, "TIEMPO_SUBIDA_INSERCION: " + Str$((Tmr(5))) + " s"
+			TmReset 5
+			
+		EndIf
+		
+	Return
+	
+Fend
+
+Function Seleccionar_Tool
+	
+	If cilindro = cilindro_a Then	  'Tool 1 para cilindro A
+		'ajuste de herramienta
+		TLSet 1, XY(91.253, 11.266, 0, 0)
+		Tool 1
+	
+	ElseIf cilindro = cilindro_b Then 'Tool 2 para cilindro B
+		TLSet 2, XY(-47.801, 77.243, 0, 0)
+		Tool 2
+	EndIf
+	
+Fend
+
+
+Function Ajuste
+	ajustX = 0; ajustY = 0; ajustZ = 0; ajustU = 0
+	
+	'BASADOS EN ATOC_15 (AZUL CLEAR) como posición inicial para los ajustes	
+	
+	If fusible$ = "ATOC_5" Then		  		'ATO_5 CLEAR (BEIGE)
+		ajustU = 42.5
+		ajustX = 1.5
+		ajustY = 0.5
+		If caja$ = "TBLU" Then
+			ajustU = ajustU + 1.7
+			ajustX = ajustX - 1.3
+			ajustY = ajustY - 0.1
+		EndIf
+		
+		If caja$ = "PDCS" Then
+			ajustX = ajustX - 1.4
+			ajustY = ajustY
+			ajustU = ajustU + 1.7
+		EndIf
+
+		
+	ElseIf fusible$ = "ATOC_10" Then		  		'ATO_5 CLEAR (BEIGE)
+		ajustU = 42.5
+		ajustX = 1.5
+		ajustY = 0.5
+		If caja$ = "TBLU" Then
+			ajustU = ajustU + 2.2
+			ajustX = ajustX - 1.3
+			ajustY = ajustY - 0.2
+		EndIf
+		
+		If caja$ = "PDCS" Then
+			ajustX = ajustX - 1.6
+			ajustY = ajustY - 0.5
+			ajustU = ajustU + 2
+		EndIf
+'============================================================'
+'============================================================'
+'============================================================'		
+' NUEVOS AJUSTES PARA ATO 30 CON FEEDERS LINEALES
+	ElseIf fusible$ = "ATO_30" Then
+		If caja$ = "PDCR" Then
+			If CA30 = 1 Then
+				If (cavity >= 400 And cavity <= 405) Then
+					ajustX = ajustX + 0.3
+					ajustY = ajustY - 0.7
+					ajustU = ajustU + 89
+				EndIf
+				If (cavity >= 412 And cavity <= 417) Then
+					ajustX = ajustX + 1.2
+					ajustY = ajustY - 1.2
+					ajustU = ajustU + 89
+				EndIf
+				If (cavity >= 421 And cavity <= 426) Then
+					ajustX = ajustX + 0.3 - 0.4
+					ajustY = ajustY - 0.9
+					ajustU = ajustU + 89 - 2
+				EndIf
+				If (cavity >= 450 And cavity <= 455) Then
+					ajustX = ajustX + 1 - 0.3
+					ajustY = ajustY - 0.7
+					ajustU = ajustU + 87.5 - 0.5
+				EndIf
+				If (cavity >= 456 And cavity <= 461) Then
+					ajustX = ajustX + 1
+					ajustY = ajustY - 0.7
+					ajustU = ajustU + 87.5
+					If cavity >= 459 And cavity <= 461 Then
+						ajustX = ajustX - 0.8
+					EndIf
+				EndIf
+			EndIf
+			If CA30 = 0 Then
+				If (cavity >= 400 And cavity <= 405) Then
+					ajustX = ajustX + 0.3
+					ajustY = ajustY - 0.7
+					ajustU = ajustU + 89
+				EndIf
+				If (cavity >= 412 And cavity <= 417) Then
+					ajustX = ajustX + 1.7
+					ajustY = ajustY - 1.7 - 0.5
+					ajustU = ajustU + 90
+				EndIf
+				If (cavity >= 421 And cavity <= 426) Then
+					ajustX = ajustX - 0.2
+					ajustY = ajustY - 0.9
+					ajustU = ajustU + 88
+				EndIf
+				If (cavity >= 450 And cavity <= 455) Then
+					ajustX = ajustX + 1
+					ajustY = ajustY - 0.7
+					ajustU = ajustU + 87.5
+				EndIf
+				If (cavity >= 456 And cavity <= 461) Then
+					ajustX = ajustX + 1
+					ajustY = ajustY - 0.7
+					ajustU = ajustU + 87.5
+				EndIf
+			EndIf
+		EndIf
+'============================================================'		
+'============================================================'		
+'============================================================'
+		If caja$ = "PDCS" Then
+			If CA30 = 1 Then
+				ajustX = ajustX + 0.1
+				ajustY = ajustY - 0.4
+				ajustU = ajustU + 87.03
+				If cavity = 111 Then
+					ajustX = ajustX + 0.6
+					ajustY = ajustY + 0.8
+					ajustZ = ajustZ - 0.2
+				EndIf
+				If cavity >= 111 And cavity <= 113 Then 'Para compensar el desnivel de la caja
+					ajustZ = ajustZ - 0.3
+				EndIf
+			EndIf
+			If CA30 = 0 Then
+				ajustX = ajustX + 0.1
+				ajustY = ajustY + 0
+				ajustU = ajustU + 87.03
+				If cavity = 111 Then
+					ajustX = ajustX + 0.6
+					ajustY = ajustY + 0.8
+					ajustZ = ajustZ - 0.2
+				EndIf
+				If cavity >= 111 And cavity <= 113 Then 'Para compensar el desnivel de la caja
+					ajustZ = ajustZ - 0.3
+				EndIf
+			EndIf
+		EndIf
+		
+	ElseIf fusible$ = "ATO_20" Then			'ATO_20 (AMARILLO)
+		ajustU = 4
+		ajustY = -1
+		ajustX = 1
+		If (cavity >= 450 And cavity <= 455) Then
+			ajustU = 4
+			ajustY = -2.1
+			ajustX = 0.6
+		EndIf
+    	ajustY = ajustY + 1.2
+		ajustU = ajustU - 3
+		ajustX = ajustX - 0.8
+		
+		If caja$ = "PDCS" Then
+			If cavity = 111 Then
+				ajustX = ajustX + 0.8
+				ajustZ = ajustZ - 0.5
+			EndIf
+		EndIf
+		
+	ElseIf fusible$ = "ATO_15" Then			'ATO_15 (AZUL)
+		ajustU = 66
+		ajustY = -0.2
+		ajustX = 0.5
+		If caja$ = "TBLU" Then
+			ajustY = ajustY + 0.7
+			ajustX = ajustX + 1
+		EndIf
+		
+		If caja$ = "PDCS" Then
+			If cavity = 111 Then
+				ajustX = ajustX + 0.8
+				ajustZ = ajustZ - 0.5
+			EndIf
+		EndIf
+		
+		If caja$ = "F96_box" Then
+			ajustX = ajustX + 1.2
+			ajustY = ajustY - 0.5
+			ajustU = ajustU + 1
+		EndIf
+		
+		If caja$ = "PDCR" Then
+			If (cavity >= 400 And cavity <= 405) Then
+				ajustU = ajustU - 1
+				ajustX = ajustX - 0.3
+				ajustY = ajustY - 0.3
+			EndIf
+			If (cavity >= 412 And cavity <= 417) Then
+				ajustU = ajustU + 1.5
+				ajustX = ajustX + 1.5
+				ajustY = ajustY - 0.6
+			EndIf
+			If (cavity >= 421 And cavity <= 426) Then
+				ajustU = ajustU - 2
+				ajustX = ajustX - 0.5
+				ajustY = ajustY - 0.5
+			EndIf
+			If (cavity >= 450 And cavity <= 455) Then
+				ajustU = ajustU - 0.5
+				ajustY = ajustY - 0.3
+			EndIf
+			If (cavity >= 456 And cavity <= 461) Then
+				ajustU = ajustU - 0.5
+				ajustX = ajustX + 0.9
+				ajustY = ajustY - 0.5
+				If (cavity >= 459 And cavity <= 461) Then
+					ajustX = ajustX - 0.9
+				EndIf
+			EndIf
+		EndIf
+		
+	ElseIf fusible$ = "ATO_10" Then			'ATO_10 (ROJO)
+		ajustU = 91
+		ajustY = 0.5
+		ajustX = 1.5
+		If caja$ = "PDCS" Then
+			ajustX = ajustX - 2.5
+			If cavity = 111 Then
+				ajustX = ajustX + 1
+				ajustZ = ajustZ - 0.5
+			EndIf
+		EndIf
+		
+	'--------------------------FEEDERS BOWLS
+	ElseIf fusible$ = "ATO_7.5" Then			'ATO_7.5 CAFE (Antes ATO_30 VERDE) ##Movimiento de BOWL##
+        ajustU = 84.6
+		ajustX = (1.5 - 0.5)
+		If cavity = 461 Then
+			ajustX = ajustX - 1
+		EndIf
+		
+		If (cavity >= 412 And cavity <= 417) Then
+			ajustX = ajustX + 1.35
+			ajustY = ajustY - 1.3
+			ajustU = ajustU + 2
+		EndIf
+		
+		If (cavity >= 421 And cavity <= 426) Then
+			ajustY = ajustY - 1.4
+		EndIf
+'				
+		If cavity = 461 Then
+			ajustU = ajustU + 1
+			ajustY = ajustY - 1
+			ajustX = ajustX - 1
+		EndIf
+		
+		If cavity = 450 Then
+			ajustY = ajustY - 0.15
+		EndIf
+		
+		If caja$ = "PDCS" Then
+			If cavity = 111 Then
+				ajustX = ajustX + 0.7
+				ajustZ = ajustZ - 0.5
+			EndIf
+		EndIf
+		
+		If caja$ = "F96_box" Then
+			ajustX = ajustX - 0.7
+			ajustY = ajustY - 2
+			ajustU = ajustU + 4.5
+			ajustZ = ajustZ
+		EndIf
+		
+	ElseIf fusible$ = "ATO_25" Then			'ATO_25 (NATURAL)
+		ajustU = -93
+		ajustX = -0.2
+		If caja$ = "PDCS" Then
+			ajustU = ajustU + 180.5 - 1.5
+			ajustY = ajustY + 1 - 1
+			ajustX = ajustX + 1
+			If cavity = 111 Then
+				ajustX = ajustX + 0.8
+				ajustZ = ajustZ - 0.5
+			EndIf
+		EndIf
+		
+'		If cavity = 401 Then
+'			ajustX = ajustX + 0.5
+'			ajustY = ajustY - 0.55
+'			ajustU = ajustU + 0.5
+'		EndIf
+		
+		If (cavity >= 400 And cavity <= 405) Then
+			ajustX = ajustX - 0.3
+			ajustY = ajustY - 2
+			ajustU = ajustU
+			ajustZ = ajustZ - 0.5
+		EndIf
+		
+		If (cavity >= 412 And cavity <= 417) Then
+			ajustX = ajustX + 3.5
+			ajustY = ajustY - 1.4
+			ajustU = ajustU + 2
+			ajustZ = ajustZ - 0.5
+		EndIf
+		
+		If (cavity >= 421 And cavity <= 426) Then
+			ajustX = ajustX + 2
+			ajustY = ajustY - 1.6
+			ajustU = ajustU - 2.5
+			ajustZ = ajustZ - 0.5
+		EndIf
+		
+		If (cavity >= 450 And cavity <= 461) Then
+			ajustX = ajustX + 0.6
+			ajustY = ajustY - 3
+			ajustU = ajustU - 0.5
+			ajustZ = ajustZ - 0.5
+			If (cavity >= 456 And cavity <= 461) Then
+				ajustX = ajustX + 0.7
+				ajustY = ajustY - 0.2
+			EndIf
+		EndIf
+		
+' ###### Este ajuste de ATO_30 corresponde al BOWL, se comenta en lo que se decide
+' ###### si se tomaran fusibles de BOWL (izq) y Feeder (der), por ahora solo se toman
+' ###### fusibles de Feeder doble de lado derecho
+'	ElseIf fusible$ = "ATO_30" Then		'ATO_30 VERDE (Antes ATO_7.5 CAFE) ##Movimiento de BOWL##
+'		ajustU = -94
+'		ajustX = 0.8
+'		ajustY = -0.2
+'		
+'		If caja$ = "PDCR" Then
+'			If (cavity >= 400 And cavity <= 405) Then
+'				ajustU = ajustU - 3
+'				ajustX = ajustX - 0.3
+'				ajustY = ajustY - 3.5
+'			EndIf
+'			If (cavity >= 412 And cavity <= 417) Then
+'				ajustU = ajustU - 1
+'				ajustX = ajustX + 4
+'				If (cavity >= 412 And cavity <= 414) Then
+'					ajustX = ajustX - 1
+'				EndIf
+'			EndIf
+'			If (cavity >= 421 And cavity <= 426) Then
+'				ajustU = ajustU - 1
+'				ajustX = ajustX + 2.85
+'			EndIf
+'			If (cavity >= 450 And cavity <= 455) Then
+'				ajustU = ajustU - 4
+'				ajustX = ajustX + 0.7
+'				ajustY = ajustY - 3.2
+'			EndIf
+'			If (cavity >= 456 And cavity <= 461) Then
+'				ajustU = ajustU - 2
+'				ajustX = ajustX + 1.2
+'				ajustY = ajustY - 2.8
+'				If (cavity >= 459 And cavity <= 461) Then
+'					ajustX = ajustX - 0.8
+'				EndIf
+'			EndIf
+'		EndIf
+'		If caja$ = "PDCS" Then
+'			ajustU = 86
+'			ajustX = ajustX - 0.8
+'			If cavity = 111 Then
+'				ajustX = ajustX + 0.8
+'			EndIf
+'		EndIf
+		
+	ElseIf fusible$ = "MINI_5" Then			'MINI_5 (BEIGE)
+		ajustU = -1
+		ajustX = -0.2
+		ajustY = 0.2
+		
+	ElseIf fusible$ = "MINI_7.5" Then		'MINI_7.5 (CAFE)
+		'If cavity = 432 Then
+		'	ajustY = 1.5
+		'	ajustU = -4
+		'EndIf
+					
+		If (cavity >= 406 And cavity <= 411) Then
+		'Ajuste por reacomodo de feeder bowl
+			ajustX = ajustX - 0.7
+			ajustY = ajustY + 0.75
+		Else
+			ajustY = ajustY + 2
+		EndIf
+		ajustU = ajustU - 3
+		
+		If cavity = 411 Then
+			ajustX = ajustX + 1
+		EndIf
+		
+		If cavity = 440 Then
+			ajustX = ajustX + 1.5
+			ajustU = ajustU + 2
+		EndIf
+		
+		
+	ElseIf fusible$ = "MAXI_40" Then	'MAXI_40 (NARANJA)
+		'If CM40 = 1 Then
+		ajustX = ajustX + 0.1
+		ajustY = ajustY - 0.3
+		If (cavity >= 418 And cavity <= 420) Or (cavity >= 447 And cavity <= 449) Then
+			ajustX = ajustX + 0.8
+			ajustY = ajustY - 0.5
+			ajustU = ajustU
+		EndIf
+		'EndIf
+		' En toma de fusible, antes de salir de la rutina de lado A o B, cambia CM40
+	'	If CM40 = 0 Then	' Si es el lado B
+	ElseIf fusible$ = "MAXI_30" Then
+		ajustX = ajustX + 0.6
+		ajustY = ajustY
+		If (cavity >= 418 And cavity <= 420) Or (cavity >= 447 And cavity <= 449) Then
+			ajustX = ajustX - 0.6
+			ajustY = ajustY - 0.5
+			ajustU = ajustU
+		EndIf
+		'EndIf
+	ElseIf fusible$ = "MAXI_50" Then
+		ajustX = ajustX + 0.3
+		If cavity >= 418 And cavity <= 420 Then
+			ajustX = ajustX - 1
+			ajustY = ajustY - 2
+		EndIf
+		If cavity >= 447 And cavity <= 449 Then
+			ajustX = ajustX - 0.5
+			ajustY = ajustY - 2.5
+		EndIf
+			
+	'-------------------------- GENERAL POINTS
+	ElseIf cavity = 440 Then
+		ajustX = 1
+		
+	'ElseIf cavity = 447 Or cavity = 448 Or cavity = 449 Then
+	'	ajustX = -1
+		
+	'
+	'	
+	'	
+	EndIf
+	
+	If (cavity <= 417) And (cavity >= 412) Then
+		ajustX = ajustX - 2
+	EndIf
+	
+	
+	If fusible$ = "ATO_5" Then
+		If caja$ = "PDCS" Then
+			ajustX = ajustX + 1.7
+			ajustU = ajustU + 1
+			ajustY = ajustY + 1
+			If cavity = 111 Then
+				ajustX = ajustX + 0.8
+				ajustZ = ajustZ - 0.5
+			EndIf
+			
+			If (cavity <= 116) And (cavity >= 114) Then
+				ajustY = ajustY - 1
+				ajustX = ajustX + 0.4
+			EndIf
+			
+		EndIf
+		
+		If caja$ = "PDCR" Then
+			If (cavity >= 412 And cavity <= 417) Or (cavity >= 421 And cavity <= 426) Then
+				ajustX = ajustX + 1.5
+				ajustY = ajustY + 0.3
+				ajustU = ajustU + 3
+			EndIf
+		EndIf
+	EndIf
+	
+	If fusible$ = "ATO_20" Then
+		If caja$ = "PDCR" Then
+			If (cavity >= 450 And cavity <= 455) Then
+				ajustX = ajustX + 2
+				ajustU = ajustU + 1
+			EndIf
+		EndIf
+	EndIf
+	
+	
+	If fusible$ = "MINI_15" Then
+		
+		If (cavity >= 437 And cavity <= 441) Then
+			ajustX = ajustX + 1
+			ajustY = ajustY + 1
+			ajustU = ajustU - 1.5
+		EndIf
+		If cavity = 430 Then
+			ajustY = ajustY - 1.4
+			ajustX = ajustX + 0.7
+			ajustZ = ajustZ - 0.5
+		EndIf
+	EndIf
+	
+	If fusible$ = "ATOC_15" Then
+		If caja$ = "TBLU" Then
+			ajustX = ajustX + 1.675
+			ajustY = ajustY - 0.512
+			ajustU = ajustU - 90.393
+		EndIf
+	EndIf
+	
+	If caja$ = "TBLU" Then
+		ajustZ = ajustZ + 0.5
+	EndIf
+
+	Print (ajustZ)
+	If cilindro = cilindro_b Then
+		ajustZ = ajustZ - 3.4
+		Print (ajustZ)
+		If caja$ = "F96_box" Then
+			ajustZ = ajustZ + 3.4
+		EndIf
+	EndIf
+	
+	
+	
+'	If fusible$ = "ATO_5" Then
+'		If caja$ = "PDCS" Then
+'			ajustX = ajustX + 1.7
+'			ajustU = ajustU + 1
+'			ajustY = ajustY + 1
+'			If cavity = 111 Then
+'				ajustX = ajustX + 0.8
+'				ajustZ = ajustZ - 0.5
+'			EndIf
+'			
+'			If cavity = 116 Then
+'				ajustY = ajustY - 0.4
+'			EndIf
+	
+	
+	Print("adjustX: " + Str$(ajustX))
+	Print("adjustY: " + Str$(ajustY))
+	Print("adjustZ: " + Str$(ajustZ))
+	Print("adjustU: " + Str$(ajustU))
+	
+Fend
+
+
+Function Monitoreo_Insercion
+			
+	If cilindro = 523 Then 'cilindro_a = 523
+	
+		If EstatusCilindro = 0 Or EstatusCilindro = 4 Then
+				Print("EstatusCilindro de error: "); Print (EstatusCilindro)
+
+				Print #202, "ERROR_insertion"
+				On 544
+				
+				Off cilindro
+				FindHome_after_error
+
+				Print "______________________________________"
+				Print "Retirar Fusible y reintentar inserción"
+				Print "______________________________________"
+				
+				Pause
+		
+		EndIf
+	
+	
+	ElseIf cilindro = 524 Then 'cilindro_b = 524
+	
+		If EstatusCilindro = 0 Or EstatusCilindro = 1 Then
+				Print("EstatusCilindro de error: "); Print (EstatusCilindro)
+
+				Print #202, "ERROR_insertion"
+				On 544
+				
+				Off cilindro
+				FindHome_after_error
+
+				Print "______________________________________"
+				Print "Retirar Fusible y reintentar inserción"
+				Print "______________________________________"
+
+				Pause
+	
+		EndIf
+	
+	EndIf
+	
+Fend
+
+Function Insercion_PistonExtendido
+	
+	EstatusC_actual = EstatusCilindro
+	'On cilindro
+'	If shared_zone = True Then	' Si shared_zone = True, es decir, si el fusible se tomo de lado izq...
+'		Move P(cavity) +Z(50)	' Te mueves al punto de insercion 50 mm arriba
+'	EndIf
+	
+	'Extra_Low_Speed	
+	FastInsertion_Speed '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	
+	Print("//////////////////////////////////////////////////////")
+	Tiempo_bajada_insercion_1 = (Tmr(5))
+	
+	Print #202, "TIEMPO_BAJADA_INSERCION: " + Str$((Tmr(5))) + " s"
+	TmReset 5
+	
+	Do Until EstatusCilindro <> EstatusC_actual 'Asegurar que salga cilindro
+    Loop
+	
+	Print("//////////////////////////////////////////////////////")
+	Tiempo_cilindro_insercion_1 = (Tmr(5))
+	
+	Print #202, "TIEMPO_CILINDRO_INSERCION: " + Str$((Tmr(5))) + " s"
+	TmReset 5
+	
+	Move P(cavity)
+	Revisando_vacio = 0
+	Monitoreo_Insercion
+	
+	Print("//////////////////////////////////////////////////////")
+	Tiempo_insercion_insercion_1 = (Tmr(5))
+	
+	Print #202, "TIEMPO_INSERCION_INSERCION: " + Str$((Tmr(5))) + " s"
+	TmReset 5
+	
+	Tiempo_bajada_insercion_2 = 0
+	Tiempo_cilindro_insercion_2 = 0
+	Tiempo_insercion_insercion_2 = 0
+				
+Fend
+

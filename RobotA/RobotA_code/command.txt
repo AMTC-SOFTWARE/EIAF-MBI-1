@@ -1,0 +1,143 @@
+> reset; motor On; power High
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+!!Error: 4025, Cannot execute a motion command during emergency stop condition.
+> 
+!!Error: 4025, Cannot execute a motion command during emergency stop condition.
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+!!Error: 3201, Expected ','.
+> 
+> 
+> 
+> 
+> reset; motor On; power High
+> 
+> 
+> 
+> on 523
+> off 523
+> on 524
+> off 524
+> 
+> 
+> 
+> 
+> 
+> GO HERE + Y(-1)
+> 
+> 
+> 
+> 
+> 
+> 
+> on 523
+> off 523
+> on 524
+> off 524
+> on 520
+> on 521
+> reset
+> motor On
+!!Error: 1037, Cannot execute when Remote Ethernet enabled except from the remote Ethernet device.
+> motor On
+> tool
+	   4
+> go home_R
+> tool 3
+> go home_R
+> reset
+> motor On
+> print(P910)
+ X: -365.326 Y:  160.112 Z:  -20.000 U:   77.418 V:    0.000 W:    0.000 /R /0
+> go P910
+> reset
+> 
+> 
+> motor On
+> 
+> 
+> go here + y(-0.4)
+> go here + y(-0.4)
+> go here + y(-0.5)
+> 
+> reset
+> reset
+> on 423
+!!Error: 2344, I/O input/output bit number is out of available range or the board is not installed.
+> on 524
+> on 523
+> off 523
+> off 524
+> reset
+> GO HERE + u(+1)
+> 
+> off gripper
+> on gripper
+> reset
+> motor On
+> on 523
+> off 523
+> on 523
+> go here + X(-2)
+> go here + X(-2)
+> go here + X(-2)
+> go here + Y(-1)
+!!Error: 4025, Cannot execute a motion command during emergency stop condition.
+> 
+> RESET;MOTOR ON;POWER HIGH
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> > 
+
+> 
+> 
+> GO HERE + U(1)
+> 
+!!Error: 3205, Point is not specified.
+> 
+> 
+> 
+> 
+> 
+> 
+> 

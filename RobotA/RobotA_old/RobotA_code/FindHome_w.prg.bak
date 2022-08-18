@@ -1,0 +1,70 @@
+Global Double Ymax1, Ymin1
+Global Double Xmax1, Xmin1
+Global Double Xmax2, Xmin2
+Global Integer Zona1, Zona2
+	
+Function FindHome_w
+	
+	Home_Speed
+	crear_zona
+	SubirRobot_Z
+	actualizar_zona
+	Find_Hand
+	Go HOME_R
+	On vacio_rl
+	'On aire
+	Wait 0.5
+	Off vacio_rl
+	Wait 0.5
+	'Off aire
+	Print #202, "HOME"
+Fend
+
+Function crear_zona
+	
+	'Zona cerca de los nidos
+	Ymax1 = 490;
+	Ymin1 = 180;
+	Xmax1 = 420;
+	Xmin1 = -460;
+	
+	Xmax2 = -380
+	Xmin2 = -700
+	'Solo puedes crear 15 objetos de este tipo
+	'BoxClr 1 'borrar zona
+	Box 1, Xmin1, Xmax1, Ymin1, Ymax1, 0, 0
+	Box 2, Xmin2, Xmax2, 0, 0, 0, 0
+	
+	
+Fend
+
+Function actualizar_zona
+	
+	Zona1 = GetRobotInsideBox(1)
+	Zona2 = GetRobotInsideBox(2)
+	'If Zona1 = 1 Then
+	'	Print "Zona actual: Delantera"
+	'Else
+	'	Print "Zona actual: Feeders"
+	'EndIf
+	
+Fend
+
+Function SubirRobot_Z
+	P700 = RealPos
+	P700 = P700 :Z(-15) 'Reemplazar coordenada Z por -15
+	Work_Speed
+	Go P700
+	PDel 700
+Fend
+
+Function Find_Hand
+	RobotHand = Hand(RealPos)
+	'If RobotHand = 1 Then
+	'	Print "Codo actual: Derecho"
+	'Else
+	'	Print "Codo actual: Izquierdo"
+	'EndIf
+Fend
+
+

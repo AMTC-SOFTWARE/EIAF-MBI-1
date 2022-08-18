@@ -1,0 +1,144 @@
+> reset; motor On;POWER High
+> 
+
+> > 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>gripper off
+!!Error: 3100, Syntax error.
+> gripper off
+!!Error: 3100, Syntax error.
+> GRIPPER OFF
+!!Error: 3100, Syntax error.
+> 
+> 
+!!Error: 4025, Cannot execute a motion command during emergency stop condition.
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+!!Error: 4025, Cannot execute a motion command during emergency stop condition.
+> 
+> 
+> 
+> 
+> 
+> 
+> on 523
+> 
+> on 524
+> 
+> off 523
+> 
+> off 524
+!!Error: 1037, Cannot execute when Remote Ethernet enabled except from the remote Ethernet device.
+> 
+> 
+> GO HERE + u(0.5)
+> 
+> 
+> 
+> 
+> GO HERE + Y(-0.4)
+> 
+>  GO HERE + Y(-.5)
+> 
+> 
+> GO HERE + X(.5)
+> 
+> 
+> 
+!!Error: 4025, Cannot execute a motion command during emergency stop condition.
+> 
+> 
+!!Error: 4025, Cannot execute a motion command during emergency stop condition.
+> 
+> 
+> 
+>  GO HERE + Y(-0.4)
+> 
+> GO HERE + Y
+> 
+> 
+> 
+> 
+> 
+> on 543
+> off 543
+> on 543
+> off 543
+> 
+> 
+> off gripper
+!!Error: 2342, Cannot change the status for output bit configured as remote output.
+> 
+> RESET;MOTOR ON;POWER High
+> 
+> 
+> 
+> 
+> 
+> GO MINI10_bw_up
+> 
+> 
+> 
+> ON 523
+> OFF 523
+> ON 524
+> 
+> 
+> TOOL
+	   2
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> ON 517
+> OFF 517
+> 
+> 
+!!Error: 1037, Cannot execute when Remote Ethernet enabled except from the remote Ethernet device.
+> 
+> 
+> 
+!!Error: 3201, Expected ','.
+> 
+> 

@@ -1,0 +1,102 @@
+Global Double Ymax1, Ymin1
+Global Double Xmax1, Xmin1
+Global Double Xmax2, Xmin2
+Global Integer Zona1, Zona2
+Global Integer digital_outputs
+	
+Function FindHome_w
+	Tool 3
+	
+	crear_zona
+	Off cilindro_a
+	Off cilindro_b
+	SubirRobot_Z 'En SubirRobot_Z hay un Work_Speed
+	Home_Speed
+	actualizar_zona
+	Find_Hand
+	Go home_R
+	Print #202, "HOME"
+	On vacio_rl
+	Off vacio
+	'On aire
+	Wait 0.5
+	Off vacio_rl
+	Wait 0.5
+	'Off aire
+	
+	For digital_outputs = 514 To 544
+		Off digital_outputs
+	Next digital_outputs
+	
+	Reset_Grippers_PLC
+		
+	On AVAILABLE 'Negado
+	
+Fend
+
+Function FindHome_after_error
+	Tool 3
+	SubirRobot_Z 'En SubirRobot_Z hay un Work_Speed
+	Home_Speed
+	Go home_R
+	On vacio_rl
+	Off vacio
+	Wait 0.5
+	Off vacio_rl
+	Wait 0.5
+	
+Fend
+
+Function crear_zona
+	
+	'Zona cerca de los nidos
+	Ymax1 = 490;
+	Ymin1 = 180;
+	Xmax1 = 420;
+	Xmin1 = -460;
+	
+	Xmax2 = -380
+	Xmin2 = -700
+	'Solo puedes crear 15 objetos de este tipo
+	'BoxClr 1 'borrar zona
+	Box 1, Xmin1, Xmax1, Ymin1, Ymax1, 0, 0
+	Box 2, Xmin2, Xmax2, 0, 0, 0, 0
+		
+Fend
+
+Function actualizar_zona
+	
+	Zona1 = GetRobotInsideBox(1)
+	Zona2 = GetRobotInsideBox(2)
+	'If Zona1 = 1 Then
+	'	Print "Zona actual: Delantera"
+	'Else
+	'	Print "Zona actual: Feeders"
+	'EndIf
+	
+Fend
+
+Function SubirRobot_Z
+	P700 = RealPos
+	P700 = P700 :Z(-20) 'Reemplazar coordenada Z por -15
+	Work_Speed
+	Go P700
+	PDel 700
+Fend
+
+Function Find_Hand
+	RobotHand = Hand(RealPos)
+	'If RobotHand = 1 Then
+	'	Print "Codo actual: Derecho"
+	'Else
+	'	Print "Codo actual: Izquierdo"
+	'EndIf
+Fend
+
+Function Reset_Grippers_PLC
+	On 514 	'Reset CNT en FEEDERS
+	Wait 0.3
+	Off 514	'Reset CNT en FEEDERS
+Fend
+
+

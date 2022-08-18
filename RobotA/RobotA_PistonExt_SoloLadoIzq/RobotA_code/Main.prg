@@ -1,0 +1,208 @@
+Global Integer RobotHand '1 = Right Hand, 2 = Left Hand
+Global Integer cavity
+Global String fusible$, cavidad$, caja$, lectura$, lectura_anterior$
+Global Boolean shared_zone
+Global Integer CM75, CM5							'Estas variables funcionan como contadores
+Global Integer vacio, aire, cilindro_actual, cilindro_a, cilindro_b, fuse_presence, cilindro, vacio_ok, vacio_rl, AVAILABLE
+
+Global Double Tiempo_reinicio, Tiempo_reset, Tiempo_total, Tiempo_Envio_Mensaje, Tiempo_Lectura_Mensaje, Tiempo_espera_robotB
+Global Double Tiempo_traslado_toma, Tiempo_presencia_gripper, Tiempo_bajada_toma, Tiempo_vacio, Tiempo_subida_toma
+Global Double Tiempo_traslado_insercion, Tiempo_subida_insercion
+Global Double Tiempo_bajada_insercion_1, Tiempo_insercion_insercion_1
+Global Double Tiempo_bajada_insercion_2, Tiempo_cilindro_insercion_2, Tiempo_insercion_insercion_2
+
+'#202 TCP/IP
+'192.168.15.30
+'2000
+
+'IP: 192.168.15.230
+'Puerto: 5000
+
+'Presión: 92 PSI
+
+'Válvula de vacío:
+'SoG
+'HYS: 0.10
+'Response time: 2.5ms
+'P_1: -10.40
+
+
+Function main
+	Xqt Estatus_Cilindro
+	Xqt Revisar_vacio
+	
+	'CONEXION TCP/IP
+	OpenNet #202 As Client						'Abrir conexión TCP/IP
+	Print "Esperando conexión TCP/IP"
+	WaitNet #202								'Esperar que haya conexión
+	Print "Conexión TCP/IP correcta"
+										'Tiempo entre mensajes para separar en MQTT
+	Print #202, "SUCCESSFUL CONNECTION TCP/IP"	'Enviar mensaje por TCP/IP
+	
+	CollisionDetect Off	' Checar descripcion de Error 5057 para mas informacion >:)
+	
+	'-----------------------------------
+	Print("//////////////////////////////////////////////////////")
+	Tiempo_reinicio = (Tmr(5))
+	
+	Print #202, "TIEMPO_REINICIO: " + Str$(Tiempo_reinicio) + " s"
+	TmReset 5
+	'-----------------------------------
+	
+	
+	Off 544										'Apagar Torreta
+	AVAILABLE = 512
+	'aire = 
+	vacio = 521									'variable de la valvula de vacio
+	vacio_rl = 520								'switch vacio a cilindro a o cilindro b
+	cilindro_a = 523							'variable para activar el cilindro a
+	cilindro_b = 524							'variable para activar el cilindro b
+	fuse_presence = 522							'variable para comprobar la presencia del fusible
+	vacio_ok = 525								'variable para comprobar la toma del fusible con la prueba de vacio
+	CM75 = Int(Rnd(1.99))						'contadores para inline dobles
+	CM5 = Int(Rnd(1.99))						'Int(Rnd(1.99)) regresa un 1 o 0. NOTA: Int(1.99999) = 1
+	lectura$ = "empty"							'limpiar variables de lectura
+	fusible$ = "empty"
+	cavidad$ = "empty"
+	FuseOK = 0
+	recursividad_vacio = 0
+	Revisando_vacio = 0
+	'Cerrar válvulas de Efector final antes de iniciar
+	Off cilindro_a; Off cilindro_b
+	cilindro_actual = cilindro_a				'se inicializa variable en 0 para revisión de cilindro en uso
+												'(para mantenerlo activado en todo momento)
+	
+	'Función para mover todos los puntos en un rango (Calibrarlos)
+	'Puede ser un solo punto poniendo el mismo punto en Desde y Hasta
+	'Calibrar_w(Desde, Hasta, X_val, Y_val, Z_val, U_val)
+	
+	'___________________________________________
+
+	P(326) = PDCP_F326
+	P(335) = PDCP_F335
+	Compute_Cavity(326, 335)
+	
+	P(318) = PDCP_F318
+	P(325) = PDCP_F325
+	Compute_Cavity(318, 325)
+	
+	P(301) = PDCP_F301
+	P(305) = PDCP_F305
+	Compute_Cavity(301, 305)
+	Calibrar_w(302, 303, -1.5, 4, 0, -3) '!!!!!!!!!!!!!!!!!!!!!!
+	
+	P(300) = PDCP_F300
+	
+	'Calculo de puntos para la caja PDC-D
+	'---------------MINI-----------------------
+	P(200) = PDCD_F200
+	P(208) = PDCD_F208
+	Compute_Cavity(200, 208)
+	
+	P(217) = PDCD_F217
+	P(221) = PDCD_F221
+	Compute_Cavity(217, 221)
+	
+	P(222) = PDCD_F222
+	P(226) = PDCD_F226
+	Compute_Cavity(222, 226)
+	
+	P(232) = PDCD_F232
+	P(227) = PDCD_F227
+	Compute_Cavity(227, 232)
+	
+	'-----------------ATO---------------------
+	P(209) = PDCD_F209
+	P(216) = PDCD_F216
+	Compute_Cavity(209, 216)
+	
+	'-----------------MULTI---------------------
+	P(310) = PDCP_MF1
+	P(311) = PDCP_MF2
+	'___________________________________________
+	'Calibrar_w(210, 210, -0.5, 0.5, 0, 1) '!!!!!!!!!!!!!!!!!!!!!!	
+	
+	Motor On									'Encender motores del robot
+	
+	FindHome_w
+
+	
+	Print #202, "READY"
+	'AVISAR A ROBOT B que ya puede empezar 
+	On 542
+	
+	'Tiempo que tarda en resetearse el robot, una vez que se dio reinicio
+	Print("//////////////////////////////////////////////////////")
+	Tiempo_reset = (Tmr(5))
+	
+	Print #202, "TIEMPO_RESET: " + Str$((Tmr(5))) + " s"
+	TmReset 5
+	
+	LeerMensaje_w
+	
+	Do While (lectura$ <> "HOME")
+			
+		Do While (FuseOK = 0)
+			RevisarListaFusibles
+			If FuseOK = 0 Then
+				ActualizarMensaje_w
+			EndIf
+		Loop
+		
+		Print("//////////////////////////////////////////////////////")
+		Tiempo_Lectura_Mensaje = (Tmr(5))
+		
+		Print #202, "TIEMPO_MENSAJE: " + Str$((Tmr(5))) + " s"
+		TmReset 5
+		
+		Print #202, "LOADING"
+		
+		tomaFusible '######################
+
+		Print "Fusible tomado: " + fusible$
+        
+        Print #202, "LOADED"
+			
+		'Wait 0.2
+		revisar_vacio1
+		
+		insertarFusible '######################
+
+
+		Print("//////////////////////////////////////////////////////")
+		Tiempo_total = 0
+		Tiempo_total = Tiempo_Lectura_Mensaje + Tiempo_espera_robotB + Tiempo_traslado_toma + Tiempo_presencia_gripper + Tiempo_bajada_toma + Tiempo_vacio + Tiempo_subida_toma + Tiempo_traslado_insercion + Tiempo_subida_insercion + Tiempo_bajada_insercion_1 + Tiempo_insercion_insercion_1 + Tiempo_bajada_insercion_2 + Tiempo_cilindro_insercion_2 + Tiempo_insercion_insercion_2
+		Print("Tiempo Total: " + Str$(Tiempo_total))
+		
+		Print #202, "TIEMPO_TOTAL: " + Str$(Tiempo_total) + " s"
+
+		Print "Fusible insertó en: " + letracavidad$ + cavidad$
+        
+        Print #202, "INSERTED"
+		
+		Tool 3
+		
+		lectura_anterior$ = lectura$
+		
+		ActualizarMensaje_w
+		
+		FuseOK = 0
+		recursividad_vacio = 0
+	Loop
+	'___________________________________________
+	
+	FuseOK = 0
+	lectura$ = "empty"
+	fusible$ = "empty"
+	cavidad$ = "empty"
+	FindHome_w
+	
+	Print #202, "PROGRAM FINISHED"
+	CloseNet #202
+	Motor Off
+	
+	Print "PROGRAMA FINALIZADO"
+	
+Fend
+
+

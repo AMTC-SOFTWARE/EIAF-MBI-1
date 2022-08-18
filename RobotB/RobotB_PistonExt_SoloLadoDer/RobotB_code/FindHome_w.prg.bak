@@ -1,0 +1,106 @@
+Global Double Ymax1, Ymax2
+Global Double Ymin1, Ymin2
+Global Integer Zona1, Zona2
+Global Integer digital_outputs
+	
+Function FindHome_w
+	Tool 0
+	crear_zona
+	SubirRobot_Z 'En SubirRobot_Z hay un Work_Speed
+	Home_Speed
+	actualizar_zona
+	Find_Hand
+	Go home_l
+	Print #202, "HOME"
+	On vacio_rl
+	'On aire
+	Off vacio
+	Wait 0.5
+	Off vacio_rl
+	Wait 0.5
+	'Off aire
+	
+	For digital_outputs = 514 To 544
+		Off digital_outputs
+	Next digital_outputs
+	
+	Reset_Grippers_PLC
+	
+	
+	
+	On AVAILABLE 'Negado
+	
+	
+	Do While (Sw(542) = 0)
+		Print("Esperando que empieze el Robot A")
+		Wait 1
+	Loop
+	Wait 1
+	
+Fend
+
+
+Function FindHome_after_error
+	Tool 0
+
+	SubirRobot_Z 'En SubirRobot_Z hay un Work_Speed
+	Home_Speed
+
+	Go home_l
+	On vacio_rl
+
+	Off vacio
+	Wait 0.5
+	Off vacio_rl
+	
+Fend
+
+Function crear_zona
+	
+	'Zona cerca de los nidos
+	Ymax1 = 500;
+	Ymin1 = 160;
+	
+	Ymax2 = -200;
+	Ymin2 = -500;
+	'Solo puedes crear 15 objetos de este tipo
+	'BoxClr 1 'borrar zona
+	Box 1, 0, 0, Ymin1, Ymax1, 0, 0
+	Box 2, 0, 0, Ymin2, Ymax2, 0, 0
+	
+	Wait 0.1
+	
+Fend
+
+Function actualizar_zona
+	
+	Zona1 = GetRobotInsideBox(1)
+	Zona2 = GetRobotInsideBox(2)
+	
+Fend
+
+
+Function SubirRobot_Z
+	P700 = RealPos
+	P700 = P700 :Z(-20) 'Reemplazar coordenada Z por -15
+	Work_Speed
+	Go P700
+	PDel 700
+Fend
+
+		
+Function Find_Hand
+	RobotHand = Hand(RealPos)
+	'If RobotHand = 1 Then
+	'	Print "Codo actual: Derecho"
+	'Else
+	'	Print "Codo actual: Izquierdo"
+	'EndIf
+Fend
+
+Function Reset_Grippers_PLC
+	On 514 	'Reset CNT en FEEDERS
+	Wait 0.3
+	Off 514	'Reset CNT en FEEDERS
+Fend
+

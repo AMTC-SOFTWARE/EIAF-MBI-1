@@ -1,0 +1,23 @@
+> reset; motor On; power High
+> reset; motor On; power High
+> on 523
+> off 523
+> on 524
+> off 524
+> on 520
+> on 521
+> reset
+> motor On
+!!Error: 1037, Cannot execute when Remote Ethernet enabled except from the remote Ethernet device.
+> motor On
+> tool
+	   4
+> go home_R
+> tool 3
+> go home_R
+> reset
+> motor On
+> print(P910)
+ X: -365.326 Y:  160.112 Z:  -20.000 U:   77.418 V:    0.000 W:    0.000 /R /0
+> go P910
+> 

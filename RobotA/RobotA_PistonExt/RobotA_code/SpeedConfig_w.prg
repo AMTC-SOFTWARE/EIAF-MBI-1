@@ -1,0 +1,68 @@
+	'Power High 'High,Low
+	'Speed 30 'punto a punto (porcentaje)
+	'SpeedS 500 'Z (milimetros por segundo)
+	'SpeedR 90 'U (grados por segundo)
+	'Accel 5, 5 'punto a punto (porcentaje)
+	'AccelS 600, 600 'Z (milimetros por s cuadrado)
+	'AccelR 90, 90 'U (grados por s cuadrado)
+	
+	
+Function Home_Speed
+	Power High;
+	Speed 50;					Accel 50, 50;
+	SpeedS 400;					AccelS 400, 400;
+    SpeedR 90;					AccelR 90, 90;
+    'Low_Speed;
+Fend
+
+Function Low_Speed
+	Power High;
+	Speed 40;					Accel 40, 40;
+	SpeedS 1000;				AccelS 5000, 5000;
+	'SpeedS 100;					AccelS 500, 500;
+	SpeedR 40;					AccelR 40, 40;
+	If cavidad$ = "MF1" Or cavidad$ = "MF2" Then
+		'SpeedS 250;			AccelS 300, 300;
+		SpeedS 600;				AccelS 2000, 2000;
+		SpeedR 30;				AccelR 30, 30;
+	EndIf
+	
+Fend
+
+
+Function Extra_Low_Speed
+	Power High;
+	Speed 10;					Accel 10, 10;
+	SpeedS 150;					AccelS 150, 150;
+	SpeedR 15;					AccelR 15, 15;
+	Low_Speed
+Fend
+
+
+Function Work_Speed
+	'Power High; Speed 80; SpeedS 550; SpeedR 90; Accel 30, 60; AccelS 600, 600; AccelR 100, 100;
+	Power High;
+	Speed 95;					Accel 60, 60;
+	'SpeedS 1800;				AccelS 6000, 6000;
+	SpeedS 2000;				AccelS 10000, 10000;
+	SpeedR 150;					AccelR 150, 150;
+	If cavidad$ = "MF1" Or cavidad$ = "MF2" Then
+		Power High;
+		Speed 40;				Accel 40, 40;
+		SpeedS 600;				AccelS 2000, 2000;
+		SpeedR 60;				AccelR 60, 60;
+	EndIf
+	'Low_Speed;
+Fend
+
+
+Function Take_Speed
+	Power High;
+	'SpeedS 1500;				AccelS 2000, 1000;
+	SpeedS 2000;				AccelS 10000, 10000;
+	
+	If cavidad$ = "MF1" Or cavidad$ = "MF2" Then
+		SpeedS 600;				AccelS 1000, 1000;
+	EndIf
+	'Low_Speed
+Fend

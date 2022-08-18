@@ -1,0 +1,305 @@
+ENVT0100,LM:2022/08/05 23:23:58:910,DS:0000004201,CS:13071,MA:10-63-C8-F3-F6-30,EI:           
+sActiveChild="Insercion_a.prg"
+bMdiMaximized=False
+nProgramFileCount=10
+ProgramFile1 {
+	sName="Main.prg"
+	bOpened=True
+	nWinState=0
+	Window {
+		nLeft=32
+		nTop=16
+		nWidth=742
+		nHeight=713
+	}
+}
+ProgramFile2 {
+	sName="FindHome_w.prg"
+	bOpened=True
+	nWinState=0
+	Window {
+		nLeft=17
+		nTop=2
+		nWidth=555
+		nHeight=817
+	}
+}
+ProgramFile3 {
+	sName="SpeedConfig_w.prg"
+	bOpened=True
+	nWinState=0
+	Window {
+		nLeft=6
+		nTop=-8
+		nWidth=832
+		nHeight=637
+	}
+}
+ProgramFile4 {
+	sName="ReadMsj_w.prg"
+	bOpened=True
+	nWinState=0
+	Window {
+		nLeft=32
+		nTop=44
+		nWidth=838
+		nHeight=507
+	}
+}
+ProgramFile5 {
+	sName="TomaFusible_a.prg"
+	bOpened=True
+	nWinState=0
+	Window {
+		nLeft=63
+		nTop=11
+		nWidth=856
+		nHeight=831
+	}
+}
+ProgramFile6 {
+	sName="Insercion_a.prg"
+	bOpened=True
+	nWinState=0
+	Window {
+		nLeft=41
+		nTop=94
+		nWidth=744
+		nHeight=649
+	}
+}
+ProgramFile7 {
+	sName="calibracion_w.prg"
+	bOpened=True
+	nWinState=0
+	Window {
+		nLeft=22
+		nTop=3
+		nWidth=823
+		nHeight=470
+	}
+}
+ProgramFile8 {
+	sName="revisar_vacio.prg"
+	bOpened=True
+	nWinState=0
+	Window {
+		nLeft=39
+		nTop=4
+		nWidth=702
+		nHeight=529
+	}
+}
+ProgramFile9 {
+	sName="Multi_tareas_w.prg"
+	bOpened=True
+	nWinState=0
+	Window {
+		nLeft=809
+		nTop=73
+		nWidth=839
+		nHeight=609
+	}
+}
+ProgramFile10 {
+	sName="ListaFusibles.prg"
+	bOpened=True
+	nWinState=0
+	Window {
+		nLeft=99
+		nTop=-9
+		nWidth=492
+		nHeight=543
+	}
+}
+nIncludeFileCount=0
+nPointFileCount=1
+PointFile1 {
+	sName="robot1.pts"
+	bOpened=False
+	nWinState=0
+	Window {
+		nLeft=84
+		nTop=22
+		nWidth=1170
+		nHeight=661
+	}
+}
+nForceFileCount=0
+sActiveWindow="main.prg"
+CmdWindow {
+	bOpened=True
+	Window {
+		nLeft=435
+		nTop=367
+		nWidth=631
+		nHeight=270
+	}
+	nWinState=0
+}
+RunWindow {
+	bOpened=False
+	Window {
+		nLeft=649
+		nTop=181
+		nWidth=1019
+		nHeight=635
+	}
+	nWinState=0
+	nNumOfDisplays=1
+	nSplitterDistance=283
+	Display1 {
+		nCamera=0
+		sSequences="1"
+	}
+	Display2 {
+		nCamera=0
+		sSequences="1"
+	}
+	Display3 {
+		nCamera=0
+		sSequences="1"
+	}
+	Display4 {
+		nCamera=0
+		sSequences="1"
+	}
+	Display5 {
+		nCamera=0
+		sSequences="1"
+	}
+	Display6 {
+		nCamera=0
+		sSequences="1"
+	}
+}
+IOLabelEditor {
+	bOpened=False
+	Window {
+		nLeft=0
+		nTop=0
+		nWidth=0
+		nHeight=0
+	}
+	nWinState=0
+}
+IOMonitor {
+	bOpened=False
+	Window {
+		nLeft=759
+		nTop=142
+		nWidth=520
+		nHeight=794
+	}
+}
+Simulator {
+	bOpened=False
+	Window {
+		nLeft=156
+		nTop=156
+		nWidth=775
+		nHeight=480
+	}
+}
+TaskMgr {
+	bOpened=False
+	Window {
+		nLeft=0
+		nTop=0
+		nWidth=0
+		nHeight=0
+	}
+}
+Macros {
+	bOpened=False
+	Window {
+		nLeft=0
+		nTop=0
+		nWidth=0
+		nHeight=0
+	}
+}
+RobotMgr {
+	bOpened=False
+	Window {
+		nLeft=453
+		nTop=79
+		nWidth=747
+		nHeight=518
+	}
+}
+UserErrorEditor {
+	bOpened=False
+	Window {
+		nLeft=0
+		nTop=0
+		nWidth=0
+		nHeight=0
+	}
+	nWinState=0
+}
+VisionGuide {
+	bOpened=False
+	Window {
+		nLeft=0
+		nTop=0
+		nWidth=0
+		nHeight=0
+	}
+	nWinState=0
+	bShowFlowChart=True
+	nSplitterDistance1=0
+	nSplitterDistance2=0
+	nSplitterDistance3=0
+	nSplitterDistance4=0
+	nSplitterDistance5=0
+}
+ForceGuide {
+	bOpened=False
+	Window {
+		nLeft=0
+		nTop=0
+		nWidth=0
+		nHeight=0
+	}
+	nWinState=0
+	nSplitterDistance1=0
+	nSplitterDistance2=0
+	nSplitterDistance3=0
+	nSplitterDistance4=0
+	nSplitterDistance5=0
+	nSelectedTab=0
+}
+GUIBuilder {
+	bOpened=False
+	Window {
+		nLeft=0
+		nTop=0
+		nWidth=0
+		nHeight=0
+	}
+	nWinState=0
+	nSplitterDistance1=0
+	nSplitterDistance2=0
+	nSplitterDistance3=0
+	nSplitterDistance4=0
+}
+ProjectExplorer {
+	bProgramsOpened=True
+	bIncludesOpened=False
+	bLabelsOpened=False
+	bMacrosOpened=False
+	bFunctionsOpened=False
+	bVisionOpened=False
+	bVisionSequencesOpened=False
+	bVisionCalibsOpened=False
+	bGUIBOpened=False
+	bGUIBFormsOpened=False
+	bRobotPointsOpened=True
+	bCommonPointsOpened=False
+	bForcesOpened=True
+	bCommonForcesOpened=False
+	bRobotsOpened1=True
+	bForceGuideOpened=False
+	bForceSequencesOpened=False
+}

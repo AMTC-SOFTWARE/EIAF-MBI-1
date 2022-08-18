@@ -1,0 +1,47 @@
+Function revisar_vacio3
+	
+	
+	If Sw(vacio_ok) = 0 Then
+		Off cilindro
+		SubirRobot_Z
+		Off vacio
+		FindCodo_w
+		tomaFusible
+		Print "Fusible tomado: " + fusible$
+		FindCodo_w
+		insertarFusible
+	EndIf
+	
+	
+Fend
+
+
+Function revisar_vacio2
+	
+	
+	If Sw(vacio_ok) = 0 Then
+		Off cilindro
+		SubirRobot_Z
+		Off vacio
+		tomaFusible
+		Print "Fusible tomado: " + fusible$
+		FindCodo_w
+	EndIf
+	
+	
+Fend
+
+Function revisar_vacio1
+	
+	
+	If Sw(vacio_ok) = 0 Then
+		Off cilindro
+		SubirRobot_Z
+		Off vacio
+		tomaFusible
+		Print "Fusible tomado: " + fusible$
+	EndIf
+	
+Fend
+
+

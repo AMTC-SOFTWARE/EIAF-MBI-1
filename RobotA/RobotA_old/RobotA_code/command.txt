@@ -1,0 +1,27 @@
+> go here - x(1)
+> go here - x(0.5)
+> on 523
+!!Error: 2319, Cannot execute an I/O command during emergency stop condition.
+> reset
+> on 523
+> off 523
+> reset
+> on 523
+> off 523
+> on 523
+> off 523
+> reset; on 523
+> off 523
+> on 523;off 523
+> on 523
+> of 523
+!!Error: 3100, Syntax error.
+> off 523
+> reset; on 523; wait 1; off 523
+> 
+> 
+> 
+> 
+> 
+> 
+> 
