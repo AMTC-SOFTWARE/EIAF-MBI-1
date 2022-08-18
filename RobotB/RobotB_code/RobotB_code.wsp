@@ -1,4 +1,4 @@
-ENVT0100,LM:2022/08/18 18:03:38:096,DS:0000004201,CS:29250,MA:C8-5B-76-56-1A-E9,EI:           
+ENVT0100,LM:2022/08/18 19:35:14:148,DS:0000004206,CS:31264,MA:C8-5B-76-56-1A-E9,EI:           
 sActiveChild="Insercion_a.prg"
 bMdiMaximized=False
 nProgramFileCount=10
@@ -7,21 +7,21 @@ ProgramFile1 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=8
-		nTop=17
-		nWidth=1529
-		nHeight=811
+		nLeft=37
+		nTop=49
+		nWidth=1528
+		nHeight=807
 	}
 }
 ProgramFile2 {
 	sName="ListaFusibles.prg"
 	bOpened=True
-	nWinState=0
+	nWinState=1
 	Window {
-		nLeft=203
-		nTop=40
-		nWidth=543
-		nHeight=805
+		nLeft=161
+		nTop=29
+		nWidth=542
+		nHeight=802
 	}
 }
 ProgramFile3 {
@@ -40,43 +40,43 @@ ProgramFile4 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=52
-		nTop=7
-		nWidth=878
-		nHeight=788
+		nLeft=383
+		nTop=109
+		nWidth=877
+		nHeight=784
 	}
 }
 ProgramFile5 {
 	sName="ReadMsj_w.prg"
 	bOpened=True
-	nWinState=0
+	nWinState=1
 	Window {
-		nLeft=-24
-		nTop=-16
-		nWidth=677
-		nHeight=816
+		nLeft=18
+		nTop=39
+		nWidth=676
+		nHeight=812
 	}
 }
 ProgramFile6 {
 	sName="SpeedConfig_w.prg"
 	bOpened=True
-	nWinState=0
+	nWinState=1
 	Window {
-		nLeft=190
+		nLeft=196
 		nTop=36
-		nWidth=1285
-		nHeight=823
+		nWidth=1283
+		nHeight=816
 	}
 }
 ProgramFile7 {
 	sName="Calibracion_a.prg"
 	bOpened=True
-	nWinState=0
+	nWinState=1
 	Window {
-		nLeft=-24
-		nTop=0
-		nWidth=679
-		nHeight=848
+		nLeft=-8
+		nTop=10
+		nWidth=677
+		nHeight=844
 	}
 }
 ProgramFile8 {
@@ -84,8 +84,8 @@ ProgramFile8 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=45
-		nTop=-5
+		nLeft=201
+		nTop=35
 		nWidth=853
 		nHeight=852
 	}
@@ -93,23 +93,23 @@ ProgramFile8 {
 ProgramFile9 {
 	sName="Revisar_vacio.prg"
 	bOpened=True
-	nWinState=0
+	nWinState=1
 	Window {
-		nLeft=60
-		nTop=21
-		nWidth=677
-		nHeight=857
+		nLeft=264
+		nTop=12
+		nWidth=675
+		nHeight=851
 	}
 }
 ProgramFile10 {
 	sName="Multi_tareas_w.prg"
-	bOpened=False
+	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=-24
-		nTop=0
-		nWidth=681
-		nHeight=831
+		nLeft=969
+		nTop=90
+		nWidth=679
+		nHeight=828
 	}
 }
 nIncludeFileCount=0
@@ -119,10 +119,10 @@ PointFile1 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=96
-		nTop=6
-		nWidth=664
-		nHeight=661
+		nLeft=17
+		nTop=24
+		nWidth=795
+		nHeight=788
 	}
 }
 nForceFileCount=0
@@ -224,8 +224,8 @@ RobotMgr {
 	Window {
 		nLeft=204
 		nTop=109
-		nWidth=747
-		nHeight=518
+		nWidth=748
+		nHeight=521
 	}
 }
 UserErrorEditor {

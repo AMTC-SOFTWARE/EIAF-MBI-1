@@ -66,7 +66,6 @@ Function main
 	CA30 = Int(Rnd(1.99))    	'contador ATO 30A
 	Check_Vacio = 0
 	shared_zone = False
-	recursividad_vacio = 0
 	Insertando = 0
 	Tool 0
 	
@@ -182,11 +181,7 @@ Function main
 			tomaFusible
 			
 			Print "Fusible tomado: " + fusible$
-			
 			Print #202, "LOADED"
-			
-			Wait 0.2
-			revisar_vacio1
 			
 			insertarFusible
 			
@@ -208,7 +203,6 @@ Function main
 			ActualizarMensaje_w
 			
 			FuseOK = 0
-			recursividad_vacio = 0
 			
 		Loop
 		'__________________

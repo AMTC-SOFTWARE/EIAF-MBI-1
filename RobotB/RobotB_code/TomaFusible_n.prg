@@ -348,7 +348,7 @@ Function Toma2Fusible
 			'Print #202, "TIEMPO_VACIO_TOMA: " + Str$((Tmr(5))) + " s"
 			'TmReset 5
 	
-			Wait 0.3
+			
 			Off cilindro						'cilindro regresando a su posicion retraida	
 			Move P210 							'muevete al punto de superior
 			
@@ -361,7 +361,8 @@ Function Toma2Fusible
 			
 			'Print #202, "TIEMPO_SUBIDA_TOMA: " + Str$((Tmr(5))) + " s"
 			'TmReset 5
-			Check_Vacio = 0
+			Check_Vacio = 1
+						
 Fend
 
 

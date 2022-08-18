@@ -15,6 +15,7 @@ Function Estatus_Cilindro
 	
 	
 Fend
+
 Function Estatus_Vacio
 	
 	Do While (1)

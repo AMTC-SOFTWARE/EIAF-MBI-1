@@ -60,174 +60,78 @@ Function insertarFusible
 		
 		Go P(cavity) :Z(CZ(P210))
 		
-		Print("//////////////////////////////////////////////////////")
-		Tiempo_traslado_insercion = (Tmr(5))
+		'Print("//////////////////////////////////////////////////////")
+		'Tiempo_traslado_insercion = (Tmr(5))
 		
-		Print #202, "TIEMPO_TRASLADO_INSERCION: " + Str$((Tmr(5))) + " s"
-		TmReset 5
+		'Print #202, "TIEMPO_TRASLADO_INSERCION: " + Str$((Tmr(5))) + " s"
+		'TmReset 5
 		
-		revisar_vacio3
 		
-		If recursividad_vacio <> 1 Then
 			
-			Print #202, "TAKE_AVAILABLE"
-			On AVAILABLE 'Negado
+		Print #202, "TAKE_AVAILABLE"
+		On AVAILABLE 'Negado
+		
+		If fusible$ = "RELAY_132" Then
 			
-			If fusible$ = "RELAY_112" Then
-				
-				'Move P(cavity) +Z(50)
-				EstatusC_actual = EstatusCilindro
-				Extra_Low_Speed
-				
-				Print("//////////////////////////////////////////////////////")
-				Tiempo_bajada_insercion_2 = (Tmr(5))
-				
-				Print #202, "TIEMPO_BAJADA_INSERCION: " + Str$((Tmr(5))) + " s"
-				TmReset 5
-	
-				Tiempo_cilindro_insercion_2 = 0
-				
-				Move P(cavity)
-				
-				Print("//////////////////////////////////////////////////////")
-				Tiempo_insercion_insercion_2 = (Tmr(5))
-				
-				Print #202, "TIEMPO_INSERCION_INSERCION: " + Str$((Tmr(5))) + " s"
-				TmReset 5
-				
-				Tiempo_bajada_insercion_1 = 0
-				Tiempo_cilindro_insercion_1 = 0
-				Tiempo_insercion_insercion_1 = 0
-	
-			ElseIf fusible$ = "RELAY_132" Then
-				
-				'Move P(cavity) +Z(40)
-				EstatusC_actual = EstatusCilindro
-				Extra_Low_Speed
-				
-				Print("//////////////////////////////////////////////////////")
-				Tiempo_bajada_insercion_2 = (Tmr(5))
-				
-				Print #202, "TIEMPO_BAJADA_INSERCION: " + Str$((Tmr(5))) + " s"
-				TmReset 5
-	
-				On cilindro
-				Do Until EstatusCilindro <> EstatusC_actual 'Asegurar que salga cilindro
-				Loop
-				
-				Print("//////////////////////////////////////////////////////")
-				Tiempo_cilindro_insercion_2 = (Tmr(5))
-				
-				Print #202, "TIEMPO_CILINDRO_INSERCION: " + Str$((Tmr(5))) + " s"
-				TmReset 5
-				
-				Move P(cavity)
-				RELX_Speed
-				Monitoreo_Insercion
-				revisar_vacio_RELX	'<------------------<<<<
-				Move RELX2 ROT
-				Extra_Low_Speed
-				Monitoreo_Insercion
-				revisar_vacio_RELX	'<------------------<<<<
-				Move RELX3
-				Monitoreo_Insercion
-				
-				Print("//////////////////////////////////////////////////////")
-				Tiempo_insercion_insercion_2 = (Tmr(5))
-				
-				Print #202, "TIEMPO_INSERCION_INSERCION: " + Str$((Tmr(5))) + " s"
-				TmReset 5
-	
-				Tiempo_bajada_insercion_1 = 0
-				Tiempo_cilindro_insercion_1 = 0
-				Tiempo_insercion_insercion_1 = 0
-				
-			ElseIf fusible$ = "MAXI_40" Or fusible$ = "MAXI_50" Then
-				'On cilindro
-				If shared_zone = True Then
-					Move P(cavity) +Z(50)
-				EndIf
-				EstatusC_actual = EstatusCilindro
-				Low_Speed
-				
-				Print("//////////////////////////////////////////////////////")
-				Tiempo_bajada_insercion_2 = (Tmr(5))
-				
-				Print #202, "TIEMPO_BAJADA_INSERCION: " + Str$((Tmr(5))) + " s"
-				TmReset 5
-	
-				On cilindro
-				Do Until EstatusCilindro <> EstatusC_actual 'Asegurar que salga cilindro
-				Loop
-				
-				Print("//////////////////////////////////////////////////////")
-				Tiempo_cilindro_insercion_2 = (Tmr(5))
-				
-				Print #202, "TIEMPO_CILINDRO_INSERCION: " + Str$((Tmr(5))) + " s"
-				TmReset 5
-				
-				Move P(cavity)
-				Monitoreo_Insercion
-				
-				Print("//////////////////////////////////////////////////////")
-				Tiempo_insercion_insercion_2 = (Tmr(5))
-				
-				Print #202, "TIEMPO_INSERCION_INSERCION: " + Str$((Tmr(5))) + " s"
-				TmReset 5
-	
-				Tiempo_bajada_insercion_1 = 0
-				Tiempo_cilindro_insercion_1 = 0
-				Tiempo_insercion_insercion_1 = 0
-			Else
-				
-				Insercion_PistonExtendido
-'				Move P(cavity)
-'				
-'				EstatusC_actual = EstatusCilindro
-'				Print("EstatusCilindro Antes de insertar: "); Print (EstatusCilindro)
-'				TmReset 3						 	'Timer para inserciones			
-'
-'				Print("//////////////////////////////////////////////////////")
-'				Tiempo_bajada_insercion_1 = (Tmr(5))
-'				
-'				Print #202, "TIEMPO_BAJADA_INSERCION: " + Str$((Tmr(5))) + " s"
-'				TmReset 5
-'				
-'				On cilindro
-'				Do Until EstatusCilindro <> EstatusC_actual 'Asegurar que salga cilindro
-'					If Tmr(3) > 1 Then 'si tarda mas de un segundo en salir
-'						Monitoreo_Insercion
-'					EndIf
-'				Loop
-'				
-'				Print("//////////////////////////////////////////////////////")
-'				Tiempo_insercion_insercion_1 = (Tmr(5))
-'				
-'				Print #202, "TIEMPO_INSERCION_INSERCION: " + Str$((Tmr(5))) + " s"
-'				TmReset 5
-'				
-'				Tiempo_bajada_insercion_2 = 0
-'				Tiempo_cilindro_insercion_2 = 0
-'				Tiempo_insercion_insercion_2 = 0
-				
-			EndIf
+			'Move P(cavity) +Z(40)
+			EstatusC_actual = EstatusCilindro
+			Extra_Low_Speed
 			
-			'Monitoreo_Insercion
-			Off vacio
-			Off cilindro
-			'Retirarse después de insertar
-			SubirRobot_Z
-			P(cavity) = P(cavity) -X(ajustX) -Y(ajustY) -Z(ajustZ) -U(ajustU)
-			Tool 0
-			recursividad_vacio = 1
+			'Print("//////////////////////////////////////////////////////")
+			'Tiempo_bajada_insercion_2 = (Tmr(5))
 			
-			Print("//////////////////////////////////////////////////////")
-			Tiempo_subida_insercion = (Tmr(5))
+			'Print #202, "TIEMPO_BAJADA_INSERCION: " + Str$((Tmr(5))) + " s"
+			'TmReset 5
+
+			On cilindro
+			Do Until EstatusCilindro <> EstatusC_actual 'Asegurar que salga cilindro
+			Loop
 			
-			Print #202, "TIEMPO_SUBIDA_INSERCION: " + Str$((Tmr(5))) + " s"
-			TmReset 5
+			'Print("//////////////////////////////////////////////////////")
+			'Tiempo_cilindro_insercion_2 = (Tmr(5))
 			
+			'Print #202, "TIEMPO_CILINDRO_INSERCION: " + Str$((Tmr(5))) + " s"
+			'TmReset 5
+			
+			Move P(cavity)
+			RELX_Speed
+			Monitoreo_Insercion
+			Move RELX2 ROT
+			Extra_Low_Speed
+			Monitoreo_Insercion
+			Check_Vacio = 0
+			Move RELX3
+			Monitoreo_Insercion
+			
+			'Print("//////////////////////////////////////////////////////")
+			'Tiempo_insercion_insercion_2 = (Tmr(5))
+			
+			'Print #202, "TIEMPO_INSERCION_INSERCION: " + Str$((Tmr(5))) + " s"
+			'TmReset 5
+
+			'Tiempo_bajada_insercion_1 = 0
+			'Tiempo_cilindro_insercion_1 = 0
+			'Tiempo_insercion_insercion_1 = 0
+		Else
+			Insercion_PistonExtendido
 		EndIf
+		
+		'Monitoreo_Insercion
+		Off vacio
+		Off cilindro
+		'Retirarse después de insertar
+		SubirRobot_Z
+		P(cavity) = P(cavity) -X(ajustX) -Y(ajustY) -Z(ajustZ) -U(ajustU)
+		Tool 0
+		
+		
+		'Print("//////////////////////////////////////////////////////")
+		'Tiempo_subida_insercion = (Tmr(5))
+		
+		'Print #202, "TIEMPO_SUBIDA_INSERCION: " + Str$((Tmr(5))) + " s"
+		'TmReset 5
+			
+	
 		
 	Return
 	
@@ -941,9 +845,6 @@ Function Ajuste
 			ajustU = ajustU - 3
 	EndIf
 	
-	If fusible$ = "MINI_7.5" And cavity = 438 Then
-			ajustZ = ajustZ + 2
-	EndIf
 
 	Print("adjustX: " + Str$(ajustX))
 	Print("adjustY: " + Str$(ajustY))
@@ -1002,12 +903,23 @@ Function Insercion_PistonExtendido
 	
 	EstatusC_actual = EstatusCilindro
 	On cilindro
+	
+	If fusible$ = "RELAY_112" Then
+		Extra_Low_Speed
+	ElseIf fusible$ = "MAXI_30" Or fusible$ = "MAXI_40" Or fusible$ = "MAXI_50" Then
+		Low_Speed
+	Else
+		FastInsertion_Speed '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	EndIf
+	
+	
+	
 '	If shared_zone = True Then	' Si shared_zone = True, es decir, si el fusible se tomo de lado izq...
 '		Move P(cavity) +Z(50)	' Te mueves al punto de insercion 50 mm arriba
 '	EndIf
 	
 	'Extra_Low_Speed	
-	FastInsertion_Speed '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	'FastInsertion_Speed '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	
 	'Print("//////////////////////////////////////////////////////")
 	'Tiempo_bajada_insercion_1 = (Tmr(5))
@@ -1027,11 +939,11 @@ Function Insercion_PistonExtendido
 	Move P(cavity)
 	Monitoreo_Insercion
 	
-	Print("//////////////////////////////////////////////////////")
-	Tiempo_insercion_insercion_1 = (Tmr(5))
+	'Print("//////////////////////////////////////////////////////")
+	'Tiempo_insercion_insercion_1 = (Tmr(5))
 	
-	Print #202, "TIEMPO_INSERCION_INSERCION: " + Str$((Tmr(5))) + " s"
-	TmReset 5
+	'Print #202, "TIEMPO_INSERCION_INSERCION: " + Str$((Tmr(5))) + " s"
+	'TmReset 5
 	
 	Tiempo_bajada_insercion_2 = 0
 	Tiempo_cilindro_insercion_2 = 0

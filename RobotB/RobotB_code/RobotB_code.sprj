@@ -1,11 +1,11 @@
-ENVT0100,LM:2022/08/18 17:49:57:227,DS:0000008227,CS:15451,MA:C8-5B-76-56-1A-E9,EI:           
+ENVT0100,LM:2022/08/18 19:35:14:113,DS:0000008219,CS:12582,MA:C8-5B-76-56-1A-E9,EI:           
 SystemProperties {
 	sRCVersion="7.4.5"
 	sRCRevision=""
 	sGUID="b012eed9-9601-4743-a88e-d971d6ef9842"
-	sPath="C:\\EpsonRC70\\Projects\\RobotB_CONAJUSTES\\RobotB_code\\"
+	sPath="C:\\EpsonRC70\\Projects\\RobotB\\RobotB_code\\"
 	sCreated="19/2/2021 12:14:43"
-	sLastModified="8/17/2022 10:21:57 AM"
+	sLastModified="18/08/2022 01:00:09 p. m."
 	bBuildComplete=False
 	bFirstBuildComplete=True
 	bRebuildRequired=False
@@ -36,17 +36,17 @@ ProgramFile1 {
 	sName="TomaFusible_n.prg"
 	bCompiled=False
 	bStoreInController=True
-	sTimeSavedInController="08/08/2022 09:10:18 p. m."
+	sTimeSavedInController="01/01/0001 06:00:00 a. m."
 }
 ProgramFile2 {
 	sName="ListaFusibles.prg"
-	bCompiled=False
+	bCompiled=True
 	bStoreInController=True
 	sTimeSavedInController="03/03/2022 05:45:47 p. m."
 }
 ProgramFile3 {
 	sName="FindHome_w.prg"
-	bCompiled=False
+	bCompiled=True
 	bStoreInController=True
 	sTimeSavedInController="01/01/0001 06:00:00 a. m."
 }
@@ -54,23 +54,23 @@ ProgramFile4 {
 	sName="Main.prg"
 	bCompiled=False
 	bStoreInController=True
-	sTimeSavedInController="08/09/2022 12:32:46 p. m."
+	sTimeSavedInController="03/03/2022 05:44:20 p. m."
 }
 ProgramFile5 {
 	sName="ReadMsj_w.prg"
-	bCompiled=False
+	bCompiled=True
 	bStoreInController=True
 	sTimeSavedInController="01/01/0001 06:00:00 a. m."
 }
 ProgramFile6 {
 	sName="SpeedConfig_w.prg"
-	bCompiled=False
+	bCompiled=True
 	bStoreInController=True
 	sTimeSavedInController="01/01/0001 06:00:00 a. m."
 }
 ProgramFile7 {
 	sName="Calibracion_a.prg"
-	bCompiled=False
+	bCompiled=True
 	bStoreInController=True
 	sTimeSavedInController="11/11/2021 07:24:34 p. m."
 }
@@ -78,7 +78,7 @@ ProgramFile8 {
 	sName="Insercion_a.prg"
 	bCompiled=False
 	bStoreInController=True
-	sTimeSavedInController="08/11/2022 01:11:28 p. m."
+	sTimeSavedInController="01/01/0001 06:00:00 a. m."
 }
 ProgramFile9 {
 	sName="Revisar_vacio.prg"
@@ -90,7 +90,7 @@ ProgramFile10 {
 	sName="Multi_tareas_w.prg"
 	bCompiled=False
 	bStoreInController=True
-	sTimeSavedInController="08/08/2022 09:10:18 p. m."
+	sTimeSavedInController="01/01/0001 06:00:00 a. m."
 }
 nIncludeFileCount=0
 nPointFileCount=1
@@ -98,7 +98,7 @@ PointFile1 {
 	sName="robot1.pts"
 	nRobot=1
 	bDefault=True
-	sTimeSavedInController="01/01/0001 06:00:00 a. m."
+	sTimeSavedInController="08/05/2022 11:29:31 p. m."
 }
 nForceFileCount=0
 OperatorSettings {
@@ -464,6 +464,6 @@ FGFile1 {
 }
 bFGCompiled=False
 Simulator {
-	sSimProjFile="C:\\EpsonRC70\\Simulator\\CAD To Point\\SimObjects.dat"
+	sSimProjFile="C:\\EpsonRC70\\Simulator\\SO733_T600T00386\\SimObjects.dat"
 }
 nPFFileCount=0

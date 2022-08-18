@@ -56,7 +56,7 @@ Function main
 	cilindro_b = 524							'variable para activar el cilindro a
 	fuse_presence = 522							'variable para comprobar la presencia del fusible
 	vacio_ok = 525								'variable para comprobar la toma del fusible con la prueba de vacio
-	CM40 = Int(Rnd(1.99))    	'contador maxi 40
+	'CM40 = Int(Rnd(1.99))    	'contador maxi 40
 	CA10 = Int(Rnd(1.99))   	'contador ATO 10
 	CA5 = Int(Rnd(1.99))    	'contador ATO5
 	'CA20 = Int(Rnd(1.99))    	'contador ATO20

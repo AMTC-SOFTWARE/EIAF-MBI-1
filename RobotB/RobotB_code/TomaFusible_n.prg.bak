@@ -155,7 +155,7 @@ Function tomaFusibleR							'Subrutina de toma de fusible dividida /feeder bowl/
 		ElseIf fusible$ = "ATO_30" Then				'si el mensaje es para este fusible entonces...
 			cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
 			On vacio_rl
-			CA30 = 1
+			'CA30 = 1
 			If CA30 = 0 Then						'aplica para los inlines, si es 0 toma de la cabidad A
 				Gripper = 526 						'variable del gripper, diferente para cada feeder
 				P210 = ATO30_da_up				'El punto 210 tomara el valor de los puntos de up de los feeders

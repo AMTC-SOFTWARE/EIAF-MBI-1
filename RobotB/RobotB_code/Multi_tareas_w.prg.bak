@@ -12,13 +12,9 @@ Function Estatus_Cilindro
 		'EstatusCilindro = 5, cilindro a fuera, cilindro b fuera	
 		
 	Loop
-		
+	
+	
 Fend
-
-
-
-
-
 
 
 

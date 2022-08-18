@@ -3,6 +3,7 @@ Global Integer recursividad_vacio
 Function revisar_vacio3
 	
 	If Sw(vacio_ok) = 0 Then
+		Reset_Grippers_PLC
 		Tool 0
 		Off cilindro
 		SubirRobot_Z
@@ -20,6 +21,7 @@ Fend
 Function revisar_vacio1
 	
 	If Sw(vacio_ok) = 0 Then
+		Reset_Grippers_PLC
 		Off cilindro
 		SubirRobot_Z
 		Off vacio
