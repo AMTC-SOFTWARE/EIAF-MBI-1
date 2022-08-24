@@ -13,7 +13,7 @@ from threading import Timer
 class Model (object):
 
     def __init__(self, parent = None):
-        self.no_serie = "EIAF-MBI-X294-1"
+        self.no_serie = "EIAF-MBI-X296-1"
         self.QR = "--"
         self.shutdown = False
         self.main_window = None
@@ -243,7 +243,7 @@ class Model (object):
                 }
             }
 
-        self.AfusesIzq = ['MINI,5,beige','MINI,15,blue','MULTI,7.5,brown','ATO,5,beige','ATO,15,blue','MULTI,5,beige','ATO,10,red']
+        self.AfusesIzq = ['MINI,5,beige','MINI,15,blue','MULTI,7.5,brown','ATO,5,beige','ATO,15,blue','MULTI,5,beige']
         self.AfusesDer = ['ATO,30,green','ATO,25,white','ATO,7.5,brown','MINI,7.5,brown','MINI,10,red']
         self.BfusesIzq = ['MINI,5,beige','MINI,7.5,brown','MINI,10,red','ATO,25,white','ATO,7.5,brown','ATO,15,blue_clear','MINI,15,blue','MAXI,50,red']
         self.BfusesDer = ['RELAY,60,red','RELAY,70,gray','MAXI,40,amber','MAXI,30,green','ATO,30,green','ATO,10,red_clear','ATO,5,beige_clear','ATO,20,yellow','ATO,5,beige','ATO,10,red','ATO,15,blue']
