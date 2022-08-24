@@ -1,0 +1,15 @@
+manager/.vs/
+manager/env/
+manager/dist/
+manager/env/
+manager/build/
+*.pyc
+manager/data/imgs/PDC-D.jpg
+manager/data/imgs/PDC-P.jpg
+manager/data/imgs/PDC-R.jpg
+manager/data/imgs/PDC-RMID.jpg
+manager/data/imgs/PDC-S.jpg
+manager/data/imgs/TBLU.jpg
+manager/manager.spec
+manager/.spec
+manager/MercedesBenz

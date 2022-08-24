@@ -1,0 +1,2 @@
+# manager-EIAF-MBI
+Maquina de estados que rige la secuencia del ciclo de operación, el comportamiento de la GUI y el mnejo de información para la trazabilidad de las "Estaciónes de Inserción Automática de Fusiibles" (EIAFs) correspondientes a la producción del arnes interior del proyecto Mercedes Benz en Fujikura México Planta 4. El desarrollo esta basado en Python 3.7.8 y pyQt5 empleando Visual Studio 2019 y QtDesigner 5.12.
