@@ -13,7 +13,7 @@ from threading import Timer
 class Model (object):
 
     def __init__(self, parent = None):
-        self.no_serie = "EIAF-MBI-X296-1"
+        self.no_serie = "EIAF-MBI-1"
         self.QR = "--"
         self.shutdown = False
         self.main_window = None

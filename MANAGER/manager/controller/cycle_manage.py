@@ -400,17 +400,9 @@ class CheckQr (QState):
                         #Si la columna que indica la hora de salida de TORQUE, es diferente a None, significa que completó esa estación y SI puede entrar a Inserción.
                         if famx2response["SALTORQUE"] != None: #AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
                             print("El arnés ya salió de TORQUE")
-                            #Si la ubicación del HM del Arnés se encuentra entrando en reparación, NO podrá entrar a Torque
-                            if famx2response["UBICACION"] == "ENTRADA_A_REPARACION":
-                                print("El Arnés se encuentra entrando en Reparación, NO puede entrar a Inserción")
-                                command = {
-                                "lbl_result" : {"text": "Ubicación de HM: Entrada a Reparación", "color": "red"},
-                                "lbl_steps" : {"text": "Inténtalo de nuevo", "color": "black"}
-                                }
-                                publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
-                                self.nok.emit()
-                                return
-                            else:
+                            #La ubicación debe ser "SALIDA_DE_TORQUE"
+                            if famx2response["UBICACION"] == "SALIDA_DE_TORQUE" or famx2response["UBICACION"] == "ENTRADA_A_INSERCION":
+
                                 #Se guarda el id del arnés de FAMX2 en el modelo para realizar updates en el servidor de FAMX2.
                                 self.model.id_HM = famx2response["id"]
                                 self.model.datetime = datetime.now()
@@ -437,13 +429,27 @@ class CheckQr (QState):
                                 respTrazabilidad = requests.post(endpointUpdate, data=json.dumps(entTrazabilidad))
                                 respTrazabilidad = respTrazabilidad.json()
                                 print("respTrazabilidad del update: ",respTrazabilidad)
-
                                 #### Trazabilidad FAMX2 Update de Información
+
+                            else:
+                                
+                                ubicacion = copy(famx2response["UBICACION"])
+                                ubicacion = ubicacion.replace(" ","")
+
+                                print("El Arnés se encuentra en otra ubicación de entrada")
+                                command = {
+                                "lbl_result" : {"text": "Ubicación de HM Incorrecta:", "color": "red"},
+                                "lbl_steps" : {"text": ubicacion, "color": "black"}
+                                }
+                                publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+                                self.nok.emit()
+                                return
+
                         #Si la columna que indica la hora de salida de TORQUE es None, significa que no ha completado esa estación y NO puede entrar aún a Inserción.
                         else:
                             print("El Arnés no ha pasado por la estación anterior (TORQUE) por lo que no puede entrar a Torque")
                             command = {
-                            "lbl_result" : {"text": "Arnés sin Historial de TORQUE", "color": "red"},
+                            "lbl_result" : {"text": "Arnés sin Fecha de Historial de TORQUE", "color": "red"},
                             "lbl_steps" : {"text": "Inténtalo de nuevo", "color": "black"}
                             }
                             publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
