@@ -397,6 +397,9 @@ class CheckQr (QState):
                     else:
                         print("FAMX2 Salida de Torque: \n",famx2response["SALTORQUE"])
                         print("FAMX2 Ubicación: \n",famx2response["UBICACION"])
+                        famx2response["UBICACION"] = famx2response["UBICACION"].replace(" ","")
+                        print("FAMX2 Ubicación sin espacios: \n",famx2response["UBICACION"])
+
                         #Si la columna que indica la hora de salida de TORQUE, es diferente a None, significa que completó esa estación y SI puede entrar a Inserción.
                         if famx2response["SALTORQUE"] != None: #AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
                             print("El arnés ya salió de TORQUE")
@@ -431,15 +434,12 @@ class CheckQr (QState):
                                 print("respTrazabilidad del update: ",respTrazabilidad)
                                 #### Trazabilidad FAMX2 Update de Información
 
-                            else:
-                                
-                                ubicacion = copy(famx2response["UBICACION"])
-                                ubicacion = ubicacion.replace(" ","")
+                            else:                    
 
                                 print("El Arnés se encuentra en otra ubicación de entrada")
                                 command = {
                                 "lbl_result" : {"text": "Ubicación de HM Incorrecta:", "color": "red"},
-                                "lbl_steps" : {"text": ubicacion, "color": "black"}
+                                "lbl_steps" : {"text": famx2response["UBICACION"], "color": "black"}
                                 }
                                 publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
                                 self.nok.emit()
@@ -953,56 +953,56 @@ class Finish (QState):
 
         ##################### EXCEL DE TIEMPOS #########################
         #Aquí se crea el Excel con los tiempos recopilados por los Robots
-        print("Creando excel de TIEMPOS....")
-        print("Valor Final de Tiempos: ",self.model.insertion_times)
+        #print("Creando excel de TIEMPOS....")
+        #print("Valor Final de Tiempos: ",self.model.insertion_times)
 
-        wb = Workbook()
-        filestamp = strftime('%Y%m%d-%H%M%S') #Fecha y Hora actual
-        print("FILESTAMP (HORA ACTUAL): ",filestamp)
-        print("Tipo de dato de FILESTAMP: ",type(filestamp))
-        filesheet = "./"+self.model.codes["HM"]+"-"+filestamp+".xlsx" #Se crea el archivo con el nombre del HM + Fecha y Hora actual
-        sheet = wb.active
-        sheet.title = "Inserción"
-        #Se crean los encabezados
-        sheet.append(["CAVIDAD","TIEMPO_ENVIO_MENSAJE","TIEMPO_MENSAJE","TIEMPO_RESET","TIEMPO_REINICIO","TIEMPO_TOTAL","TIEMPO_ESPERA_ROBOTA","TIEMPO_ESPERA_ROBOTB","TIEMPO_TRASLADO_TOMA","TIEMPO_PRESENCIA_TOMA","TIEMPO_BAJADA_TOMA","TIEMPO_VACIO_TOMA","TIEMPO_SUBIDA_TOMA","TIEMPO_TRASLADO_INSERCION","TIEMPO_BAJADA_INSERCION","TIEMPO_CILINDRO_INSERCION","TIEMPO_INSERCION_INSERCION","TIEMPO_SUBIDA_INSERCION"])
-        #sheet["A1"] = "Cavidad"
-        #sheet["B1"] = "Tiempos"
-        #print("Data.items(): ",data.items())
-        encabezados = {}
-        print("+++++++++++Recorriendo Excel ya creado:\n")
-        #Se recorren los encabezados en el excel para identificar la columna (Ej. "A","J",etc) de cada uno y guardarlo en un arreglo (encabezados)
-        for column in range(1, sheet.max_column + 1):
-            print("column: ",column)
-            char = get_column_letter(column)
-            print("Letra o Columna en Excel: ",char)
-            header = sheet.cell(row = 1, column = column).value
-            print("Header: ",header)
-            encabezados[header] = char
-        print("Encabezados Arreglo: ",encabezados)
-        print("||||||self.model.insertion_times.items(): ",self.model.insertion_times.items())
-        #Se agregan al Excel las cavidades y valores correspondientes
-        for row, (key,value) in enumerate(self.model.insertion_times.items(),start=2):
-            #print("Row dentro del for: ",row)
-            #print("Tipo de dato del ROW: ",type(row))
-            #print("Key dentro del for: ",key)
-            #print("Tipo de dato KEY: ",type(key))
-            #print("Value dentro del for: ",value)
-            #print("Tipo de dato VALUE: ",type(value))
-            #print("IMPRIMIENDO VALORES DENTRO DEL FOR:\n")
-            sheet[f"A{row}"] = key
-            for i in value:
-                print("----i: ",i)
-                print("value[i]",value[i])
-                print("Columna donde se colocará: ",encabezados[i])
-                sheet[encabezados[i]+str(row)] = str(value[i])
-            #y = json.dumps(value)
-            #print("VALUE CONVERTIDO (y): ",y)
-            #print("Tipo de dato y: ",type(y))
+        #wb = Workbook()
+        #filestamp = strftime('%Y%m%d-%H%M%S') #Fecha y Hora actual
+        #print("FILESTAMP (HORA ACTUAL): ",filestamp)
+        #print("Tipo de dato de FILESTAMP: ",type(filestamp))
+        #filesheet = "./"+self.model.codes["HM"]+"-"+filestamp+".xlsx" #Se crea el archivo con el nombre del HM + Fecha y Hora actual
+        #sheet = wb.active
+        #sheet.title = "Inserción"
+        ##Se crean los encabezados
+        #sheet.append(["CAVIDAD","TIEMPO_ENVIO_MENSAJE","TIEMPO_MENSAJE","TIEMPO_RESET","TIEMPO_REINICIO","TIEMPO_TOTAL","TIEMPO_ESPERA_ROBOTA","TIEMPO_ESPERA_ROBOTB","TIEMPO_TRASLADO_TOMA","TIEMPO_PRESENCIA_TOMA","TIEMPO_BAJADA_TOMA","TIEMPO_VACIO_TOMA","TIEMPO_SUBIDA_TOMA","TIEMPO_TRASLADO_INSERCION","TIEMPO_BAJADA_INSERCION","TIEMPO_CILINDRO_INSERCION","TIEMPO_INSERCION_INSERCION","TIEMPO_SUBIDA_INSERCION"])
+        ##sheet["A1"] = "Cavidad"
+        ##sheet["B1"] = "Tiempos"
+        ##print("Data.items(): ",data.items())
+        #encabezados = {}
+        #print("+++++++++++Recorriendo Excel ya creado:\n")
+        ##Se recorren los encabezados en el excel para identificar la columna (Ej. "A","J",etc) de cada uno y guardarlo en un arreglo (encabezados)
+        #for column in range(1, sheet.max_column + 1):
+        #    print("column: ",column)
+        #    char = get_column_letter(column)
+        #    print("Letra o Columna en Excel: ",char)
+        #    header = sheet.cell(row = 1, column = column).value
+        #    print("Header: ",header)
+        #    encabezados[header] = char
+        #print("Encabezados Arreglo: ",encabezados)
+        #print("||||||self.model.insertion_times.items(): ",self.model.insertion_times.items())
+        ##Se agregan al Excel las cavidades y valores correspondientes
+        #for row, (key,value) in enumerate(self.model.insertion_times.items(),start=2):
+        #    #print("Row dentro del for: ",row)
+        #    #print("Tipo de dato del ROW: ",type(row))
+        #    #print("Key dentro del for: ",key)
+        #    #print("Tipo de dato KEY: ",type(key))
+        #    #print("Value dentro del for: ",value)
+        #    #print("Tipo de dato VALUE: ",type(value))
+        #    #print("IMPRIMIENDO VALORES DENTRO DEL FOR:\n")
+        #    sheet[f"A{row}"] = key
+        #    for i in value:
+        #        print("----i: ",i)
+        #        print("value[i]",value[i])
+        #        print("Columna donde se colocará: ",encabezados[i])
+        #        sheet[encabezados[i]+str(row)] = str(value[i])
+        #    #y = json.dumps(value)
+        #    #print("VALUE CONVERTIDO (y): ",y)
+        #    #print("Tipo de dato y: ",type(y))
 
-        wb.save(filesheet)
-        print("Excel Guardado Correctamente")
+        #wb.save(filesheet)
+        #print("Excel Guardado Correctamente")
 
-        self.model.insertion_times = {}
+        #self.model.insertion_times = {}
         ###########################################################
 
         print("current state: Finish (cycle_manage)")
@@ -1063,13 +1063,13 @@ class Finish (QState):
         #### Trazabilidad FAMX2 Update de Información
 
 
-        if "0011936" in self.model.codes["HM"]:
+        if "HM000000011936" in self.model.codes["HM"]:
             self.model.config_data["trazabilidad"] = True
                         
-        if "0011925" in self.model.codes["HM"]:
+        if "HM000000011925" in self.model.codes["HM"]:
             self.model.config_data["trazabilidad"] = True
 
-        if "0011920" in self.model.codes["HM"]:
+        if "HM000000011920" in self.model.codes["HM"]:
             self.model.config_data["trazabilidad"] = True
 
         if self.model.config_data["trazabilidad"] == True:
@@ -1101,13 +1101,13 @@ class Reset (QState):
 
     def onEntry(self, event):
 
-        if "0011936" in self.model.codes["HM"]:
+        if "HM000000011936" in self.model.codes["HM"]:
             self.model.config_data["trazabilidad"] = True
                         
-        if "0011925" in self.model.codes["HM"]:
+        if "HM000000011925" in self.model.codes["HM"]:
             self.model.config_data["trazabilidad"] = True
 
-        if "0011920" in self.model.codes["HM"]:
+        if "HM000000011920" in self.model.codes["HM"]:
             self.model.config_data["trazabilidad"] = True
 
 

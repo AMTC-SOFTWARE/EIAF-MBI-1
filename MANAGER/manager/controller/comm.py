@@ -972,91 +972,91 @@ class MqttClient (QObject):
                                 self.model.error_thread_robot = True
                             else:
                                 self.error.emit()
-                        if "TIEMPO" in payload["response"]:
-                            ##### Mensajes para el Tiempo recopilado por el robot #####
-                            #current_trig_RA = self.model.robots["robot_a"]["queueIzq"][0] para ambos robots se recorre primero esta lista izquierda
-                            #current_trig_RA = self.model.robots["robot_a"]["queueDer"][0] y posteriormente la lista derecha
+                        #if "TIEMPO" in payload["response"]:
+                        #    ##### Mensajes para el Tiempo recopilado por el robot #####
+                        #    #current_trig_RA = self.model.robots["robot_a"]["queueIzq"][0] para ambos robots se recorre primero esta lista izquierda
+                        #    #current_trig_RA = self.model.robots["robot_a"]["queueDer"][0] y posteriormente la lista derecha
 
 
-                            #puede haber casos en que los mensajes vengan juntos, para esto se revisa el número de mensajes que vienen pegados:
-                            #ejemplo*         {"response": "TIEMPO_TRASLADO_TOMA: 5.55 s\r\nTIEMPO_BAJADA_TOMA: 5.55 s\r\n"}
+                        #    #puede haber casos en que los mensajes vengan juntos, para esto se revisa el número de mensajes que vienen pegados:
+                        #    #ejemplo*         {"response": "TIEMPO_TRASLADO_TOMA: 5.55 s\r\nTIEMPO_BAJADA_TOMA: 5.55 s\r\n"}
 
-                            mensajes = []
-                            mensajes.clear()
-                            copia_mensaje = payload["response"]
+                        #    mensajes = []
+                        #    mensajes.clear()
+                        #    copia_mensaje = payload["response"]
 
-                            #['TIEMPO_TRASLADO_TOMA: 5.55 ', 'TIEMPO_BAJADA_TOMA: 5.55 ', '']
-                            tratamiento_mensaje =  copia_mensaje.split("s\r\n")
-                            for i in range(len(tratamiento_mensaje)-1):
-                                mensajes.append(tratamiento_mensaje[i])
+                        #    #['TIEMPO_TRASLADO_TOMA: 5.55 ', 'TIEMPO_BAJADA_TOMA: 5.55 ', '']
+                        #    tratamiento_mensaje =  copia_mensaje.split("s\r\n")
+                        #    for i in range(len(tratamiento_mensaje)-1):
+                        #        mensajes.append(tratamiento_mensaje[i])
                                     
 
-                            #print("mensajes: ", mensajes)
-                            for w in mensajes:
+                        #    #print("mensajes: ", mensajes)
+                        #    for w in mensajes:
 
-                                #Se divide el mensaje mediante la palabra "TIEMPO" ({"response": "TIEMPO_TRASLADO_TOMA: 5.55 s\r\n"})
-                                separation = w.split("TIEMPO") #Da como resultado : ["","_TRASLADO_TOMA: 5.55 s\r\n"]
-                                #print("Separaciones por TIEMPO: ",separation)
-                                separation = "TIEMPO" + separation[1] #"TIEMPO"+"_TRASLADO_TOMA: 5.55 s\r\n"
+                        #        #Se divide el mensaje mediante la palabra "TIEMPO" ({"response": "TIEMPO_TRASLADO_TOMA: 5.55 s\r\n"})
+                        #        separation = w.split("TIEMPO") #Da como resultado : ["","_TRASLADO_TOMA: 5.55 s\r\n"]
+                        #        #print("Separaciones por TIEMPO: ",separation)
+                        #        separation = "TIEMPO" + separation[1] #"TIEMPO"+"_TRASLADO_TOMA: 5.55 s\r\n"
 
-                                separation = separation.split(":") #["TIEMPO_TRASLADO_TOMA"," 5.55 s\r\n"]
-                                separationKey = separation[0] #"TIEMPO_TRASLADO_TOMA"
-                                #print("Key: ",separationKey)
-                                separationValue = separation[1].split(" ") #['', '5.55', 's\r\n']
-                                separationValue = separationValue[1] # 5.55
-                                separationValue = float(separationValue) #Se convierte a flotante
-                                #print("Valor: ",separationValue)
+                        #        separation = separation.split(":") #["TIEMPO_TRASLADO_TOMA"," 5.55 s\r\n"]
+                        #        separationKey = separation[0] #"TIEMPO_TRASLADO_TOMA"
+                        #        #print("Key: ",separationKey)
+                        #        separationValue = separation[1].split(" ") #['', '5.55', 's\r\n']
+                        #        separationValue = separationValue[1] # 5.55
+                        #        separationValue = float(separationValue) #Se convierte a flotante
+                        #        #print("Valor: ",separationValue)
 
-                                #print("Len de current_trig_RA IZQUIERDO: ",len(self.model.robots["robot_a"]["queueIzq"]))
-                                #print("Len de current_trig_RA DERECHO: ",len(self.model.robots["robot_a"]["queueDer"]))
+                        #        #print("Len de current_trig_RA IZQUIERDO: ",len(self.model.robots["robot_a"]["queueIzq"]))
+                        #        #print("Len de current_trig_RA DERECHO: ",len(self.model.robots["robot_a"]["queueDer"]))
                             
-                                #Si la queue Izquierda para el robot A aún tiene elementos:
-                                if len(self.model.robots["robot_a"]["queueIzq"]) > 0:
-                                    #print("##### Robot A Queue Izquierda #####\n")
-                                    cavidadActual = self.model.robots["robot_a"]["queueIzq"][0][1]
-                                    #print("Cavidad Actual: ",cavidadActual)
-                                    #Si el fusible en cola, es igual al fusible actual en la variable de self.model.insertion_times:
-                                    if cavidadActual in self.model.insertion_times:
-                                        #print("Mismo Trigger o Cavidad")
-                                        # Si el tiempo que llega para ese fusible ya tiene un valor en la variable de self.model.insertion_times, se va sumando:
-                                        if separationKey in self.model.insertion_times[cavidadActual]:
-                                            #print("Se va sumando")
-                                            self.model.insertion_times[cavidadActual][separationKey] = self.model.insertion_times[cavidadActual][separationKey]+separationValue
-                                        #Si el tiempo que llega es nuevo para ese fusible:
-                                        else:
-                                            self.model.insertion_times[cavidadActual][separationKey] = separationValue
-                                    #Si el fusible en cola es diferente al fusible actual en la variable de self.model.insertion_times:
-                                    else:
-                                        #print("Trigger o Cavidad Nuevo")
-                                        self.model.insertion_times[cavidadActual] = {}
-                                        self.model.insertion_times[cavidadActual][separationKey] = separationValue
-                                #Si la queue Izquierda YA NO tiene elementos, se pasa a la queue DERECHA:
-                                elif len(self.model.robots["robot_a"]["queueDer"]) > 0:
-                                    #print("##### Robot A Queue Derecha #####\n")
-                                    cavidadActual = self.model.robots["robot_a"]["queueDer"][0][1]
-                                    #print("Cavidad Actual: ",cavidadActual)
-                                    #Si el fusible en cola, es igual al fusible actual en la variable de self.model.insertion_times:
-                                    if cavidadActual in self.model.insertion_times:
-                                        #print("Mismo Trigger o Cavidad")
-                                        # Si el tiempo que llega para ese fusible ya tiene un valor en la variable de self.model.insertion_times, se va sumando:
-                                        if separationKey in self.model.insertion_times[cavidadActual]:
-                                            #print("Se va sumando")
-                                            self.model.insertion_times[cavidadActual][separationKey] = self.model.insertion_times[cavidadActual][separationKey]+separationValue
-                                        #Si el tiempo que llega es nuevo para ese fusible:
-                                        else:
-                                            self.model.insertion_times[cavidadActual][separationKey] = separationValue
-                                    #Si el fusible en cola es diferente al fusible actual en la variable de self.model.insertion_times:
-                                    else:
-                                        #print("Trigger o Cavidad Nuevo")
-                                        self.model.insertion_times[cavidadActual] = {}
-                                        self.model.insertion_times[cavidadActual][separationKey] = separationValue
+                        #        #Si la queue Izquierda para el robot A aún tiene elementos:
+                        #        if len(self.model.robots["robot_a"]["queueIzq"]) > 0:
+                        #            #print("##### Robot A Queue Izquierda #####\n")
+                        #            cavidadActual = self.model.robots["robot_a"]["queueIzq"][0][1]
+                        #            #print("Cavidad Actual: ",cavidadActual)
+                        #            #Si el fusible en cola, es igual al fusible actual en la variable de self.model.insertion_times:
+                        #            if cavidadActual in self.model.insertion_times:
+                        #                #print("Mismo Trigger o Cavidad")
+                        #                # Si el tiempo que llega para ese fusible ya tiene un valor en la variable de self.model.insertion_times, se va sumando:
+                        #                if separationKey in self.model.insertion_times[cavidadActual]:
+                        #                    #print("Se va sumando")
+                        #                    self.model.insertion_times[cavidadActual][separationKey] = self.model.insertion_times[cavidadActual][separationKey]+separationValue
+                        #                #Si el tiempo que llega es nuevo para ese fusible:
+                        #                else:
+                        #                    self.model.insertion_times[cavidadActual][separationKey] = separationValue
+                        #            #Si el fusible en cola es diferente al fusible actual en la variable de self.model.insertion_times:
+                        #            else:
+                        #                #print("Trigger o Cavidad Nuevo")
+                        #                self.model.insertion_times[cavidadActual] = {}
+                        #                self.model.insertion_times[cavidadActual][separationKey] = separationValue
+                        #        #Si la queue Izquierda YA NO tiene elementos, se pasa a la queue DERECHA:
+                        #        elif len(self.model.robots["robot_a"]["queueDer"]) > 0:
+                        #            #print("##### Robot A Queue Derecha #####\n")
+                        #            cavidadActual = self.model.robots["robot_a"]["queueDer"][0][1]
+                        #            #print("Cavidad Actual: ",cavidadActual)
+                        #            #Si el fusible en cola, es igual al fusible actual en la variable de self.model.insertion_times:
+                        #            if cavidadActual in self.model.insertion_times:
+                        #                #print("Mismo Trigger o Cavidad")
+                        #                # Si el tiempo que llega para ese fusible ya tiene un valor en la variable de self.model.insertion_times, se va sumando:
+                        #                if separationKey in self.model.insertion_times[cavidadActual]:
+                        #                    #print("Se va sumando")
+                        #                    self.model.insertion_times[cavidadActual][separationKey] = self.model.insertion_times[cavidadActual][separationKey]+separationValue
+                        #                #Si el tiempo que llega es nuevo para ese fusible:
+                        #                else:
+                        #                    self.model.insertion_times[cavidadActual][separationKey] = separationValue
+                        #            #Si el fusible en cola es diferente al fusible actual en la variable de self.model.insertion_times:
+                        #            else:
+                        #                #print("Trigger o Cavidad Nuevo")
+                        #                self.model.insertion_times[cavidadActual] = {}
+                        #                self.model.insertion_times[cavidadActual][separationKey] = separationValue
 
-                                #Si ambas queues del robot están vacías (terminó todas sus inserciones):
-                                else:
-                                    print("########Ya no hay fusibles para este robot########")
-                                if separationKey == "TIEMPO_SUBIDA_INSERCION":
-                                    print("Aquí finaliza el trigger")
-                                #print("+*+*+*+*#####self.model.insertion_times: ",self.model.insertion_times)
+                        #        #Si ambas queues del robot están vacías (terminó todas sus inserciones):
+                        #        else:
+                        #            print("########Ya no hay fusibles para este robot########")
+                        #        if separationKey == "TIEMPO_SUBIDA_INSERCION":
+                        #            print("Aquí finaliza el trigger")
+                        #        #print("+*+*+*+*#####self.model.insertion_times: ",self.model.insertion_times)
 
             if message.topic == self.model.sub_topics["robot_b"]:
                 ###############################################################
@@ -1107,88 +1107,88 @@ class MqttClient (QObject):
                                 self.model.error_thread_robot = True
                             else:
                                 self.error.emit()
-                        if "TIEMPO" in payload["response"]:
-                            ##### Mensajes para el Tiempo recopilado por el robot #####
-                            #current_trig_RB = self.model.robots["robot_b"]["queueIzq"][0] para ambos robots se recorre primero esta lista izquierda
-                            #current_trig_RB = self.model.robots["robot_b"]["queueDer"][0] y posteriormente la lista derecha
+                        #if "TIEMPO" in payload["response"]:
+                        #    ##### Mensajes para el Tiempo recopilado por el robot #####
+                        #    #current_trig_RB = self.model.robots["robot_b"]["queueIzq"][0] para ambos robots se recorre primero esta lista izquierda
+                        #    #current_trig_RB = self.model.robots["robot_b"]["queueDer"][0] y posteriormente la lista derecha
 
-                            #puede haber casos en que los mensajes vengan juntos, para esto se revisa el número de mensajes que vienen pegados:
-                            #ejemplo*         {"response": "TIEMPO_TRASLADO_TOMA: 5.55 s\r\nTIEMPO_BAJADA_TOMA: 5.55 s\r\n"}
+                        #    #puede haber casos en que los mensajes vengan juntos, para esto se revisa el número de mensajes que vienen pegados:
+                        #    #ejemplo*         {"response": "TIEMPO_TRASLADO_TOMA: 5.55 s\r\nTIEMPO_BAJADA_TOMA: 5.55 s\r\n"}
 
-                            mensajes = []
-                            mensajes.clear()
-                            copia_mensaje = payload["response"]
+                        #    mensajes = []
+                        #    mensajes.clear()
+                        #    copia_mensaje = payload["response"]
 
-                            #['TIEMPO_TRASLADO_TOMA: 5.55 ', 'TIEMPO_BAJADA_TOMA: 5.55 ', '']
-                            tratamiento_mensaje =  copia_mensaje.split("s\r\n")
-                            for i in range(len(tratamiento_mensaje)-1):
-                                mensajes.append(tratamiento_mensaje[i])
+                        #    #['TIEMPO_TRASLADO_TOMA: 5.55 ', 'TIEMPO_BAJADA_TOMA: 5.55 ', '']
+                        #    tratamiento_mensaje =  copia_mensaje.split("s\r\n")
+                        #    for i in range(len(tratamiento_mensaje)-1):
+                        #        mensajes.append(tratamiento_mensaje[i])
                                     
 
-                            #print("mensajes: ", mensajes)
-                            for w in mensajes:
+                        #    #print("mensajes: ", mensajes)
+                        #    for w in mensajes:
 
-                                #Se divide el mensaje mediante la palabra "TIEMPO" ({"response": "TIEMPO_TRASLADO_TOMA: 5.55 s\r\n"})
-                                separation = w.split("TIEMPO") #Da como resultado : ["","_TRASLADO_TOMA: 5.55 s\r\n"]
-                                separation = "TIEMPO" + separation[1] #"TIEMPO"+"_TRASLADO_TOMA: 5.55 s\r\n"
+                        #        #Se divide el mensaje mediante la palabra "TIEMPO" ({"response": "TIEMPO_TRASLADO_TOMA: 5.55 s\r\n"})
+                        #        separation = w.split("TIEMPO") #Da como resultado : ["","_TRASLADO_TOMA: 5.55 s\r\n"]
+                        #        separation = "TIEMPO" + separation[1] #"TIEMPO"+"_TRASLADO_TOMA: 5.55 s\r\n"
 
-                                separation = separation.split(":") #["TIEMPO_TRASLADO_TOMA"," 5.55 s\r\n"]
-                                separationKey = separation[0] #"TIEMPO_TRASLADO_TOMA"
-                                #print("Key: ",separationKey)
-                                separationValue = separation[1].split(" ") #['', '5.55', 's\r\n']
-                                separationValue = separationValue[1] # 5.55
-                                separationValue = float(separationValue) #Se convierte a flotante
-                                #print("Valor: ",separationValue)
+                        #        separation = separation.split(":") #["TIEMPO_TRASLADO_TOMA"," 5.55 s\r\n"]
+                        #        separationKey = separation[0] #"TIEMPO_TRASLADO_TOMA"
+                        #        #print("Key: ",separationKey)
+                        #        separationValue = separation[1].split(" ") #['', '5.55', 's\r\n']
+                        #        separationValue = separationValue[1] # 5.55
+                        #        separationValue = float(separationValue) #Se convierte a flotante
+                        #        #print("Valor: ",separationValue)
 
-                                #print("Len de current_trig_RB IZQUIERDO: ",len(self.model.robots["robot_b"]["queueIzq"]))
-                                #print("Len de current_trig_RB DERECHO: ",len(self.model.robots["robot_b"]["queueDer"]))
+                        #        #print("Len de current_trig_RB IZQUIERDO: ",len(self.model.robots["robot_b"]["queueIzq"]))
+                        #        #print("Len de current_trig_RB DERECHO: ",len(self.model.robots["robot_b"]["queueDer"]))
                             
-                                #Si la queue Izquierda para el robot A aún tiene elementos:
-                                if len(self.model.robots["robot_b"]["queueIzq"]) > 0:
-                                    #print("##### Robot B Queue Izquierda #####\n")
-                                    cavidadActual = self.model.robots["robot_b"]["queueIzq"][0][1]
-                                    #print("Cavidad Actual: ",cavidadActual)
-                                    #Si el fusible en cola, es igual al fusible actual en la variable de self.model.insertion_times:
-                                    if cavidadActual in self.model.insertion_times:
-                                        #print("Mismo Trigger o Cavidad")
-                                        # Si el tiempo que llega para ese fusible ya tiene un valor en la variable de self.model.insertion_times, se va sumando:
-                                        if separationKey in self.model.insertion_times[cavidadActual]:
-                                            #print("Se va sumando")
-                                            self.model.insertion_times[cavidadActual][separationKey] = self.model.insertion_times[cavidadActual][separationKey]+separationValue
-                                        #Si el tiempo que llega es nuevo para ese fusible:
-                                        else:
-                                            self.model.insertion_times[cavidadActual][separationKey] = separationValue
-                                    #Si el fusible en cola es diferente al fusible actual en la variable de self.model.insertion_times:
-                                    else:
-                                        #print("Trigger o Cavidad Nuevo")
-                                        self.model.insertion_times[cavidadActual] = {}
-                                        self.model.insertion_times[cavidadActual][separationKey] = separationValue
-                                #Si la queue Izquierda YA NO tiene elementos, se pasa a la queue DERECHA:
-                                elif len(self.model.robots["robot_b"]["queueDer"]) > 0:
-                                    #print("##### Robot B Queue Derecha #####\n")
-                                    cavidadActual = self.model.robots["robot_b"]["queueDer"][0][1]
-                                    #print("Cavidad Actual: ",cavidadActual)
-                                    #Si el fusible en cola, es igual al fusible actual en la variable de self.model.insertion_times:
-                                    if cavidadActual in self.model.insertion_times:
-                                        #print("Mismo Trigger o Cavidad")
-                                        # Si el tiempo que llega para ese fusible ya tiene un valor en la variable de self.model.insertion_times, se va sumando:
-                                        if separationKey in self.model.insertion_times[cavidadActual]:
-                                            #print("Se va sumando")
-                                            self.model.insertion_times[cavidadActual][separationKey] = self.model.insertion_times[cavidadActual][separationKey]+separationValue
-                                        #Si el tiempo que llega es nuevo para ese fusible:
-                                        else:
-                                            self.model.insertion_times[cavidadActual][separationKey] = separationValue
-                                    #Si el fusible en cola es diferente al fusible actual en la variable de self.model.insertion_times:
-                                    else:
-                                        #print("Trigger o Cavidad Nuevo")
-                                        self.model.insertion_times[cavidadActual] = {}
-                                        self.model.insertion_times[cavidadActual][separationKey] = separationValue
+                        #        #Si la queue Izquierda para el robot A aún tiene elementos:
+                        #        if len(self.model.robots["robot_b"]["queueIzq"]) > 0:
+                        #            #print("##### Robot B Queue Izquierda #####\n")
+                        #            cavidadActual = self.model.robots["robot_b"]["queueIzq"][0][1]
+                        #            #print("Cavidad Actual: ",cavidadActual)
+                        #            #Si el fusible en cola, es igual al fusible actual en la variable de self.model.insertion_times:
+                        #            if cavidadActual in self.model.insertion_times:
+                        #                #print("Mismo Trigger o Cavidad")
+                        #                # Si el tiempo que llega para ese fusible ya tiene un valor en la variable de self.model.insertion_times, se va sumando:
+                        #                if separationKey in self.model.insertion_times[cavidadActual]:
+                        #                    #print("Se va sumando")
+                        #                    self.model.insertion_times[cavidadActual][separationKey] = self.model.insertion_times[cavidadActual][separationKey]+separationValue
+                        #                #Si el tiempo que llega es nuevo para ese fusible:
+                        #                else:
+                        #                    self.model.insertion_times[cavidadActual][separationKey] = separationValue
+                        #            #Si el fusible en cola es diferente al fusible actual en la variable de self.model.insertion_times:
+                        #            else:
+                        #                #print("Trigger o Cavidad Nuevo")
+                        #                self.model.insertion_times[cavidadActual] = {}
+                        #                self.model.insertion_times[cavidadActual][separationKey] = separationValue
+                        #        #Si la queue Izquierda YA NO tiene elementos, se pasa a la queue DERECHA:
+                        #        elif len(self.model.robots["robot_b"]["queueDer"]) > 0:
+                        #            #print("##### Robot B Queue Derecha #####\n")
+                        #            cavidadActual = self.model.robots["robot_b"]["queueDer"][0][1]
+                        #            #print("Cavidad Actual: ",cavidadActual)
+                        #            #Si el fusible en cola, es igual al fusible actual en la variable de self.model.insertion_times:
+                        #            if cavidadActual in self.model.insertion_times:
+                        #                #print("Mismo Trigger o Cavidad")
+                        #                # Si el tiempo que llega para ese fusible ya tiene un valor en la variable de self.model.insertion_times, se va sumando:
+                        #                if separationKey in self.model.insertion_times[cavidadActual]:
+                        #                    #print("Se va sumando")
+                        #                    self.model.insertion_times[cavidadActual][separationKey] = self.model.insertion_times[cavidadActual][separationKey]+separationValue
+                        #                #Si el tiempo que llega es nuevo para ese fusible:
+                        #                else:
+                        #                    self.model.insertion_times[cavidadActual][separationKey] = separationValue
+                        #            #Si el fusible en cola es diferente al fusible actual en la variable de self.model.insertion_times:
+                        #            else:
+                        #                #print("Trigger o Cavidad Nuevo")
+                        #                self.model.insertion_times[cavidadActual] = {}
+                        #                self.model.insertion_times[cavidadActual][separationKey] = separationValue
 
-                                #Si ambas queues del robot están vacías (terminó todas sus inserciones):
-                                else:
-                                    print("########Ya no hay fusibles para este robot########")
-                                if separationKey == "TIEMPO_SUBIDA_INSERCION":
-                                    print("Aquí finaliza el trigger")
+                        #        #Si ambas queues del robot están vacías (terminó todas sus inserciones):
+                        #        else:
+                        #            print("########Ya no hay fusibles para este robot########")
+                        #        if separationKey == "TIEMPO_SUBIDA_INSERCION":
+                        #            print("Aquí finaliza el trigger")
 
 
         except Exception as ex:

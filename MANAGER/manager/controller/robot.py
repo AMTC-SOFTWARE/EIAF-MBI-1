@@ -771,6 +771,12 @@ class Error(QState):
         #si el relevador que falló fue el rosa, se irá directo al estado manual
         if cavity == "RELX":
             self.limite_reintentos.emit()
+            
+        if cavity == "RELU":
+            self.limite_reintentos.emit()
+            
+        if cavity == "RELT":
+            self.limite_reintentos.emit()
 
         if self.model.contador_error == self.model.max_reintentos:
             self.limite_reintentos.emit()
