@@ -784,6 +784,12 @@ class MyThread(QThread):
                     if cavity == "RELX":
                         self.model.limite_reintentos_thread = True
 
+                    elif cavity == "RELU":
+                        self.model.limite_reintentos_thread = True
+
+                    elif cavity == "RELT":
+                        self.model.limite_reintentos_thread = True
+
                     elif self.model.contador_error_2 == self.model.max_reintentos_2:
                         self.model.limite_reintentos_thread = True
 
