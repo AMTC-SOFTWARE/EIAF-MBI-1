@@ -1,0 +1,334 @@
+Global Real Incremento
+Global Integer Gripper, cavity
+
+'------------------------------Funcion de toma de fusibles------------------------------------
+Function tomaFusible							'Subrutina de toma de fusible dividida /feeder bowl/in line sencillos/in linedobles
+	Tool 5
+	Integer not_found
+	not_found = 1
+	Print("Loading")							'mensaje de toma de fusible
+	Print "Buscando Fusible en lado izquierdo..."
+	
+	shared_zone = True
+	
+'---TOMA DE FUSIBLES DE LADO IZQUIERDO --------------------------------------------
+	If fusible$ = "ATO_25" Then				'si el mensaje es para un este fusible entonces...
+		cilindro = cilindro_b				'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 517                       'variable del gripper, diferente para cada feeder
+		P210 = ATO25_bw_up						'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = ATO25_bw_load					'El punto 211 tomara los valores de los puntos load de los feeders
+		
+'	ElseIf fusible$ = "ATO_30" Then				'si el mensaje es para este fusible entonces...
+'		cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
+'		Gripper = 519 							'variable del gripper, diferente para cada feeder
+'		P210 = ATO30_bw_up						'El punto 210 tomara el valor de los puntos de up de los feeders
+'		P211 = ATO30_bw_load					'El punto 211 tomara los valores de los puntos load de los feeders
+'		
+	ElseIf fusible$ = "ATO_7.5" Then			'si el mensaje es para este fusible entonces...
+		cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 518 							'variable del gripper, diferente para cada feeder
+		P210 = ATO75_bw_up						'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = ATO75_bw_load					'El punto 211 tomara los valores de los puntos load de los feeders
+		
+	ElseIf fusible$ = "MINI_5" Then				'si el mensaje es para este fusible entonces...
+		cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 516 							'variable del gripper, diferente para cada feeder
+		P210 = MINI5_bw_up						'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = MINI5_bw_load					'El punto 211 tomara los valores de los puntos load de los feeders
+		
+	ElseIf fusible$ = "MINI_7.5" Then			'si el mensaje es para este fusible entonces...
+		cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 515 							'variable del gripper, diferente para cada feeder
+		P210 = MINI75_bw_up						'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = MINI75_bw_load					'El punto 211 tomara los valores de los puntos load de los feeders
+		
+	ElseIf fusible$ = "MINI_10" Then			'si el mensaje es para este fusible entonces...
+		cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 543 							'variable del gripper, diferente para cada feeder
+		P210 = MINI10_bw_up						'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = MINI10_bw_load					'El punto 211 tomara los valores de los puntos load de los feeders
+		
+	ElseIf fusible$ = "MINI_15" Then			'si el mensaje es para este fusible entonces...
+		cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
+		CM15 = 1
+		If CM15 = 0 Then						'aplica para los inlines, si es 0 toma de la cabidad A
+			Gripper = 541 						'variable del gripper, diferente para cada feeder
+			P210 = MINI15_da_up				'El punto 210 tomara el valor de los puntos de up de los feeders
+			P211 = MINI15_da_load				'El punto 211 tomara los valores de los puntos load de los feeders
+			CM15 = 1							'variable que controla el lado para tomar el fusible
+		Else									'en 1 toma de la cabidad B
+			Gripper = 542 						'variable del gripper, diferente para cada feeder
+			P210 = MINI15_db_up				'El punto 210 tomara el valor de los puntos de up de los feeders
+			P211 = MINI15_db_load				'El punto 211 tomara los valores de los puntos load de los feeders
+			CM15 = 0							'variable que controla el lado para tomar el fusible
+		EndIf
+		'P210 = TOMA_REL_3 :Z(-13)
+		'P211 = TOMA_REL_3
+    
+    ElseIf fusible$ = "ATOC_15" Then			'si el mensaje es para un este fusible entonces...
+		cilindro = cilindro_b				'igualamos el valor del cilindro a cilindro correspondiente
+			Gripper = 539 						'variable del gripper, diferente para cada feeder
+		P210 = ATOC15_up				    'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = ATOC15_load					'El punto 211 tomara los valores de los puntos load de los feeders
+		
+	ElseIf fusible$ = "MAXI_50" Then			'si el mensaje es para este fusible entonces...
+		cilindro = cilindro_a				'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 540 						'variable del gripper, diferente para cada feeder
+		P210 = MAXI50_up					'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = MAXI50_load				'El punto 211 tomara los valores de los puntos load de los feeders
+			
+	Else
+		not_found = 2
+	EndIf
+
+	If not_found = 1 Then
+		shared_zone = True
+		Toma2Fusible
+		Print "toma exitosa"
+	Else
+		Print "Buscando Fusible en lado derecho..."
+		shared_zone = False
+		tomaFusibleR
+	EndIf
+
+Fend
+
+'---TOMA DE FUSIBLES DE LADO DERECHO-----------------------------
+Function tomaFusibleR							'Subrutina de toma de fusible dividida /feeder bowl/in line sencillos/in linedobles
+	Integer not_found
+	not_found = 1
+	Print("Loading")							'mensaje de toma de fusible
+		
+	If fusible$ = "ATO_10" Then				'si el mensaje es para este fusible entonces...
+		cilindro = cilindro_b				'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 533 						'variable del gripper, diferente para cada feeder
+		P210 = ATO10_up					'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = ATO10_load					'El punto 211 tomara los valores de los puntos load de los feeders	
+		
+	ElseIf fusible$ = "MAXI_40" Then		'si el mensaje es para este fusible entonces...
+		Off switch_presion
+		cilindro = cilindro_a				'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 536 						'variable del gripper, diferente para cada feeder
+		P210 = MAXI40_da_up					'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = MAXI40_da_load				'El punto 211 tomara los valores de los puntos load de los feeders
+		
+	ElseIf fusible$ = "MAXI_30" Then		'en 1 toma de la cabidad B
+		Off switch_presion
+		cilindro = cilindro_a
+		Gripper = 537 						'variable del gripper, diferente para cada feeder
+		P210 = MAXI30_db_up					'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = MAXI30_db_load				'El punto 211 tomara los valores de los puntos load de los feeders
+			
+	ElseIf fusible$ = "ATO_30" Then				'si el mensaje es para este fusible entonces...
+		cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
+		'CA30 = 1
+		If CA30 = 0 Then						'aplica para los inlines, si es 0 toma de la cabidad A
+			Gripper = 526 						'variable del gripper, diferente para cada feeder
+			P210 = ATO30_da_up				'El punto 210 tomara el valor de los puntos de up de los feeders
+			P211 = ATO30_da_load				'El punto 211 tomara los valores de los puntos load de los feeders
+			CA30 = 1							'variable que controla el lado para tomar el fusible
+		Else									'en 1 toma de la cabidad B
+			Gripper = 527 						'variable del gripper, diferente para cada feeder
+			P210 = ATO30_db_up				'El punto 210 tomara el valor de los puntos de up de los feeders
+			P211 = ATO30_db_load				'El punto 211 tomara los valores de los puntos load de los feeders
+			CA30 = 0							'variable que controla el lado para tomar el fusible
+		EndIf
+		
+	ElseIf fusible$ = "ATOC_10" Then			'si el mensaje es para este fusible entonces...
+		cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 529 						'variable del gripper, diferente para cada feeder
+		P210 = ATOC10_up				'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = ATOC10_load				'El punto 211 tomara los valores de los puntos load de los feeders
+
+	ElseIf fusible$ = "ATOC_5" Then
+		cilindro = cilindro_b
+		Gripper = 530 					'variable del gripper, diferente para cada feeder
+		P210 = ATOC5_up					'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = ATOC5_load				'El punto 211 tomara los valores de los puntos load de los feeders					
+
+	ElseIf fusible$ = "ATO_20" Then			'si el mensaje es para este fusible entonces...
+		cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 531 						'variable del gripper, diferente para cada feeder
+		P210 = ATO20_up				'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = ATO20_load				'El punto 211 tomara los valores de los puntos load de los feeders
+			
+	ElseIf fusible$ = "ATO_5" Then			'si el mensaje es para este fusible entonces...
+   	    cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 532 						'variable del gripper, diferente para cada feeder
+		P210 = ATO5_up				'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = ATO5_load				'El punto 211 tomara los valores de los puntos load de los feeders
+ 
+   	ElseIf fusible$ = "ATO_15" Then			'si el mensaje es para este fusible entonces...
+		cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
+        
+		If CA15 = 0 Then						'aplica para los inlines, si es 0 toma de la cabidad A
+			Gripper = 534 						'variable del gripper, diferente para cada feeder
+			P210 = ATO15_da_up				'El punto 210 tomara el valor de los puntos de up de los feeders
+			P211 = ATO15_da_load				'El punto 211 tomara los valores de los puntos load de los feeders
+			CA15 = 1							'variable que controla el lado para tomar el fusible
+		Else									'en 1 toma de la cabidad B
+			Gripper = 535 						'variable del gripper, diferente para cada feeder
+			P210 = ATO15_db_up				'El punto 210 tomara el valor de los puntos de up de los feeders
+			P211 = ATO15_db_load				'El punto 211 tomara los valores de los puntos load de los feeders
+			CA15 = 0							'variable que controla el lado para tomar el fusible
+		EndIf
+		
+	ElseIf fusible$ = "RELAY_112" Then		'si el mensaje es para este fusible entonces...
+		On switch_presion
+		cilindro = cilindro_a				'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 538 						'variable del gripper, diferente para cada feeder
+		P210 = R112_up					'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = R112_load					'El punto 211 tomara los valores de los puntos load de los feeders
+	
+	ElseIf fusible$ = "RELAY_132" Then		'si el mensaje es para este fusible entonces...
+		On switch_presion
+		cilindro = cilindro_a				'igualamos el valor del cilindro a cilindro correspondiente
+		Gripper = 528                       'variable del gripper, diferente para cada feeder
+		
+		P210 = R132_up					'El punto 210 tomara el valor de los puntos de up de los feeders
+		P211 = R132_load					'El punto 211 tomara los valores de los puntos load de los feeders	
+		If cavidad$ = "RELU" Then
+			P210 = R132_up_RELU					'El punto 210 tomara el valor de los puntos de up de los feeders
+			P211 = R132_load_RELU					'El punto 211 tomara los valores de los puntos load de los feeders	
+			
+		EndIf
+		
+		
+		Else
+		
+		not_found = 2
+	EndIf
+			
+	If not_found = 1 Then
+		Toma2Fusible
+		Print "toma exitosa"
+	Else
+		Print "Fusible no existe"
+	EndIf
+
+Fend
+
+
+Function Toma2Fusible
+	
+	'shared_zone = True 'TESTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+	
+	Print("esperando al otro roboto")
+	If shared_zone = True Then			'si vas a usar un fusible del lado compartido...
+		Do While (Sw(512) = 0)			' Sw(AVAILABLE)
+		Loop
+		Off AVAILABLE 'Negado
+	EndIf
+
+	If cilindro = cilindro_a Then
+		Off switch
+		
+	Else
+		On switch
+		
+	EndIf
+	
+	
+	Work_Speed;
+	
+	
+	If fusible$ = "MAXI_50" Then
+		Go MAXI50_TOMA1
+	EndIf
+	
+	Go P210
+
+	Take_Speed
+	On vacio						'Activar el vacio
+	On cilindro						'Activar cilindro correspondiente
+	
+	Fuse_Presence_Function
+
+
+	Move P211							'tomar fusible
+
+	TmReset 0						 	'Timer para vacio
+	TmReset 1							'Timer para imprimir mensaje
+	Incremento = 0
+	
+	
+	Do While (Sw(vacio_ok) = 0)			'Esperar mientras se detecta que se tomo el fusible
+		If Tmr(1) > 0.8 Then
+			Print "Esperando Toma de Fusible"
+			TmReset 1
+		EndIf
+		If Tmr(0) > 4.200 Then
+			TmReset 0
+			Off vacio
+			Off cilindro
+			Wait 0.7
+			If Incremento < 0.5 Then
+				Move P211 +Z(-Incremento)
+				Incremento = Incremento + 0.1
+			EndIf
+			Fuse_Presence_Function
+			On cilindro
+			On vacio
+			Wait 1.5
+		EndIf
+	Loop
+	Print "fusible tomado"
+		
+	Abrir_Gripper
+	
+	If fusible$ = "MAXI_40" Or fusible$ = "MAXI_30" Or fusible$ = "MAXI_50" Or fusible$ = "ATO_25" Then
+		Wait 1
+	EndIf
+
+If cavidad$ = "RELX" Then
+Wait 1.5
+EndIf
+
+	If cavidad$ = "RELX" Or cavidad$ = "RELT" Then
+		On Gripper
+		Wait 1
+	EndIf
+
+	Off cilindro						'cilindro regresando a su posicion retraida	
+	If fusible$ = "ATO_25" Then
+		Wait 1
+	EndIf
+	
+	Print("moviendose para arriba")
+	
+	Move P210 							'muevete al punto de superior
+	
+	Work_Speed
+	
+	Off Gripper							'Cerrar Gripper
+
+	
+	Check_Vacio = 1
+		
+Fend
+
+Function Fuse_Presence_Function
+	
+	Integer FP
+	FP = 0
+	Print("aqui es el gripper no")
+	Print (Gripper)
+	
+	Do While (Sw(Gripper) = 0)					'Mientras no se detecte presencia del fusible
+		FP = 1
+	Loop
+	
+	If FP = 1 Then
+		Wait 2
+	EndIf
+	
+	Print "fusible en gripper"
+Fend
+
+Function Abrir_Gripper
+	If Sw(Gripper) Then 'si hay presencia de fusible
+		On Gripper
+		Wait 0.3		'tiempo para abrir gripper de fusible
+	EndIf
+Fend
+			

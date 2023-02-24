@@ -1,0 +1,6 @@
+> reset;motor On
+> 
+> on 524
+> Move P(cavity)
+> tool 7
+> 

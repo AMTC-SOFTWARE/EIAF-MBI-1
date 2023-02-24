@@ -1,0 +1,99 @@
+Function Ajustes
+	'Usando de base MINI_5
+	'Usando de base ATO_25
+	'Usando de base MULTI_7.5
+	
+'	' Ajuste para insercion unica en F300, caja PDCP
+'	If fusible$ = "ATO_25" Then
+'		If cavity = 300 Then
+'			ajustX = ajustX - 0.1
+'			ajustY = ajustY - 0.2
+'			ajustU = ajustU + 1.5
+'		EndIf
+'	EndIf
+'	
+'	If fusible$ = "ATO_7.5" Then
+'		If cavity = 300 Then
+'			ajustX = ajustX - 0.6
+'			ajustY = ajustY + 0
+'			ajustU = ajustU - 3
+'		EndIf
+'	EndIf
+'	' Caja PDC-D, fusibles ATO, ajuste general
+'	If (cavity >= 209) And (cavity <= 216) Then
+'		ajustX = ajustX - 0.45
+'		
+'		If fusible$ = "ATO_30" Then
+'			ajustY = ajustY + 0.8
+'        	ajustU = ajustU + 0.8
+'		EndIf
+'		
+'	EndIf
+'	
+'	If fusible$ = "ATO_15" Then
+'		If cavity = 300 Then
+'			ajustU = ajustU - 1.5
+'			ajustU = ajustU + 0.7
+'			ajustZ = ajustZ + 3
+'		EndIf
+'		
+'		If (cavity >= 326) And (cavity <= 335) Then
+'			ajustU = ajustU - 1
+'		EndIf
+'		
+'	EndIf
+'	' Caja PDC-P
+'	If (cavity >= 326) And (cavity <= 334) Then
+'		ajustX = ajustX + 0.1
+'	EndIf
+'    
+'    If cavity = 335 Then
+'    	ajustX = ajustX - 0.2
+'    EndIf
+'    
+'    If fusible$ = "MULTI_5" Then
+'    	If CM5 = 1 Then
+'    		ajustY = ajustY - 1.2
+'    	EndIf
+'    EndIf
+
+	
+    If caja$ = "PDCD" Then
+    
+    	If cavity >= 222 And cavity <= 226 Then
+    	Else
+    		ajustY = ajustY + 3.5
+	    	If cilindro = cilindro_a Then
+	    			ajustY = ajustY - 0.5
+	    	EndIf
+    	EndIf
+    
+    	
+    EndIf
+    
+    If cavity = 335 Then
+    	ajustY = ajustY - 0.343
+    	ajustX = ajustX + 0.309
+    EndIf
+    If cavidad$ = "MF1" Then
+    	ajustY = ajustY + 0.7 + 0.2
+    	ajustX = ajustX + 0.0
+    	ajustZ = ajustZ + 0.4
+    EndIf
+'    If cavidad$ = "MF2" Then
+'		ajustY = ajustY + 0.2 - 0.4
+'    	ajustX = ajustX + 0.3
+'    	ajustU = ajustU + 0.3
+'    EndIf
+    If cilindro = cilindro_b Then
+		ajustY = ajustY - 0.4
+		ajustX = ajustX - 0.4
+	EndIf
+    
+    
+    Print("adjustX: " + Str$(ajustX))
+	Print("adjustY: " + Str$(ajustY))
+	Print("adjustZ: " + Str$(ajustZ))
+	Print("adjustU: " + Str$(ajustU))
+	
+Fend

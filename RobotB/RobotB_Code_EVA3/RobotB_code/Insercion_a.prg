@@ -1,0 +1,247 @@
+Global Integer cavity, Insertando, EstatusC_actual
+Global String caja$
+Global Double ajustX, ajustY, ajustZ, ajustU
+
+'------------------------------Funcion de insercion de fusibles------------------------------------
+Function insertarFusible
+	
+	ajustX = 0; ajustY = 0; ajustZ = 0; ajustU = 0
+	 
+	Work_Speed
+		
+	If (caja$ = "PDCR") Then
+		'-----------------------BASE PARA HACER LOS RELAY----------------------
+		If cavidad$ = "RELU" Then
+			cavity = 68 'Tienen que tener un número asignado para Move P(cavity) +Z(50)
+		ElseIf cavidad$ = "RELX" Then
+			cavity = 69
+		ElseIf cavidad$ = "RELT" Then
+			cavity = 70
+		EndIf
+		'-----------------------INSERCION---------------------
+		GoSub insertar
+		'-----------------------------------------------------------'
+		
+		
+	ElseIf caja$ = "TBLU" Then
+		'-----------------------INSERCION---------------------
+		GoSub insertar
+		'-----------------------------------------------------------'
+		
+	ElseIf caja$ = "PDCS" Then
+		'-----------------------INSERCION---------------------
+		GoSub insertar
+		'-----------------------------------------------------------'
+		
+	ElseIf caja$ = "F96_box" Then
+		'-----------------------INSERCION---------------------
+		GoSub insertar
+		'-----------------------------------------------------------'
+		
+	Else
+		Print "Error, caja incorrecta"
+		Off vacio
+		Go home_l
+		cavidad$ = "CAJA INVALIDA"
+		
+	EndIf
+	
+	Exit Function
+	
+	
+	insertar:
+		'Seleccionar_Tool	'Tool: 1 - Cilindro A, 2 - Cilindro B
+		
+		Ajuste 				'Ajustar fusibles
+		P(cavity) = P(cavity) +X(ajustX) +Y(ajustY) +Z(ajustZ) +U(ajustU)
+		
+		If fusible$ = "MAXI_50" Then
+			
+			Move MAXI50_INSERCION1
+			
+		EndIf
+		
+		
+		If cavidad$ = "RELU" Then
+			P(cavity) = RELU1
+		EndIf
+			
+			
+		If cavidad$ = "RELX" Or cavidad$ = "RELU" Then
+			If mid = True Then
+				If cavidad$ = "RELX" Then
+					Print("RELX MID aquí")
+					P(cavity) = RELX1MID
+				EndIf
+			EndIf
+			Go P(cavity) :Z(-31)
+		Else
+			Go P(cavity) :Z(CZ(P210)) ' ir a punto de insercion con la Z que tomaste el fusible
+		EndIf
+			
+        
+				
+		Print #202, "TAKE_AVAILABLE"
+		On AVAILABLE 'Negado
+		
+		
+		If fusible$ = "RELAY_132" Then
+
+			EstatusC_actual = EstatusCilindro
+			Extra_Low_Speed
+
+
+			On cilindro
+			Do Until EstatusCilindro <> EstatusC_actual 'Asegurar que salga cilindro
+			Loop
+
+'			If mid = True Then
+'				P(cavity) = RELX1MID
+'			EndIf
+			
+			If mid = True Then
+			    Print("RELX1MID")
+				P(cavity) = RELX1MID
+				RELX2TOOL7 = RELX2TOOL7MID
+				RELX3TOOL7 = RELX3TOOL7MID
+				Print (P(cavity))
+			EndIf
+			
+			
+			If cavidad$ = "RELU" Then
+			    Print("RELU")
+				P(cavity) = RELU1
+				RELX2TOOL7 = RELU2
+				RELX3TOOL7 = RELU3
+				Print (P(cavity))
+			EndIf
+			
+			Move P(cavity)
+			RELX_Speed
+			Monitoreo_Insercion
+			If cavidad$ = "RELX" Then
+				Tool 7
+			EndIf
+			
+			Move RELX2TOOL7 ROT
+			
+			
+			Extra_Low_Speed
+			Monitoreo_Insercion
+			Check_Vacio = 0
+			Move RELX3TOOL7
+			Monitoreo_Insercion
+			Tool 5
+
+		Else
+			Insercion_PistonExtendido
+		EndIf
+		
+		Print #202, "INSERTED"
+		
+		If fusible$ = "RELAY_132" Or fusible$ = "RELAY_112" Then
+			Wait 1.5
+		EndIf
+		
+		'Monitoreo_Insercion
+		Off vacio
+		Off cilindro
+		'Retirarse después de insertar
+		SubirRobot_Z
+		
+		Off AVAILABLE 'Negado
+		Wait 0.3
+		On AVAILABLE 'Negado	
+		
+		P(cavity) = P(cavity) -X(ajustX) -Y(ajustY) -Z(ajustZ) -U(ajustU)
+		Tool 5
+
+		
+	Return
+	
+Fend
+
+Function Seleccionar_Tool
+	
+	If cilindro = cilindro_a Then	  'Tool 1 para cilindro A
+		TLSet 1, XY(75.854, 57.550, 0, 0)
+		Tool 1
+	ElseIf cilindro = cilindro_b Then 'Tool 2 para cilindro B
+		TLSet 2, XY(-79.069, 45.672, 0, 0)
+		Tool 2
+	EndIf
+	
+Fend
+
+
+Function Insercion_PistonExtendido
+	
+	EstatusC_actual = EstatusCilindro
+	On cilindro
+	If fusible$ = "RELAY_112" Then
+		Extra_Low_Speed
+	ElseIf fusible$ = "MAXI_30" Or fusible$ = "MAXI_40" Or fusible$ = "MAXI_50" Then
+		Low_Speed
+	Else
+		FastInsertion_Speed '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	EndIf
+
+	Do Until EstatusCilindro <> EstatusC_actual 'Asegurar que salga cilindro
+		
+    Loop
+	
+
+	Check_Vacio = 0
+	Move P(cavity)
+	Monitoreo_Insercion
+	
+
+				
+Fend
+
+
+Function Monitoreo_Insercion
+			
+	If cilindro = 523 Then 'cilindro_a = 523
+	
+		If EstatusCilindro = 0 Or EstatusCilindro = 1 Then
+				Print("EstatusCilindro de error: "); Print (EstatusCilindro)
+
+				Print #202, "ERROR_insertion"
+				On 544
+				
+				Off cilindro
+				FindHome_after_error
+
+				Print "______________________________________"
+				Print "Retirar Fusible y reintentar inserción"
+				Print "______________________________________"
+				
+				Pause
+		
+		EndIf
+	
+	
+	ElseIf cilindro = 524 Then 'cilindro_b = 524
+	
+		If EstatusCilindro = 0 Or EstatusCilindro = 4 Then
+				Print("EstatusCilindro de error: "); Print (EstatusCilindro)
+
+				Print #202, "ERROR_insertion"
+				On 544
+				
+				Off cilindro
+				FindHome_after_error
+
+				Print "______________________________________"
+				Print "Retirar Fusible y reintentar inserción"
+				Print "______________________________________"
+
+				Pause
+	
+		EndIf
+	
+	EndIf
+	
+Fend
+
