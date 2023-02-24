@@ -578,8 +578,11 @@ class CheckQr (QState):
                 if flag_s == False and flag_m == False and flag_l == False:
                     variante = "N/A"
                     print("La caja no contiene módulos pertenecientes a las categorías.")
-                print(variante)
+                
+                print("MODULO DETERMINANTE: ",variante)
+
                 for i in modules:
+
                     endpoint = "http://{}/api/get/{}/modulos_fusibles/MODULO/=/{}/_/=/_".format(self.model.server, dbEvent, i)
                     response = requests.get(endpoint).json()
                     if "MODULO" in response:
@@ -644,8 +647,9 @@ class CheckQr (QState):
                                                         self.nok.emit()
                                                         return
                         else:
+                            print("response[MODULO]",response["MODULO"])
                             command = {
-                                    "lbl_result" : {"text": "Módulos de visión redundantes", "color": "red"},
+                                    "lbl_result" : {"text": f"Módulo {i} redundante en Matriz de evento", "color": "red"},
                                     "lbl_steps" : {"text": "Inténtalo de nuevo", "color": "black"}
                                   }
                             publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
@@ -790,7 +794,6 @@ class QrRework (QState):
     def noRework(self):
         Timer(0.05, self.ok.emit).start()
 
-
 class ClampsMonitor(QState):
     ok = pyqtSignal()
 
@@ -858,11 +861,10 @@ class ClampsMonitor(QState):
 
             command = {
                 "lbl_result" : {"text": f"Cajas de {tagrob} colocadas", "color": "green"},
-                "lbl_steps" : {"text": f"Presionar boton verde para comenzar", "color": "black"}
+                "lbl_steps" : {"text": f"Presionar boton verde o CTRL para comenzar", "color": "black"}
                 }
             publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
             self.ok.emit()
-
 
 class ClampsMonitorBoth(QState):
     ok = pyqtSignal()
@@ -923,11 +925,10 @@ class ClampsMonitorBoth(QState):
 
             command = {
                 "lbl_result" : {"text": f"Todas las cajas colocadas", "color": "green"},
-                "lbl_steps" : {"text": f"Presionar boton verde para comenzar", "color": "black"}
+                "lbl_steps" : {"text": f"Presionar boton verde o CTRL para comenzar", "color": "black"}
                 }
             publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
             self.ok.emit()
-
 
 class Clamps_Standby(QState):
 
@@ -939,7 +940,6 @@ class Clamps_Standby(QState):
     def onEntry(self, QEvent):
 
         print("Esperando START")
-
 
 class Finish (QState):
     ok      = pyqtSignal()
@@ -1161,8 +1161,6 @@ class Reset (QState):
                         }
                     publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
         Timer(2,self.ok.emit).start()
-
-
 
 class Waiting_Robot (QState):
     ok      = pyqtSignal()

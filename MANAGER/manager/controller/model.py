@@ -13,7 +13,7 @@ from threading import Timer
 class Model (object):
 
     def __init__(self, parent = None):
-        self.no_serie = "EIAF-MBI-1"
+        self.no_serie = "EIAF-MBI-X296"
         self.QR = "--"
         self.shutdown = False
         self.main_window = None
@@ -160,12 +160,14 @@ class Model (object):
             }
 
         self.sub_topics = {
+            "GDI": "GDI/status",
             "keyboard": "Keyboard/status",
             "plc": "PLC/1/status",
             "gui": "gui/status",
             "config": "config/status",
             "robot_a": "RobotEpson/3/status",
             "robot_b": "RobotEpson/4/status",
+
             "color_sensor_a": "color_sensor/a/status",
             "color_sensor_b": "color_sensor/b/status"
             }
@@ -177,6 +179,7 @@ class Model (object):
             "config": "config/set",
             "robot_a": "RobotEpson/3",
             "robot_b": "RobotEpson/4",
+
             "color_sensor_a": "color_sensor/a/set",
             "color_sensor_b": "color_sensor/b/set"
             }
@@ -243,7 +246,7 @@ class Model (object):
                 }
             }
 
-        self.AfusesIzq = ['MINI,5,beige','MINI,15,blue','MULTI,7.5,brown','ATO,5,beige','ATO,10,red','ATO,15,blue','MULTI,5,beige']
+        self.AfusesIzq = ['MINI,5,beige','MINI,15,blue','MULTI,7.5,brown','ATO,5,beige','ATO,15,blue','MULTI,5,beige','ATO,10,red']
         self.AfusesDer = ['ATO,30,green','ATO,25,white','ATO,7.5,brown','MINI,7.5,brown','MINI,10,red']
         self.BfusesIzq = ['MINI,5,beige','MINI,7.5,brown','MINI,10,red','ATO,25,white','ATO,7.5,brown','ATO,15,blue_clear','MINI,15,blue','MAXI,50,red']
         self.BfusesDer = ['RELAY,60,red','RELAY,70,gray','MAXI,40,amber','MAXI,30,green','ATO,30,green','ATO,10,red_clear','ATO,5,beige_clear','ATO,20,yellow','ATO,5,beige','ATO,10,red','ATO,15,blue']

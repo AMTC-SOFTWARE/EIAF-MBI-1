@@ -31,7 +31,7 @@ class MqttClient (QObject):
     ready       =   pyqtSignal()
     available   =   pyqtSignal()
     F4          =   pyqtSignal()
-    CTRL          =   pyqtSignal()
+    CTRL        =   pyqtSignal()
 
 
     ra_home    = ""
@@ -76,38 +76,6 @@ class MqttClient (QObject):
     cortina = ""
 
     plural = ""
-    plural2 = ""
-
-    modbusIO = ""
-    modbusRA = ""
-    modbusRB = ""
-
-    missing = ""
-    missingflag = {"FUSES": {
-                "MISSING_ATOC10_A": False,  
-                "MISSING_ATOC10_B": False,
-                "MISSING_ATOC15": False,
-                "MISSING_ATOC5_A": False,  
-                "MISSING_ATOC5_B": False,
-                "MISSING_ATO20": False,  
-                "MISSING_ATO5_RB": False,
-                "MISSING_ATO10": False,  
-                "MISSING_ATO15_A": False,
-                "MISSING_ATO15_B": False,  
-                "MISSING_MAXI40_A": False,
-                "MISSING_MAXI40_B": False,  
-                "MISSING_MAXI50": False,
-                "MISSING_REL112": False,  
-                "MISSING_REL132": False,
-                "MISSING_MINI15_A": False,  
-                "MISSING_MINI15_B": False,
-                "MISSING_MULTI5_A": False,  
-                "MISSING_MULTI5_B": False,  
-                "MISSING_MULTI7.5_A": False,  
-                "MISSING_MULTI7.5_B": False,  
-                "MISSING_ATO15": False,  
-                "MISSING_ATO5_RA": False,
-                "MISSING_MINI15": False}}
 
     def __init__(self, model = None, parent = None):
         super().__init__(parent)
@@ -156,135 +124,6 @@ class MqttClient (QObject):
 
 
 ################################################################################
-    #Revisa el estado de los fusibles (si hay o no) y actualiza el mensaje para rellenar fusibles
-    def update_missingFuses(self,fuse):
-        fuse = fuse.replace("MISSING_","")
-        if "_RA" in fuse: # Fusible doble en Robot A
-            if self.missingflag["FUSES"]["MISSING_" + fuse] == True:
-                fuse = fuse.replace("_RA","")
-                if (not fuse + " ROBOT A\n" in self.missing):
-                    self.missing = self.missing + fuse + " ROBOT A\n"
-            elif self.missingflag["FUSES"]["MISSING_" + fuse] == False:
-                fuse = fuse.replace("_RA","")
-                self.missing = self.missing.replace(fuse + " ROBOT A\n","")
-
-        elif "_RB" in fuse: # Fusible doble en Robot B
-            if self.missingflag["FUSES"]["MISSING_" + fuse] == True:
-                fuse = fuse.replace("_RB","")
-                if (not fuse + " ROBOT B\n" in self.missing):
-                    self.missing = self.missing + fuse + " ROBOT B\n"
-            elif self.missingflag["FUSES"]["MISSING_" + fuse] == False:
-                fuse = fuse.replace("_RB","")
-                self.missing = self.missing.replace(fuse + " ROBOT B\n","")
-
-        elif "_A" in fuse: # Fusible doble
-            fuse = fuse.replace("_A","")
-            if self.missingflag["FUSES"]["MISSING_" + fuse + "_A"] == True or self.missingflag["FUSES"]["MISSING_" + fuse + "_B"] == True:
-                if (not fuse + "\n" in self.missing):
-                    self.missing = self.missing + fuse + "\n"
-            elif self.missingflag["FUSES"]["MISSING_" + fuse + "_A"] == False and self.missingflag["FUSES"]["MISSING_" + fuse + "_B"] == False:
-                self.missing = self.missing.replace(fuse + "\n","")
-
-        elif "_B" in fuse: # Fusible doble
-            fuse = fuse.replace("_B","")
-            if self.missingflag["FUSES"]["MISSING_" + fuse + "_A"] == True or self.missingflag["FUSES"]["MISSING_" + fuse + "_B"] == True:
-                if (not fuse + "\n" in self.missing):
-                    self.missing = self.missing + fuse + "\n"
-            elif self.missingflag["FUSES"]["MISSING_" + fuse + "_A"] == False and self.missingflag["FUSES"]["MISSING_" + fuse + "_B"] == False:
-                self.missing = self.missing.replace(fuse + "\n","")
-
-        else: # Fusible sencillo
-            if self.missingflag["FUSES"]["MISSING_" + fuse] == True:
-                if (not fuse+"\n" in self.missing):
-                      self.missing = self.missing + fuse + "\n"
-            elif self.missingflag["FUSES"]["MISSING_" + fuse] == False:
-                self.missing = self.missing.replace(fuse + "\n","")
-
-    
-    def check_missingFuses(self, client, message):
-        #Mensajes para prueba en GDI
-        #PLC/1/status
-        #{"MISSING_REL132":true,"MISSING_REL112":true,"MISSING_ATO10":true,"MISSING_ATO15":true,"MISSING_ATO20":true}
-        #{"MISSING_REL132":false,"MISSING_REL112":false,"MISSING_ATO10":false,"MISSING_ATO15":false,"MISSING_ATO20":false}
-        payload = json.loads(message.payload)
-        payload_str = json.dumps(payload)
-        if "MISSING" in payload_str:
-            #se hace una copia de los fusibles actuales que presenten cambios fisicamente en mensajes mqtt desde la GDI
-            #y se guardan en el diccionario self.missingflag, que es un atributo de la clase
-            if "MISSING_ATOC10_A" in payload:
-                self.missingflag["FUSES"]["MISSING_ATOC10_A"] = payload["MISSING_ATOC10_A"]
-            if "MISSING_ATOC10_B" in payload:
-                self.missingflag["FUSES"]["MISSING_ATOC10_B"] = payload["MISSING_ATOC10_B"]
-            if "MISSING_ATOC15" in payload:
-                self.missingflag["FUSES"]["MISSING_ATOC15"] = payload["MISSING_ATOC15"]
-            if "MISSING_ATOC5_A" in payload:
-                self.missingflag["FUSES"]["MISSING_ATOC5_A"] = payload["MISSING_ATOC5_A"]
-            if "MISSING_ATOC5_B" in payload:
-                self.missingflag["FUSES"]["MISSING_ATOC5_B"] = payload["MISSING_ATOC5_B"]
-            if "MISSING_ATO20" in payload:
-                self.missingflag["FUSES"]["MISSING_ATO20"] = payload["MISSING_ATO20"]
-            if "MISSING_ATO5_RB" in payload:
-                self.missingflag["FUSES"]["MISSING_ATO5_RB"] = payload["MISSING_ATO5_RB"]
-            if "MISSING_ATO10" in payload:
-                self.missingflag["FUSES"]["MISSING_ATO10"] = payload["MISSING_ATO10"]
-            if "MISSING_ATO15_A" in payload:
-                self.missingflag["FUSES"]["MISSING_ATO15_A"] = payload["MISSING_ATO15_A"]
-            if "MISSING_ATO15_B" in payload:
-                self.missingflag["FUSES"]["MISSING_ATO15_B"] = payload["MISSING_ATO15_B"]
-            if "MISSING_MAXI40_A" in payload:
-                self.missingflag["FUSES"]["MISSING_MAXI40_A"] = payload["MISSING_MAXI40_A"]
-            if "MISSING_MAXI40_B" in payload:
-                self.missingflag["FUSES"]["MISSING_MAXI40_B"] = payload["MISSING_MAXI40_B"]
-            if "MISSING_MAXI50" in payload:
-                self.missingflag["FUSES"]["MISSING_MAXI50"] = payload["MISSING_MAXI50"]
-            if "MISSING_REL112" in payload:
-                self.missingflag["FUSES"]["MISSING_REL112"] = payload["MISSING_REL112"]
-            if "MISSING_REL132" in payload:
-                self.missingflag["FUSES"]["MISSING_REL132"] = payload["MISSING_REL132"]
-            if "MISSING_MINI15_A" in payload:
-                self.missingflag["FUSES"]["MISSING_MINI15_A"] = payload["MISSING_MINI15_A"]
-            if "MISSING_MINI15_B" in payload:
-                self.missingflag["FUSES"]["MISSING_MINI15_B"] = payload["MISSING_MINI15_B"]
-            if "MISSING_MULTI5_A" in payload:
-                self.missingflag["FUSES"]["MISSING_MULTI5_A"] = payload["MISSING_MULTI5_A"]
-            if "MISSING_MULTI5_B" in payload:
-                self.missingflag["FUSES"]["MISSING_MULTI5_B"] = payload["MISSING_MULTI5_B"]
-            if "MISSING_MULTI7.5_A" in payload:
-                self.missingflag["FUSES"]["MISSING_MULTI7.5_A"] = payload["MISSING_MULTI7.5_A"]
-            if "MISSING_MULTI7.5_B" in payload:
-                self.missingflag["FUSES"]["MISSING_MULTI7.5_B"] = payload["MISSING_MULTI7.5_B"]
-            if "MISSING_ATO15" in payload:
-                self.missingflag["FUSES"]["MISSING_ATO15"] = payload["MISSING_ATO15"]
-            if "MISSING_ATO5_RA" in payload:
-                self.missingflag["FUSES"]["MISSING_ATO5_RA"] = payload["MISSING_ATO5_RA"]
-            if "MISSING_MINI15" in payload:
-                self.missingflag["FUSES"]["MISSING_MINI15"] = payload["MISSING_MINI15"]
-            # Diccionario actualizado
-            #for i in self.missingflag["FUSES"]:
-            #    print(i + "\t\t" + str(self.missingflag["FUSES"][i]))
-
-
-            #recorrido para saber si no faltan fusibles
-            contadormiss = 0
-            self.missing = ""   # Se resetea el mensaje para evitar sobreescritura de mensajes no deseados
-            for i in self.missingflag["FUSES"]: #i toma el valor de las llave del diccionario missingflag (i es el nombre de los fusibles)
-                    revisarmiss = self.missingflag["FUSES"][i] #Valor booleano correspondiente
-                    
-                    if revisarmiss == True:
-                        contadormiss += 1
-                        if contadormiss < 6:   # Numero maximo de fusibles a imprimir (5 fusibles)
-                            self.update_missingFuses(i)
-                        
-                        command = {"lbl_info2" : {"text": f"RELLENAR FUSIBLES: \n {self.missing}", "color": "red"} }
-                        self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)          
-                    elif revisarmiss == False:
-                        if contadormiss == 0:
-                            command = { "lbl_info2" : {"text": "", "color": "orange"} }
-                            self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
-                        self.update_missingFuses(i)
-
-            print("\n\n" + self.missing)
-            #print("CONTADOR::::::::::: ", contadormiss)
             
     #def reiniciar_robots(self):
     #                    print("Encendiendo Robots")
@@ -370,10 +209,6 @@ class MqttClient (QObject):
 
             if message.topic == self.model.sub_topics["plc"]:
 
-                #if "key" in payload:
-                #    if payload["key"] == True:
-                #        self.key.emit()
-
                 if "key" in payload:
                     if payload["key"] == True:
                         # si la variable es True, quiere decir que ya pasaron varios reintentos y se requiere llave de calidad para continua
@@ -391,7 +226,7 @@ class MqttClient (QObject):
                             
                         # si la variable es False, quiere decir que estás en otra parte del proceso y la llave reiniciará el ciclo
                         elif self.model.fusible_manual == False:
-                            command = {"popOut":"¿Seguro que desea dar llave?\n Presione Esc. para salir, Enter para continuar..."}
+                            command = {"popOut":"¿Seguro que desea dar llave?\n Presione Esc. para salir, Space para continuar..."}
                             self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
                             #variable de la clase MQTT para habilitar las funciones del teclado
                             self.llave = True
@@ -399,6 +234,15 @@ class MqttClient (QObject):
                 if "start" in payload:
                     if payload["start"] == True:
                         self.start.emit()
+
+                    if self.llave == True:
+                        command = {"popOut":"close"}
+                        self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+                        self.key.emit()
+                        self.thread_triggers_off()
+                        print("key emit")
+                        self.llave = False
+
 
                 if "retry_btn" in payload:
                     self.model.plc["retry_btn"] = bool(payload["retry_btn"])
@@ -443,7 +287,6 @@ class MqttClient (QObject):
                                 # el indice sería el número 1 (PDC-D es el número 0)
                                 self.model.plc["clamps"].pop(self.model.plc["clamps"].index(box))
 
-
                 if "start" in payload:
                     if payload["start"] == True:
                         #solo se puede modificar antes de iniciar el ciclo
@@ -454,10 +297,10 @@ class MqttClient (QObject):
                 
                 if "error" in payload:              # Esta línea nunca entra, ya que solo entraría a
                                                     # una etiqueta específica llamada "error" en el plc
-                    print("entro en error avisado por el plc")
                     #self.model.plc["error"] = payload["error"]
                     #self.error.emit()
-
+                    print("entro en error avisado por el plc")
+                    
                 ##############################################################################################
                 payload_str = json.dumps(payload)       # convertir diccionario payload a string y guardarlo
 
@@ -495,6 +338,7 @@ class MqttClient (QObject):
                             self.raffiTBLU = 0
                         elif self.raffiTBLU == 0:
                             self.raffiTBLU = 1
+                
                 ############## Código para F96; Descomentar cuando se haya acondicionado de manera física lo necesario para su funcionamiento ##############
                 #if "raffi_F96" in payload_str:
                 #    if payload["raffi_F96"] == True:
@@ -505,6 +349,7 @@ class MqttClient (QObject):
                 ############## Código para F96; Descomentar cuando se haya acondicionado de manera física lo necesario para su funcionamiento ##############
 
                 #if "PDC-D" or "raffi_PDCD" in payload_str: #(or para busqueda de palabras)
+
                 if "PDC-D" in payload_str: #busca en el string PDC-D
                     if "PDC-D" in payload:
                         if payload["PDC-D"] == True:
@@ -651,7 +496,6 @@ class MqttClient (QObject):
                     if self.nido_PDCR == "":
                         command = {"lbl_box7" : {"text": "", "color": "blue"}}
                         self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
-
                 
                 if "PDC-S" in payload_str:
                     if "PDC-S" in payload:
@@ -748,30 +592,6 @@ class MqttClient (QObject):
                             self.cortina = "CORTINA \n INTERRUMPIDA"
                         if payload["ERROR_cortina"] == False:
                             self.cortina = ""
-                    if "ERROR_modbusIO" in payload:
-                        if payload["ERROR_modbusIO"] == True:
-                            self.modbusIO = "\n Remote IO"
-                        if payload["ERROR_modbusIO"] == False:
-                            self.modbusIO = ""
-                    if "ERROR_modbusRA" in payload:
-                        if payload["ERROR_modbusRA"] == True:
-                            self.modbusRA = "\n Robot A"
-                        if payload["ERROR_modbusRA"] == False:
-                            self.modbusRA = ""
-                    if "ERROR_modbusRB" in payload:
-                        if payload["ERROR_modbusRB"] == True:
-                            self.modbusRB = "\n Robot B"
-                        if payload["ERROR_modbusRB"] == False:
-                            self.modbusRB = ""
-
-                    if self.modbusIO == "\n Remote IO" and self.modbusRA == "\n Robot A":
-                        self.plural2 = "ES"
-                    elif self.modbusIO == "\n Remote IO" and self.modbusRB == "\n Robot B":
-                        self.plural2 = "ES"
-                    elif self.modbusRA == "\n Robot A" and self.modbusRB == "\n Robot B":
-                        self.plural2 = "ES"
-                    else:
-                        self.plural2 = ""
 
                 if "INTERLOCK" in payload_str:              
                     if "INTERLOCK_A" in payload:
@@ -800,19 +620,13 @@ class MqttClient (QObject):
                         self.plural = ""
 
                 if self.puertaA == "" and self.puertaB == "" and self.puertaC == "":
-                    if self.modbusIO == "" and self.modbusRA == "" and self.modbusRB == "":
-                        command = {"lbl_info4" : {"text": f"{self.cortina}", "color": "red"}}
-                    else:
-                        command = {"lbl_info4" : {"text": f"{self.cortina} \n \n ERROR{self.plural2} MODBUS: {self.modbusIO} {self.modbusRA} {self.modbusRB}", "color": "red"}}
+                    command = {"lbl_info4" : {"text": f"{self.cortina}", "color": "red"}}
                 else:
-                    if self.modbusIO == "" and self.modbusRA == "" and self.modbusRB == "":
-                        command = {"lbl_info4" : {"text": f"{self.cortina} \n \n PUERTA{self.plural} \n ABIERTA{self.plural}:\n {self.puertaA} {self.puertaB} {self.puertaC}", "color": "red"}}
-                    else:
-                        command = {"lbl_info4" : {"text": f"{self.cortina} \n \n ERROR MODBUS: {self.modbusIO} {self.modbusRA} {self.modbusRB} \n \n PUERTA{self.plural} \n ABIERTA{self.plural}:\n {self.puertaA} {self.puertaB} {self.puertaC}", "color": "red"}}
+                    command = {"lbl_info4" : {"text": f"PUERTA{self.plural} \n ABIERTA{self.plural}:\n {self.puertaA} {self.puertaB} {self.puertaC}", "color": "red"}}
+                
                 self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
 
-                # Revisar si faltan fusibles en los feeders lineales
-                self.check_missingFuses(client, message)
+
             ##############################################################################################
             if message.topic == self.model.sub_topics["keyboard"]:
                 #ejemplo de mensaje: { "keyboard_E" : true }
@@ -831,13 +645,24 @@ class MqttClient (QObject):
                 #print("key: ",self.keyboard_key)
                 #print("value: ",self.keyboard_value)
 
+
+                if self.keyboard_key == "keyboard_F5":
+                        command = {"trigger":"ATO_15,PDCD,F215"}
+                        self.client.publish(self.model.pub_topics["robot_a"],json.dumps(command), qos = 2)
+                        print("se envia al robot A por un ATO 15")
+
+                        command = {"trigger":"ATO_15,PDCR,F412"}
+                        self.client.publish(self.model.pub_topics["robot_b"],json.dumps(command), qos = 2)
+                        print("se envia al robot B por un ATO 15")
+
+
                 if self.llave == True:
 
                     if self.keyboard_key == "keyboard_esc":
                         command = {"popOut":"close"}
                         self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
                         print("key no emit")
-                    elif self.keyboard_key == "keyboard_enter":
+                    elif self.keyboard_key == "keyboard_space":
                         command = {"popOut":"close"}
                         self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
                         self.key.emit()
@@ -895,7 +720,6 @@ class MqttClient (QObject):
                         print("self.model.robots_mode keyboard_ctrl: ",self.model.robots_mode)
                     self.CTRL.emit()
                 
-
             if message.topic == self.model.sub_topics["gui"]:
                 if "request" in payload:
                     self.model.gui["request"] = payload["request"]
@@ -1055,9 +879,9 @@ class MqttClient (QObject):
                         #        else:
                         #            print("########Ya no hay fusibles para este robot########")
                         #        if separationKey == "TIEMPO_SUBIDA_INSERCION":
+                        #            #print("+*+*+*+*#####self.model.insertion_times: ",self.model.insertion_times)
                         #            print("Aquí finaliza el trigger")
-                        #        #print("+*+*+*+*#####self.model.insertion_times: ",self.model.insertion_times)
-
+                                
             if message.topic == self.model.sub_topics["robot_b"]:
                 ###############################################################
                 payload_str = json.dumps(payload) 
@@ -1199,6 +1023,7 @@ class MqttClient (QObject):
             "popOut":"close"
             }
         self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+
 
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication

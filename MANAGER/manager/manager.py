@@ -4,7 +4,7 @@ Authors: MC Marco Rutiaga
          Ing Rogelio García (master en API)
          MC César Velázquez (master en cuidado de pinzas)
 
-pyinstaller --add-data data;data manager.py
+pyinstaller --add-data data;data --noconfirm manager.py
 """
 from gui import MainWindow
 from controller import Controller

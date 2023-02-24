@@ -452,7 +452,7 @@ class Ui_main(object):
         ######################################################################
         self.lbl_info4 = QtWidgets.QLabel(self.splitter_3)
         self.lbl_info4.setMinimumSize(QtCore.QSize(150, 0))
-        self.lbl_info4.setMaximumSize(QtCore.QSize(300, 16777215))
+        self.lbl_info4.setMaximumSize(QtCore.QSize(340, 300))
         font = QtGui.QFont()
         font.setFamily("Century Schoolbook")
         font.setPointSize(14)
@@ -497,7 +497,7 @@ class Ui_main(object):
         self.lbl_steps.setText(_translate("main", "PASOS"))
         self.lbl_info2.setText(_translate("main", "INFO2"))
         self.lbl_user.setText(_translate("main", "AMTC\n"
-"Marco Rutiaga"))
+"Wacks"))
         self.lbl_info3.setText(_translate("main", "MODO\n"
 "ADMIN"))
         self.lbl_nuts.setText(_translate("main", "lbl_nuts"))
