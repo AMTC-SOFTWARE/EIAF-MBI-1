@@ -1,0 +1,6 @@
+api/.vs/
+api/env/
+api/dist/
+api/env/
+api/build/
+*.pyc
