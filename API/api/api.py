@@ -30,7 +30,7 @@ user = "admin"
 password = "4dm1n_001"
 database = "eiaf"
 # Credenciales para permitir conexión con Servidor de FAMX2 (Sistema de Trazabilidad)
-serverp2 = "naapnx-famx2"
+serverp2 = "naapnx-famx2s"
 dbp2 = "agrucomb_prod"
 userp2 = "pnx_agrucomb_prod"
 passwordp2 = "pJ0rge2021"
