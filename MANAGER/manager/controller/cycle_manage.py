@@ -31,6 +31,7 @@ class Startup(QState):
         if self.model.local_data["user"]["type"] != "":
             Timer(0.05, self.logout, args = (copy(self.model.local_data["user"]),)).start()
         command = {
+            "lbl_info0" : {"text": "close", "color": "black"},
             "lbl_info1" : {"text": "", "color": "black"},
             #"lbl_info2" : {"text": "", "color": "green"}, #debe ir comentado para evitar que se reinicie el mensaje de fusibles que faltan por rellenar
             "lbl_info3" : {"text": "", "color": "black"},
@@ -56,16 +57,22 @@ class Startup(QState):
             "show":{"scanner": False}
             }
         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+
         #self.hideSoftware()
         #Timer(1, self.hideSoftware).start()
-        #Timer(5000, self.kioskMode).start()
+        Timer(1, self.kioskMode).start()
 
         if exists("data\config"):
             with open("data\config", "rb") as f:
                 data = load(f)
                 self.model.config_data.update(data)
         print("\nConfig:\n", self.model.config_data, "\n")
+
+        ##############
+        ##############
         self.ok.emit()
+        ##############
+        ##############
 
     def kioskMode(self):
         system("taskkill /f /im explorer.exe")
@@ -92,7 +99,6 @@ class Startup(QState):
             self.model.local_data["user"]["name"] = ""
             self.model.local_data["user"]["pass"] = ""
 
-
 class Login (QState):
     def __init__(self, model = None, parent = None):
         super().__init__(parent)
@@ -103,7 +109,6 @@ class Login (QState):
             "allow_close": True
             }
         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
-
 
 class CheckLogin (QState):
     ok      = pyqtSignal()
@@ -166,7 +171,6 @@ class CheckLogin (QState):
             publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
             self.nok.emit()
 
-
 class StartCycle (QState):
     ok = pyqtSignal()
     def __init__(self, model = None, parent = None):
@@ -176,9 +180,14 @@ class StartCycle (QState):
     def onEntry(self, event):
         #limpiar variable para caja anterior que pasó
         self.model.reset()
+
+        #se reinicia variable que dice que el robot A finalizó
+        self.model.robot_a_terminado = False
+
         Timer(1, self.robots_home).start()
         Timer(0.05, self.model.log, args = ("IDLE",)).start() 
         command = {
+            "lbl_info0" : {"text": "close", "color": "red"},
             "lbl_info1" : {"text": "", "color": "black"},
             #"lbl_info2" : {"text": "", "color": "green"},
             "lbl_info3" : {"text": "", "color": "black"},
@@ -264,7 +273,6 @@ class StartCycle (QState):
             }
         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
 
-
 class Config (QState):
     def __init__(self, model = None, parent = None):
         super().__init__(parent)
@@ -279,7 +287,6 @@ class Config (QState):
             "lbl_steps" : {"text": "Ciclo de operación deshabilitado", "color": "black"}
             }
         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
-
 
 class ScanQr (QState):
     def __init__(self, model = None, parent = None):
@@ -309,6 +316,13 @@ class ScanQr (QState):
             }
         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
 
+class StandbyTraza (QState):
+    def __init__(self, model = None, parent = None):
+        super().__init__(parent)
+        self.model = model
+
+    def onEntry(self, event):
+        print("Estado: StandbyTraza, esperando señal de ctrl o start para continuar")
 
 class CheckQr (QState):
 
@@ -418,20 +432,34 @@ class CheckQr (QState):
                                     "UBICACION": "ENTRADA_A_INSERCION",
                                     "NAMEINSERCION": self.model.no_serie
                                     }
+
                                 endpointUpdate = "http://{}/seghm/update/seghm/{}".format(self.model.server,self.model.id_HM)
                                 respTrazabilidad = requests.post(endpointUpdate, data=json.dumps(entTrazabilidad))
                                 respTrazabilidad = respTrazabilidad.json()
                                 print("respTrazabilidad del update: ",respTrazabilidad)
 
-                                sleep(0.1)
-                                respTrazabilidad = requests.post(endpointUpdate, data=json.dumps(entTrazabilidad))
-                                respTrazabilidad = respTrazabilidad.json()
-                                print("respTrazabilidad del update: ",respTrazabilidad)
+                                if "exception" in respTrazabilidad:
+                                    sleep(0.5)
+                                    respTrazabilidad = requests.post(endpointUpdate, data=json.dumps(entTrazabilidad))
+                                    respTrazabilidad = respTrazabilidad.json()
+                                    print("respTrazabilidad del update: ",respTrazabilidad)
 
-                                sleep(0.1)
-                                respTrazabilidad = requests.post(endpointUpdate, data=json.dumps(entTrazabilidad))
-                                respTrazabilidad = respTrazabilidad.json()
-                                print("respTrazabilidad del update: ",respTrazabilidad)
+                                    if "exception" in respTrazabilidad:
+                                        sleep(0.5)
+                                        respTrazabilidad = requests.post(endpointUpdate, data=json.dumps(entTrazabilidad))
+                                        respTrazabilidad = respTrazabilidad.json()
+                                        print("respTrazabilidad del update: ",respTrazabilidad)
+
+                                        if "exception" in respTrazabilidad:
+
+                                            print("no se logró hacer el update en trazabilidad")
+                                            command = {
+                                                        "lbl_result" : {"text": "No se logró hacer el update de Trazabilidad", "color": "red"},
+                                                        "lbl_steps" : {"text": "Intenta Ingresar nuevamente arnés", "color": "black"}
+                                                        }
+                                            publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+                                            self.nok.emit()
+                                            return
                                 #### Trazabilidad FAMX2 Update de Información
 
                             else:                    
@@ -763,7 +791,6 @@ class CheckQr (QState):
                 command[i] = False
         publish.single(self.model.pub_topics["plc"],json.dumps(command),hostname='127.0.0.1', qos = 2)
 
-
 class QrRework (QState):
     ok = pyqtSignal()
     def __init__(self, model = None, parent = None):
@@ -1047,16 +1074,30 @@ class Finish (QState):
                 respTrazabilidad = respTrazabilidad.json()
                 print("respTrazabilidad del update: ",respTrazabilidad)
 
-                sleep(0.1)
-                respTrazabilidad = requests.post(endpointUpdate, data=json.dumps(salTrazabilidad))
-                respTrazabilidad = respTrazabilidad.json()
-                print("respTrazabilidad del update: ",respTrazabilidad)
+                if "exception" in respTrazabilidad:
+                    sleep(0.5)
+                    respTrazabilidad = requests.post(endpointUpdate, data=json.dumps(salTrazabilidad))
+                    respTrazabilidad = respTrazabilidad.json()
+                    print("respTrazabilidad del update: ",respTrazabilidad)
 
-                sleep(0.1)
-                respTrazabilidad = requests.post(endpointUpdate, data=json.dumps(salTrazabilidad))
-                respTrazabilidad = respTrazabilidad.json()
-                print("respTrazabilidad del update: ",respTrazabilidad)
+                    if "exception" in respTrazabilidad:
+                        sleep(0.5)
+                        respTrazabilidad = requests.post(endpointUpdate, data=json.dumps(salTrazabilidad))
+                        respTrazabilidad = respTrazabilidad.json()
+                        print("respTrazabilidad del update: ",respTrazabilidad)
 
+                        if "exception" in respTrazabilidad:
+
+                            print("no se logró hacer el update en trazabilidad")
+                            command = {
+                                        "lbl_result" : {"text": "Problema de red: Actualización de Trazabilidad", "color": "red"},
+                                        "lbl_steps" : {"text": 'Para volver a intentar botón Amarillo, para continuar "CTRL"', "color": "black"}
+                                        }
+                            publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+                            self.model.problema_trazabilidad = True
+                            print("self.model.problema_trazabilidad = True, Esperando señal de botón amarillo o tecla CTRL para reintar publish o continuar")
+                            self.nok.emit()
+                            return
 
             except Exception as ex:
                 print("Excepción al momento de guardar datos en FAMX2", ex)

@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 """
 
-@author: MSc. Marco Rutiaga Quezada
+@authors: MSc. Marco Rutiaga Quezada
+          MSc. Aarón Castillo Tobías
+          
 """
-
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QDialog, QMainWindow, QLineEdit, QMessageBox, QAction
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QTimer
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QTimer, QSize
 from PyQt5.QtGui import QPixmap
 from threading import Timer
 from os.path import exists
 from os import system 
+import ctypes #PARA OBTENER RESOLUCION DE LA PANTALLA
 import json 
 
 from gui import main, login, scanner, img_popout
@@ -31,6 +34,7 @@ class MainWindow (QMainWindow):
         self.qw_scanner = Scanner(parent = self)
         self.qw_img_popout = Img_popout(parent = self)
         self.pop_out = PopOut(self)
+        self.pop_out_manual = PopOutManual(self)
 
         self.model.name = name
         self.setTopic = topic + "/set"
@@ -203,6 +207,49 @@ class MainWindow (QMainWindow):
             if "request" in message:
                 if message["request"] == "status":
                     QTimer.singleShot(100, self.sendStatus)
+            if "lbl_info0" in message:
+
+                if "text" in message["lbl_info0"]:
+                    if message["lbl_info0"]["text"] == "close":
+                        print("Ocultando ventanas de mensajes pop_out_manual y qw_img_popout")
+                        #self.pop_out_manual.close() #cuando tienen el método def closeEvent(self, event): event.ignore() no se pueden cerrar las ventanas tampoco usando close
+                        #self.qw_img_popout.close() #pero si se pueden ocultar y volver a mostrar
+                        self.pop_out_manual.hide()
+                        self.qw_img_popout.hide()
+                    else:
+                        self.qw_img_popout.ui.label.setPixmap(QPixmap(self.model.imgsPath + "RELMANUAL.jpg")) #.scaled((QSize(300,300)), Qt.KeepAspectRatio))
+
+                        #se acomoda el tamaño de la imágen a mostrar y de la ventana donde se muestra
+                        self.qw_img_popout.ui.label.setMinimumSize(QSize(0, 0))
+                        self.qw_img_popout.ui.label.setMaximumSize(QSize(300, 470)) #ancho, alto, valores máximos
+                        self.qw_img_popout.ui.MainWindow.resize(320, 490) #se le hace un resize para acomodar el tamaño de la ventana (ancho,alto)
+
+                        #para obtener la resolución de la pantalla:
+                        user32 = ctypes.windll.user32
+                        user32.SetProcessDPIAware()
+                        width_screen_resolution  = user32.GetSystemMetrics(0)
+                        heigth_screen_resolution = user32.GetSystemMetrics(1)
+
+                        #para obtener la posición en X que debe tener la ventana
+                        img_popout_ubic = width_screen_resolution - self.qw_img_popout.ui.MainWindow.size().width() - 5
+
+                        #para mover de posición la pantalla y posteriormente mostrarla
+                        self.qw_img_popout.move(img_popout_ubic,55) # posiciónX(+ es derecha), posiciónY(+ es abajo)
+                        self.qw_img_popout.show()
+
+                        #se modifica el estilo del texto y se muestra
+                        #self.pop_out_manual.setStyleSheet("QLabel{min-width: 800px; min-height: 80;font: 18pt; color: " + message["lbl_info0"]["color"] + ";} QPushButton{ width:50px; font: 10pt;}")
+                        self.pop_out_manual.setStyleSheet("QLabel{min-width: 800px; min-height: 120;font: 18pt; color: " + message["lbl_info0"]["color"] + ";}")
+                        self.pop_out_manual.MainWindow.resize(800, 120)
+                        self.pop_out_manual.label.setText(message["lbl_info0"]["text"])
+                        self.pop_out_manual.setWindowTitle("INSTRUCCIÓN")
+
+                        #se mueve de posición la pantalla y se ejecuta mensaje de poput
+                        self.pop_out_manual.move(400,20) # posiciónX, posiciónY
+                        self.pop_out_manual.show()
+                        self.pop_out_manual.setFocusPolicy(Qt.StrongFocus)
+
+
             if "lbl_info1" in message:
                 self.ui.lbl_info1.setText(message["lbl_info1"]["text"])
                 if "color" in message["lbl_info1"]:
@@ -423,16 +470,39 @@ class Img_popout (QDialog):
     def __init__(self, parent = None):
         super().__init__(parent)
         self.ui = img_popout.Ui_img_popout()
-        self.ui.setupUi(self) 
+        self.ui.setupUi(self)
         self.ui.label.setText("")
+
+    def closeEvent(self, event):
+        event.ignore() 
         
+
+#class PopOutManual (QMessageBox):   #este tipo de class con base de QMessageBox ya trae por defecto un botón "OK"
+class PopOutManual (QDialog):
+    def __init__(self, parent = None):
+        super().__init__(parent)
+
+        self.MainWindow = QtWidgets.QWidget(self)
+        self.MainWindow.setObjectName("MainWindow")
+        self.label = QtWidgets.QLabel(self.MainWindow)
+        #self.setIcon(QMessageBox.Information)
+        #self.setStandardButtons(QMessageBox.Ok)
+        #self.button(QMessageBox.Ok).setVisible(False)
+
+    def closeEvent(self, event):
+        event.ignore() 
+
 
 class PopOut (QMessageBox):
     def __init__(self, parent = None):
         super().__init__(parent)
+
+        self.setStyleSheet("font: 40pt; color: orangered; font-weight: bold; background-color: rgb(0,0,0);")
+
         self.setIcon(QMessageBox.Information)
         self.setStandardButtons(QMessageBox.Ok)
         self.button(QMessageBox.Ok).setVisible(False)
+
 
     def closeEvent(self, event):
         event.ignore() 

@@ -14,8 +14,18 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_img_popout(object):
     def setupUi(self, img_popout):
         img_popout.setObjectName("img_popout")
-        img_popout.resize(589, 488)
-        self.gridLayout = QtWidgets.QGridLayout(img_popout)
+
+        #PARA PODER HACER RESIZE DE UNA WINDOW, SE CREA UN OBJETO QUE SEA MODIFICABLE DE LA CLASE UI_img_popout
+        #ESTE OBJETO SERÁ EL PADRE DE TODOS LOS WIDGET, Y TIENE LA PROPIEDAD DE .resize, pero HAY QUE QUITAR EL
+        #RESIZE DEL UI PRINCIPAL PORQUE SI NO, ESTE ES EL DE PRIORIDAD Y EL QUE TOMA POR DEFECTO
+        #img_popout.resize(500, 500)
+
+        self.MainWindow = QtWidgets.QWidget(img_popout)
+        self.MainWindow.setAutoFillBackground(False)
+        self.MainWindow.setObjectName("MainWindow")
+        self.MainWindow.resize(500, 500)
+
+        self.gridLayout = QtWidgets.QGridLayout(self.MainWindow)
         self.gridLayout.setObjectName("gridLayout")
         self.label = QtWidgets.QLabel(img_popout)
         self.label.setScaledContents(True)

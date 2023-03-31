@@ -8,31 +8,32 @@ from time import sleep
 import json
 
 class MqttClient (QObject):
-    conn_ok     =   pyqtSignal()
-    conn_nok    =   pyqtSignal()
-    clamp       =   pyqtSignal()
-    emergency   =   pyqtSignal()
-    recovery    =   pyqtSignal()
-    key         =   pyqtSignal()
-    retry_btn   =   pyqtSignal()
-    login       =   pyqtSignal()
-    logout      =   pyqtSignal()
-    config      =   pyqtSignal()
-    config_ok   =   pyqtSignal()
-    ID          =   pyqtSignal()
-    code        =   pyqtSignal()
-    visible     =   pyqtSignal()
-    pose        =   pyqtSignal()
-    loaded      =   pyqtSignal()
-    color_rsp   =   pyqtSignal()
-    error       =   pyqtSignal()
-    inserted    =   pyqtSignal()
-    start       =   pyqtSignal()
-    ready       =   pyqtSignal()
-    available   =   pyqtSignal()
-    F4          =   pyqtSignal()
-    CTRL        =   pyqtSignal()
-
+    conn_ok         =   pyqtSignal()
+    conn_nok        =   pyqtSignal()
+    clamp           =   pyqtSignal()
+    emergency       =   pyqtSignal()
+    recovery        =   pyqtSignal()
+    key             =   pyqtSignal()
+    retry_btn       =   pyqtSignal()
+    login           =   pyqtSignal()
+    logout          =   pyqtSignal()
+    config          =   pyqtSignal()
+    config_ok       =   pyqtSignal()
+    ID              =   pyqtSignal()
+    code            =   pyqtSignal()
+    visible         =   pyqtSignal()
+    pose            =   pyqtSignal()
+    loaded          =   pyqtSignal()
+    color_rsp       =   pyqtSignal()
+    error           =   pyqtSignal()
+    inserted        =   pyqtSignal()
+    start           =   pyqtSignal()
+    ready           =   pyqtSignal()
+    available       =   pyqtSignal()
+    F4              =   pyqtSignal()
+    CTRL            =   pyqtSignal()
+    retry_traza     =   pyqtSignal()
+    continue_traza  =   pyqtSignal()
 
     ra_home    = ""
     rb_home    = ""
@@ -76,6 +77,7 @@ class MqttClient (QObject):
     cortina = ""
 
     plural = ""
+
 
     def __init__(self, model = None, parent = None):
         super().__init__(parent)
@@ -221,51 +223,131 @@ class MqttClient (QObject):
                                 print("self.model.init_thread_robot = ",self.model.init_thread_robot)
                                 self.retry_btn.emit()
                             else:
-                                self.key.emit()
-                                
+                                self.key.emit() 
                             
                         # si la variable es False, quiere decir que estás en otra parte del proceso y la llave reiniciará el ciclo
                         elif self.model.fusible_manual == False:
-                            command = {"popOut":"¿Seguro que desea dar llave?\n Presione Esc. para salir, Space para continuar..."}
+                            command = {"popOut":"¿Seguro que desea dar llave al CICLO?\nPresione Esc. para salir,\nSpace/Start para continuar..."}
                             self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
                             #variable de la clase MQTT para habilitar las funciones del teclado
                             self.llave = True
-
-                if "start" in payload:
-                    if payload["start"] == True:
-                        self.start.emit()
-
-                    if self.llave == True:
-                        command = {"popOut":"close"}
-                        self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
-                        self.key.emit()
-                        self.thread_triggers_off()
-                        print("key emit")
-                        self.llave = False
-
 
                 if "retry_btn" in payload:
                     self.model.plc["retry_btn"] = bool(payload["retry_btn"])
                     if payload["retry_btn"] == True:
 
-                        #apagar todos los triggers de robot paralelo
-                        self.thread_triggers_off()
-                        #encender estado retry de robot paralelo
-                        self.model.retry_thread_robot = True
-                        print("self.model.retry_thread_robot: ",self.model.retry_thread_robot)
+                        #si hubo problema en la publicación final de resultados de trazabilidad de ciclo...
+                        if self.model.problema_trazabilidad == True:
+                            self.model.problema_trazabilidad = False
+                            print("problema_trazabilidad = True, se hace false y se emite señal de reintentar")
+                            self.retry_traza.emit()
 
-                        #si el robot principal ya terminó:
-                        if self.model.robot_principal == True:
-                            self.model.init_thread_robot = True #porque se vuelve false cada que hay un error en el robot paralelo, esta línea es necesaria para reactivar el reobot paralelo si el otro robot ya terminó.
-                            print("self.model.robot_principal = ",self.model.robot_principal)
-                            print("self.model.init_thread_robot = ",self.model.init_thread_robot)
+                        else:
 
+                            #si se espera el botón del robot A
+                            if self.model.waiting_button_inserted_singal["robot_a"] == True:
+                                self.model.waiting_button_inserted_singal["robot_a"] = False
+
+                                #si no está activada la variable en ningún robot, se borra el label
+                                if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
+                                    command = {"lbl_info0" : {"text": "close", "color": "red"}}
+                                    self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+
+                                print("se valida inserción de robot_a y se manda un stop start")
+
+                                self.client.publish(self.model.pub_topics["robot_a"],json.dumps({"command": "stop"}), qos = 2)
+                                sleep(0.4)
+                                self.client.publish(self.model.pub_topics["robot_a"],json.dumps({"command": "start"}), qos = 2)
+
+                                if self.model.current_thread_robot == "robot_a":
+                                    self.model.init_thread_robot = True
+                                    print("init_thread_robot = ",self.model.init_thread_robot)
+                                    print("self.model.inserted_thread_robot = True para robot_a")
+                                    self.model.inserted_thread_robot = True
+                                    print("retry_btn pra robot_b emit()")
+                                    self.retry_btn.emit()
+                                else:
+                                    print("inserted para robot_a emit()")
+                                    self.inserted.emit()
+                                    #apagar todos los triggers de robot paralelo
+                                    self.thread_triggers_off()
+                                    #encender estado retry de robot paralelo
+                                    print("self.model.retry_thread_robot = True robot_b")
+                                    self.model.retry_thread_robot = True
+
+                                    #si el robot principal ya terminó:
+                                    if self.model.robot_principal == True:
+                                        self.model.init_thread_robot = True #porque se vuelve false cada que hay un error en el robot paralelo, esta línea es necesaria para reactivar el reobot paralelo si el otro robot ya terminó.
+                                        print("self.model.robot_principal = ",self.model.robot_principal)
+                                        print("self.model.init_thread_robot = ",self.model.init_thread_robot)
+
+                            #si la señal de espera de botón del robot B es true, y el robot A ya finalizó sus inserciones...
+                            elif self.model.waiting_button_inserted_singal["robot_b"] == True and self.model.robot_a_terminado == True:
+                                self.model.waiting_button_inserted_singal["robot_b"] = False
+
+                                #si no está activada la variable en ningún robot, se borra el label
+                                if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
+                                    command = {"lbl_info0" : {"text": "close", "color": "red"}}
+                                    self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+
+                                print("se valida inserción de Relay de robot_b y se manda un stop start")
+
+                                self.client.publish(self.model.pub_topics["robot_b"],json.dumps({"command": "stop"}), qos = 2)
+                                sleep(0.4)
+                                self.client.publish(self.model.pub_topics["robot_b"],json.dumps({"command": "start"}), qos = 2)
+
+                                if self.model.current_thread_robot == "robot_b":
+                                    self.model.init_thread_robot = True
+                                    print("init_thread_robot = ",self.model.init_thread_robot)
+                                    self.model.inserted_thread_robot = True
+                                    print(" self.model.inserted_thread_robot = ", self.model.inserted_thread_robot)
+                                    print("retry_btn para robot_a emit()")
+                                    self.retry_btn.emit()
+                                else:
+                                    print("inserted para robot_b emit()")
+                                    self.inserted.emit()
+                                    #apagar todos los triggers de robot paralelo
+                                    self.thread_triggers_off()
+                                    #encender estado retry de robot paralelo
+                                    print("self.model.retry_thread_robot = True para robot_a")
+                                    self.model.retry_thread_robot = True
+
+                                    #si el robot principal ya terminó:
+                                    if self.model.robot_principal == True:
+                                        self.model.init_thread_robot = True #porque se vuelve false cada que hay un error en el robot paralelo, esta línea es necesaria para reactivar el reobot paralelo si el otro robot ya terminó.
+                                        print("self.model.robot_principal = ",self.model.robot_principal)
+                                        print("self.model.init_thread_robot = ",self.model.init_thread_robot)
+                            
+                            #si la señal de espera de botón del robot B es true, y el robot A NO ha finalizado sus inserciones...
+                            elif self.model.waiting_button_inserted_singal["robot_b"] == True and self.model.robot_a_terminado == False:
+                                
+                                print("NO MOVER ROBOT B")
+                                #apagar todos los triggers de robot paralelo
+                                self.thread_triggers_off()
+                                print("retry_btn emit() para robotA")
+                                self.retry_btn.emit()
+
+                            #Funcionamiento Normal si no se ha activado ninguna variable de espera de botón...
+                            else:
+
+                                #apagar todos los triggers de robot paralelo
+                                self.thread_triggers_off()
+                                #encender estado retry de robot paralelo
+                                self.model.retry_thread_robot = True
+                                print("self.model.retry_thread_robot: ",self.model.retry_thread_robot)
+
+                                #si el robot principal ya terminó:
+                                if self.model.robot_principal == True:
+                                    self.model.init_thread_robot = True #porque se vuelve false cada que hay un error en el robot paralelo, esta línea es necesaria para reactivar el reobot paralelo si el otro robot ya terminó.
+                                    print("self.model.robot_principal = ",self.model.robot_principal)
+                                    print("self.model.init_thread_robot = ",self.model.init_thread_robot)
                         
-                        print("retry_btn emit()")
-                        self.retry_btn.emit()
+                                print("retry_btn emit()")
+                                self.retry_btn.emit()
+
                 #se crea una lista en self.model.plc["clamps"] donde se van agregando o
                 #quitando elementos para saber si en ese momento están o no clampeadas las cajas
-                for i in list(payload):
+                for i in list(payload): #list(payload) es una lista de un diccionario, te devuelve una lista con todas las keys del diccionario
                     if "clamp_" in i:
                         box = i[6:]
                         #esto es porque clamp_PDC-R en GDI aplica para R y RMID
@@ -289,18 +371,30 @@ class MqttClient (QObject):
 
                 if "start" in payload:
                     if payload["start"] == True:
+
                         #solo se puede modificar antes de iniciar el ciclo
                         if self.model.robots_mode == 0:
                             self.model.robots_mode = 2
                             print("self.model.robots_mode: ",self.model.robots_mode)
+
+                        #se emite el start
                         self.start.emit()
+
+                        #si se dio llave, dar start acepta la llave y se cierra el popout
+                        if self.llave == True:
+                            command = {"popOut":"close"}
+                            self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+                            self.key.emit()
+                            self.thread_triggers_off()
+                            print("key emit")
+                            self.llave = False
                 
                 if "error" in payload:              # Esta línea nunca entra, ya que solo entraría a
                                                     # una etiqueta específica llamada "error" en el plc
                     #self.model.plc["error"] = payload["error"]
                     #self.error.emit()
                     print("entro en error avisado por el plc")
-                    
+
                 ##############################################################################################
                 payload_str = json.dumps(payload)       # convertir diccionario payload a string y guardarlo
 
@@ -338,7 +432,6 @@ class MqttClient (QObject):
                             self.raffiTBLU = 0
                         elif self.raffiTBLU == 0:
                             self.raffiTBLU = 1
-                
                 ############## Código para F96; Descomentar cuando se haya acondicionado de manera física lo necesario para su funcionamiento ##############
                 #if "raffi_F96" in payload_str:
                 #    if payload["raffi_F96"] == True:
@@ -349,7 +442,6 @@ class MqttClient (QObject):
                 ############## Código para F96; Descomentar cuando se haya acondicionado de manera física lo necesario para su funcionamiento ##############
 
                 #if "PDC-D" or "raffi_PDCD" in payload_str: #(or para busqueda de palabras)
-
                 if "PDC-D" in payload_str: #busca en el string PDC-D
                     if "PDC-D" in payload:
                         if payload["PDC-D"] == True:
@@ -496,7 +588,7 @@ class MqttClient (QObject):
                     if self.nido_PDCR == "":
                         command = {"lbl_box7" : {"text": "", "color": "blue"}}
                         self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
-                
+   
                 if "PDC-S" in payload_str:
                     if "PDC-S" in payload:
                         if payload["PDC-S"] == True:
@@ -623,9 +715,7 @@ class MqttClient (QObject):
                     command = {"lbl_info4" : {"text": f"{self.cortina}", "color": "red"}}
                 else:
                     command = {"lbl_info4" : {"text": f"PUERTA{self.plural} \n ABIERTA{self.plural}:\n {self.puertaA} {self.puertaB} {self.puertaC}", "color": "red"}}
-                
                 self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
-
 
             ##############################################################################################
             if message.topic == self.model.sub_topics["keyboard"]:
@@ -644,17 +734,6 @@ class MqttClient (QObject):
 
                 #print("key: ",self.keyboard_key)
                 #print("value: ",self.keyboard_value)
-
-
-                if self.keyboard_key == "keyboard_F5":
-                        command = {"trigger":"ATO_15,PDCD,F215"}
-                        self.client.publish(self.model.pub_topics["robot_a"],json.dumps(command), qos = 2)
-                        print("se envia al robot A por un ATO 15")
-
-                        command = {"trigger":"ATO_15,PDCR,F412"}
-                        self.client.publish(self.model.pub_topics["robot_b"],json.dumps(command), qos = 2)
-                        print("se envia al robot B por un ATO 15")
-
 
                 if self.llave == True:
 
@@ -714,11 +793,18 @@ class MqttClient (QObject):
                     self.F4.emit()
 
                 if self.keyboard_key == "keyboard_ctrl":
-                    #solo se puede modificar antes de iniciar el ciclo
-                    if self.model.robots_mode == 0:
-                        self.model.robots_mode = 2
-                        print("self.model.robots_mode keyboard_ctrl: ",self.model.robots_mode)
-                    self.CTRL.emit()
+                    
+                    if self.model.problema_trazabilidad == True:
+                        self.model.problema_trazabilidad = False
+                        print("problema_trazabilidad = True, se hace false y se emite señal de continuar")
+                        self.continue_traza.emit()
+                    else:
+
+                        #solo se puede modificar antes de iniciar el ciclo
+                        if self.model.robots_mode == 0:
+                            self.model.robots_mode = 2
+                            print("self.model.robots_mode keyboard_ctrl: ",self.model.robots_mode)
+                        self.CTRL.emit()
                 
             if message.topic == self.model.sub_topics["gui"]:
                 if "request" in payload:
@@ -766,41 +852,12 @@ class MqttClient (QObject):
                     if type(payload["response"]) is str:
                         self.model.robots["robot_a"]["pose"] = payload["response"]
                         self.pose.emit()
-                        if "LOADED" in payload["response"]:
-                            if self.model.current_thread_robot == "robot_a":
-                                self.model.loaded_thread_robot = True
-                            else:
-                                self.loaded.emit()
-                        if "TAKE_AVAILABLE" in payload["response"]:
-                            if self.model.current_thread_robot == "robot_a":
-                                print("self.available.emit() from robot_a")
-                                self.available.emit()
-                            else:
-                                print("self.model.shared_zone = available from robot_a")
-                                self.model.shared_zone = "available"
-                        if "INSERTED" in payload["response"]:
-                            if self.model.current_thread_robot == "robot_a":
-                                self.model.inserted_thread_robot = True
-                            else:
-                                self.inserted.emit()
-                        if "READY" in payload["response"]:
-                            self.model.robots["robot_a"]["ready"] = True
-                            if self.model.current_thread_robot == "robot_a":
-                                self.model.set_thread_robot = True
-                            else:
-                                self.ready.emit()
-                        if "ERROR" in payload["response"]:
-                            self.model.robots["robot_a"]["error"] = payload["response"].rsplit("_",1)[1]
-                            if self.model.current_thread_robot == "robot_a":
-                                self.thread_triggers_off()
-                                self.model.error_thread_robot = True
-                            else:
-                                self.error.emit()
-                        #if "TIEMPO" in payload["response"]:
+
+                        if "TIEMPO" in payload["response"]:
+
                         #    ##### Mensajes para el Tiempo recopilado por el robot #####
                         #    #current_trig_RA = self.model.robots["robot_a"]["queueIzq"][0] para ambos robots se recorre primero esta lista izquierda
                         #    #current_trig_RA = self.model.robots["robot_a"]["queueDer"][0] y posteriormente la lista derecha
-
 
                         #    #puede haber casos en que los mensajes vengan juntos, para esto se revisa el número de mensajes que vienen pegados:
                         #    #ejemplo*         {"response": "TIEMPO_TRASLADO_TOMA: 5.55 s\r\nTIEMPO_BAJADA_TOMA: 5.55 s\r\n"}
@@ -879,9 +936,74 @@ class MqttClient (QObject):
                         #        else:
                         #            print("########Ya no hay fusibles para este robot########")
                         #        if separationKey == "TIEMPO_SUBIDA_INSERCION":
-                        #            #print("+*+*+*+*#####self.model.insertion_times: ",self.model.insertion_times)
                         #            print("Aquí finaliza el trigger")
-                                
+                        #        #print("+*+*+*+*#####self.model.insertion_times: ",self.model.insertion_times)
+                            pass
+                        if "LOADED" in payload["response"]:
+                            if self.model.current_thread_robot == "robot_a":
+                                self.model.loaded_thread_robot = True
+                            else:
+                                self.loaded.emit()
+                        if "TAKE_AVAILABLE" in payload["response"]:
+                            if self.model.current_thread_robot == "robot_a":
+                                print("self.available.emit() from robot_a")
+                                self.available.emit()
+                            else:
+                                print("self.model.shared_zone = available from robot_a")
+                                self.model.shared_zone = "available"
+                        if "INSERTED" in payload["response"]:
+
+                            if self.model.waiting_button_inserted_singal["robot_a"] == True: #esto es para cuando se inserte con la estación funcione igual
+                                self.model.waiting_button_inserted_singal["robot_a"] = False
+                                #si no está activada la variable en ningún robot, se borra el label
+                                if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
+                                    command = {"lbl_info0" : {"text": "close", "color": "red"}}
+                                    self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+
+                            if self.model.current_thread_robot == "robot_a":
+                                self.model.inserted_thread_robot = True
+                            else:
+                                self.inserted.emit()
+                        if "READY" in payload["response"]:
+                            if self.model.waiting_button_inserted_singal["robot_a"] == False:
+                                print("READY recibido porque self.model.waiting_button_inserted_singal[robot_a] = False")
+                                self.model.robots["robot_a"]["ready"] = True
+                                #esto hace que continúe y vuelva a pedir un trigger del robot
+                                if self.model.current_thread_robot == "robot_a":
+                                    self.model.set_thread_robot = True
+                                else:
+                                    self.ready.emit()
+                        if "ERROR" in payload["response"]:
+
+                            #solamente marca el error de inserción cuando no se trata de una inserción manual, de otra forma el robot 
+                            #intenta la inserción pero si no se completa, se quedará esperando botón
+                            if self.model.waiting_button_inserted_singal["robot_a"] == False:
+                                self.model.robots["robot_a"]["error"] = payload["response"].rsplit("_",1)[1]
+                                if self.model.current_thread_robot == "robot_a":
+                                    self.thread_triggers_off()
+                                    self.model.error_thread_robot = True
+                                else:
+                                    self.error.emit()
+                            #si la variable es true, pero se detectó un mensaje de ERROR de inserción del Robot, se guarda el registro de ese ERROR
+                            else:
+                                box = self.model.robots["robot_a"]["current_trig"][0]
+                                cavity = self.model.robots["robot_a"]["current_trig"][1]
+                                if box == "PDC-RMID" and cavity == "F96":
+                                    box = "F96_box"
+                                if box == "PDC-R" and cavity == "F96":
+                                    box = "F96_box"
+                                # GUARDAR LOS INTENTOS QUE LLEVA EN ESE FUSIBLE EN EL MODELO
+                                # ESTO SE GUARDARÁ EN LA BASE DE DATOS AL SALIR DE LA CLASE ROBOT
+                                if not(box) in self.model.retries:
+                                    self.model.retries[box] = {}
+                                    self.model.retries[box][cavity] = 1
+                                else:
+                                    if not(cavity) in self.model.retries[box]:
+                                        self.model.retries[box][cavity] = 1
+                                    else: 
+                                        self.model.retries[box][cavity] += 1
+                                print("REINTENTOS: ",self.model.retries)
+
             if message.topic == self.model.sub_topics["robot_b"]:
                 ###############################################################
                 payload_str = json.dumps(payload) 
@@ -900,38 +1022,9 @@ class MqttClient (QObject):
                     if type(payload["response"]) is str:
                         self.model.robots["robot_b"]["pose"] = payload["response"]
                         self.pose.emit()
-                        if "LOADED" in payload["response"]:
-                            if self.model.current_thread_robot == "robot_b":
-                                self.model.loaded_thread_robot = True
-                            else:
-                                self.loaded.emit()
-                        if "TAKE_AVAILABLE" in payload["response"]:
-                            if self.model.current_thread_robot == "robot_b":
-                                print("self.available.emit() from robot_b")
-                                self.available.emit()
-                            else:
-                                print("self.model.shared_zone = available from robot_b")
-                                self.model.shared_zone = "available"
-                                
-                        if "INSERTED" in payload["response"]:
-                            if self.model.current_thread_robot == "robot_b":
-                                self.model.inserted_thread_robot = True
-                            else:
-                                self.inserted.emit()
-                        if "READY" in payload["response"]:
-                            self.model.robots["robot_b"]["ready"] = True
-                            if self.model.current_thread_robot == "robot_b":
-                                self.model.set_thread_robot = True
-                            else:
-                                self.ready.emit()
-                        if "ERROR" in payload["response"]:
-                            self.model.robots["robot_b"]["error"] = payload["response"].rsplit("_",1)[1]
-                            if self.model.current_thread_robot == "robot_b":
-                                self.thread_triggers_off()
-                                self.model.error_thread_robot = True
-                            else:
-                                self.error.emit()
-                        #if "TIEMPO" in payload["response"]:
+
+                        if "TIEMPO" in payload["response"]:
+
                         #    ##### Mensajes para el Tiempo recopilado por el robot #####
                         #    #current_trig_RB = self.model.robots["robot_b"]["queueIzq"][0] para ambos robots se recorre primero esta lista izquierda
                         #    #current_trig_RB = self.model.robots["robot_b"]["queueDer"][0] y posteriormente la lista derecha
@@ -1013,7 +1106,70 @@ class MqttClient (QObject):
                         #            print("########Ya no hay fusibles para este robot########")
                         #        if separationKey == "TIEMPO_SUBIDA_INSERCION":
                         #            print("Aquí finaliza el trigger")
+                            pass
+                        if "LOADED" in payload["response"]:
+                            if self.model.current_thread_robot == "robot_b":
+                                self.model.loaded_thread_robot = True
+                            else:
+                                self.loaded.emit()
+                        if "TAKE_AVAILABLE" in payload["response"]:
+                            if self.model.current_thread_robot == "robot_b":
+                                print("self.available.emit() from robot_b")
+                                self.available.emit()
+                            else:
+                                print("self.model.shared_zone = available from robot_b")
+                                self.model.shared_zone = "available"       
+                        if "INSERTED" in payload["response"]:
+                            if self.model.waiting_button_inserted_singal["robot_b"] == True: #esto es para cuando se inserte con la estación funcione igual
+                                self.model.waiting_button_inserted_singal["robot_b"] = False
+                                #si no está activada la variable en ningún robot, se borra el label
+                                if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
+                                    command = {"lbl_info0" : {"text": "close", "color": "red"}}
+                                    self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
 
+                            if self.model.current_thread_robot == "robot_b":
+                                self.model.inserted_thread_robot = True
+                            else:
+                                self.inserted.emit()
+                            print("Inserción por robot no válida, debe ser por botón")
+                        if "READY" in payload["response"]:
+                            if self.model.waiting_button_inserted_singal["robot_b"] == False:
+                                print("READY recibido porque self.model.waiting_button_inserted_singal[robot_b] = False")
+                                self.model.robots["robot_b"]["ready"] = True
+                                if self.model.current_thread_robot == "robot_b":
+                                    #esto hace que continúe y vuelva a pedir un trigger del robot
+                                    self.model.set_thread_robot = True
+                                else:
+                                    self.ready.emit()
+                        if "ERROR" in payload["response"]:
+                            #solamente marca el error de inserción cuando no se trata de una inserción manual, de otra forma el robot 
+                            #intenta la inserción pero si no se completa, se quedará esperando botón
+                            if self.model.waiting_button_inserted_singal["robot_b"] == False:
+                                self.model.robots["robot_b"]["error"] = payload["response"].rsplit("_",1)[1]
+                                if self.model.current_thread_robot == "robot_b":
+                                    self.thread_triggers_off()
+                                    self.model.error_thread_robot = True
+                                else:
+                                    self.error.emit()
+                            #si la variable es true, pero se detectó un mensaje de ERROR de inserción del Robot, se guarda el registro de ese ERROR
+                            else:
+                                box = self.model.robots["robot_b"]["current_trig"][0]
+                                cavity = self.model.robots["robot_b"]["current_trig"][1]
+                                if box == "PDC-RMID" and cavity == "F96":
+                                    box = "F96_box"
+                                if box == "PDC-R" and cavity == "F96":
+                                    box = "F96_box"
+                                # GUARDAR LOS INTENTOS QUE LLEVA EN ESE FUSIBLE EN EL MODELO
+                                # ESTO SE GUARDARÁ EN LA BASE DE DATOS AL SALIR DE LA CLASE ROBOT
+                                if not(box) in self.model.retries:
+                                    self.model.retries[box] = {}
+                                    self.model.retries[box][cavity] = 1
+                                else:
+                                    if not(cavity) in self.model.retries[box]:
+                                        self.model.retries[box][cavity] = 1
+                                    else: 
+                                        self.model.retries[box][cavity] += 1
+                                print("REINTENTOS: ",self.model.retries)
 
         except Exception as ex:
             print("input exception", ex)
@@ -1023,7 +1179,6 @@ class MqttClient (QObject):
             "popOut":"close"
             }
         self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
-
 
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication

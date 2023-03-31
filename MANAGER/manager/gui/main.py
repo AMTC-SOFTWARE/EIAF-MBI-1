@@ -187,7 +187,7 @@ class Ui_main(object):
         sizePolicy.setHeightForWidth(self.lbl_info1.sizePolicy().hasHeightForWidth())
         self.lbl_info1.setSizePolicy(sizePolicy)
         self.lbl_info1.setMinimumSize(QtCore.QSize(220, 150))
-        self.lbl_info1.setMaximumSize(QtCore.QSize(220, 150))
+        self.lbl_info1.setMaximumSize(QtCore.QSize(300, 300))
         font = QtGui.QFont()
         font.setFamily("Century Schoolbook")
         font.setPointSize(14)
@@ -295,6 +295,19 @@ class Ui_main(object):
         self.lbl_user.setFont(font)
         self.lbl_user.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
         self.lbl_user.setObjectName("lbl_user")
+
+        self.lbl_info0 = QtWidgets.QLabel(self.splitter_2)
+        self.lbl_info0.setMinimumSize(QtCore.QSize(150, 220))
+        self.lbl_info0.setMaximumSize(QtCore.QSize(150, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("Century Schoolbook")
+        font.setPointSize(14)
+        font.setBold(True)
+        font.setWeight(75)
+        self.lbl_info0.setFont(font)
+        self.lbl_info0.setAlignment(QtCore.Qt.AlignCenter)
+        self.lbl_info0.setObjectName("lbl_info0")
+
         self.lbl_info3 = QtWidgets.QLabel(self.splitter_2)
         self.lbl_info3.setMinimumSize(QtCore.QSize(150, 220))
         self.lbl_info3.setMaximumSize(QtCore.QSize(150, 16777215))
@@ -496,10 +509,9 @@ class Ui_main(object):
         self.lbl_result.setText(_translate("main", "RESULTADOS_1234567890"))
         self.lbl_steps.setText(_translate("main", "PASOS"))
         self.lbl_info2.setText(_translate("main", "INFO2"))
-        self.lbl_user.setText(_translate("main", "AMTC\n"
-"Wacks"))
-        self.lbl_info3.setText(_translate("main", "MODO\n"
-"ADMIN"))
+        self.lbl_user.setText(_translate("main", "AMTC\nWacks"))
+        self.lbl_info0.setText(_translate("main", ""))
+        self.lbl_info3.setText(_translate("main", "lbl_info3"))
         self.lbl_nuts.setText(_translate("main", "lbl_nuts"))
         ########################################################
         self.lbl_box1.setText(_translate("main", "lbl_box1"))

@@ -69,6 +69,16 @@ class Model (object):
         self.var_queue_2 = 0 #variable para ir obteniendo fusibles de principio o fin de lista de triggers
         ###############################################################
 
+        #variable para determinar que hubo un problema de publish de trazabilidad en la salida
+        self.problema_trazabilidad = False
+
+        #variable para habilitar una inserción por botón:
+        self.waiting_button_inserted_singal = {"robot_a":False,
+                                               "robot_b":False}
+
+        #variable para saber que robot A ya terminó
+        self.robot_a_terminado = False
+
         #Variable para guardar todos los tiempos de inserción de fusibles
         self.insertion_times = {}
 
@@ -167,7 +177,6 @@ class Model (object):
             "config": "config/status",
             "robot_a": "RobotEpson/3/status",
             "robot_b": "RobotEpson/4/status",
-
             "color_sensor_a": "color_sensor/a/status",
             "color_sensor_b": "color_sensor/b/status"
             }
@@ -179,7 +188,6 @@ class Model (object):
             "config": "config/set",
             "robot_a": "RobotEpson/3",
             "robot_b": "RobotEpson/4",
-
             "color_sensor_a": "color_sensor/a/set",
             "color_sensor_b": "color_sensor/b/set"
             }
@@ -309,6 +317,7 @@ class Model (object):
             }
 
     def reset (self):
+
         self.pdcr_mid = False
         self.flag = False
         self.retries.clear()

@@ -17,7 +17,8 @@ class Model (object):
                 "gui": False, 
                 "login": False,
                 "scanner": False,
-                "pop_out": False
+                "pop_out": False,
+                "pop_out_manual":False
                 }
             }
 

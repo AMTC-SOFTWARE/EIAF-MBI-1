@@ -121,15 +121,17 @@ class Retry(QState):
         for i in self.model.robots:
             self.model.robots[i]["ready"] = False
         
-        #se quita esta variable para detener al robot opuesto
+        #se hace false para que no detenga a ningún robot
         self.model.detener_robot_opuesto = False
 
         print("self.model.robots_mode EN RETRY DE ROBOT PRINCIPAL= ",self.model.robots_mode)
         #si está habilitado el modo de dos robots
         if self.model.robots_mode == 2:
+
             self.model.init_thread_robot = True
             print("init_thread_robot = ",self.model.init_thread_robot)
             print("Iniciar el segundo robot en paralelo")
+
         else:
             self.model.init_thread_robot = False
             print("init_thread_robot = ",self.model.init_thread_robot)
@@ -158,9 +160,7 @@ class Retry(QState):
 
     def startRobot_B(self):
         self.model.robothome_b = True # variable para activar Mensaje de enviar robot a home, se resetea sola en comm.py
-        publish.single(self.model.pub_topics["robot_b"],json.dumps({"command": "start"}),hostname='127.0.0.1', qos = 2)
-        
-            
+        publish.single(self.model.pub_topics["robot_b"],json.dumps({"command": "start"}),hostname='127.0.0.1', qos = 2)        
 
 class SetRobot(QState):
     ok      = pyqtSignal()
@@ -205,7 +205,8 @@ class Triggers (QState):
         print("current state: Triggers")
         print("Triggers self.module-----", self.module)
 
-        #///////////////////////////////////////////////////////////////////////
+        #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        #esto solamente se hace una vez al inicio para acomodar el orden de inserción de los fusibles
         if self.model.acomodo_listas:
             self.model.acomodo_listas = False
 
@@ -301,35 +302,61 @@ class Triggers (QState):
 
                 print("\n\n")
 
-            # se cambia la posición del FUSIBLE de la cavidad F300 de la lista queueIzq (debe insertarse después del MINI que vaya en F301
+            # se cambia la posición del FUSIBLE de la cavidad F300 de la lista queueIzq (debe insertarse después del MINI que vaya en F301)
             try:
-                encontrado = False
-
+                #se ubica el fusible para insertar al final
                 #["PDC-P", "F300", "ATO,15,blue"]
-                posicion_final = len(self.model.robots[self.module]["queueIzq"]) - 1
-                elemento_final = self.model.robots[self.module]["queueIzq"][int(posicion_final)]
-                print("posicion final: ", int(posicion_final))
-                print("elemento en posicion final: ",self.model.robots[self.module]["queueIzq"][int(posicion_final)])
-
                 for elemento in self.model.robots[self.module]["queueIzq"]:
                     if "F300" in elemento:
                         posicion_cavidad = self.model.robots[self.module]["queueIzq"].index(elemento)
-                        elemento_cavidad = elemento
+                        elemento_cavidad = copy(elemento)
                         print("posicion cavidad F300: ",posicion_cavidad)
                         print("elemento cavidad: ",elemento_cavidad)
-                        encontrado = True
+                        self.model.robots[self.module]["queueIzq"].pop(posicion_cavidad)
+                        self.model.robots[self.module]["queueIzq"].append(elemento_cavidad)
+                        print("se mueve F300 al final")
 
-                if encontrado:
-                    self.model.robots[self.module]["queueIzq"][int(posicion_final)] = elemento_cavidad
-                    self.model.robots[self.module]["queueIzq"][int(posicion_cavidad)] = elemento_final
-                    print("intercambio realizado")
+                #se elimina el RELAY y se agrega pero al final de la lista
+                #["PDC-RMID", "RELT", "RELAY,70,gray"]
+                for elemento in self.model.robots[self.module]["queueDer"]:
+                    if "RELAY,70,gray" in elemento:
+                        posicion_relay = self.model.robots[self.module]["queueDer"].index(elemento)
+                        elemento_relay = copy(elemento)
+                        print("posicion relay: ",posicion_relay)
+                        print("elemento relay: ",elemento_relay)
+                        self.model.robots[self.module]["queueDer"].pop(posicion_relay)
+                        self.model.robots[self.module]["queueDer"].append(elemento_relay)
+                        print("se mueve RELAY GRIS al final")
+
+                #se elimina el RELAY ROJO de RELU y se agrega pero al final de la lista
+                for elemento in self.model.robots[self.module]["queueDer"]:
+                    if "RELAY,60,red" in elemento and "RELU" in elemento:
+                        posicion_relay = self.model.robots[self.module]["queueDer"].index(elemento)
+                        elemento_relay = copy(elemento)
+                        print("posicion relay: ",posicion_relay)
+                        print("elemento relay: ",elemento_relay)
+                        self.model.robots[self.module]["queueDer"].pop(posicion_relay)
+                        self.model.robots[self.module]["queueDer"].append(elemento_relay)
+                        print("se mueve RELAY ROJO RELU al final")
+
+                #se elimina el RELAY ROJO de RELX y se agrega pero al final de la lista
+                for elemento in self.model.robots[self.module]["queueDer"]:
+                    if "RELAY,60,red" in elemento and "RELX" in elemento:
+                        posicion_relay = self.model.robots[self.module]["queueDer"].index(elemento)
+                        elemento_relay = copy(elemento)
+                        print("posicion relay: ",posicion_relay)
+                        print("elemento relay: ",elemento_relay)
+                        self.model.robots[self.module]["queueDer"].pop(posicion_relay)
+                        self.model.robots[self.module]["queueDer"].append(elemento_relay)
+                        print("se mueve RELAY ROJO RELX al final")
+
             except:
                 pass
 
             #se asignan las variables del modelo a unas propias de la clase para facilitar su manejo (la nueva variable depende directamente de la original)
             self.queueIzq      = self.model.robots[self.module]["queueIzq"]
             self.queueDer      = self.model.robots[self.module]["queueDer"]
-        #///////////////////////////////////////////////////////////////////////
+        #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         #si el robot opuesto está detenido debido a un error de insercion, este
         # se va a estado standby, después de hacer su última inserción,
@@ -340,7 +367,6 @@ class Triggers (QState):
 
         #si el robot opuesto no está detenido, le permite continúar
         else:
-
             #se selecciona la queue correspondiente a a la zona compartida para el robot actual
 
             if self.module == "robot_a":
@@ -369,7 +395,7 @@ class Triggers (QState):
                 cavity          = current_trig[1]
                 fuse            = current_trig[2].split(sep = ",") # ["type", "current", "color"]
 
-
+                ###### Modif para imagenes de F96 #######
                 if box == "PDC-RMID" and cavity == "F96":
                     box = "F96_box"
                     command = {
@@ -416,7 +442,7 @@ class Triggers (QState):
                         "img_center": f"{box}.jpg",
                         "img_fuse": "vacio.jpg"
                         }
-
+                #########################################
                 else:
                     command = {
                         "lbl_result" : {"text": f"{fuse[0]} {fuse[1]}", "color": "green"},
@@ -428,6 +454,7 @@ class Triggers (QState):
                         command["lbl_steps"] = {"text": f"Tomando Relay", "color": "black"}
                 publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
             
+                #modificaciones especiales para triggers especiales que se mandarán como instrucciones al robot
                 if box == "TBLU":
                     cavity = "F10" + cavity[-1]
                 if box == "PDC-S":
@@ -436,13 +463,23 @@ class Triggers (QState):
                     fuse[0] = fuse[0] + "C"
 
                 box = box.replace("-","")
-                command = {"trigger": f"{fuse[0]}_{fuse[1]},{box},{cavity}"}
-                if "REL" in cavity:
+                command = {"trigger": f"{fuse[0]}_{fuse[1]},{box},{cavity}"} ############## #mensaje final que se enviará al robot
+                
+                if "REL" in cavity:         
                     temp = ""
                     if "60" in fuse[1]:
+                        ####if "RELX" in cavity:
+                        #si se trata de un relevador se activa esta variable para pedir su inserción mediante el botón
+                        self.model.waiting_button_inserted_singal[self.module] = True
+                        comm_info0 = {
+                            "lbl_info0" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
+                            }
+                        publish.single(self.model.pub_topics["gui"],json.dumps(comm_info0),hostname='127.0.0.1', qos = 2)
                         temp = "RELAY_132"
                     elif "70" in fuse[1]:
                         temp = "RELAY_112"
+
+                    #se modifica trigger solamente cuando se trata de un relay
                     command["trigger"] =  f"{temp},{box},{cavity}"
 
                 print("*******current_trig*******\n")
@@ -466,7 +503,6 @@ class Triggers (QState):
                     #SE MANDA MENSAJE AL ROBOT PARA IR POR ESE FUSIBLE, A ESA CAJA, A ESA CAVIDAD A INSERTAR
                     print("enviando instruccion al robot: ",self.module)
                     Timer(0.1, self.robotTrigger, args = (command, )).start()
-
 
             elif len(self.queueDer) > 0:
                 self.model.popQueueIzq = False
@@ -535,7 +571,7 @@ class Triggers (QState):
                         "img_center": f"{box}.jpg",
                         "img_fuse": "vacio.jpg"
                         }
-                ######### Modificación para F96 #########
+                #########################################
                 else:
                     command = {
                         "lbl_result" : {"text": f"{fuse[0]} {fuse[1]}", "color": "green"},
@@ -547,6 +583,8 @@ class Triggers (QState):
                         command["lbl_steps"] = {"text": f"Tomando Relay", "color": "black"}
                 publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
             
+
+                #modificaciones especiales para triggers especiales que se mandarán como instrucciones al robot
                 if box == "TBLU":
                     cavity = "F10" + cavity[-1]
                 if box == "PDC-S":
@@ -555,14 +593,24 @@ class Triggers (QState):
                     fuse[0] = fuse[0] + "C"
 
                 box = box.replace("-","")
-                command = {"trigger": f"{fuse[0]}_{fuse[1]},{box},{cavity}"}
+                command = {"trigger": f"{fuse[0]}_{fuse[1]},{box},{cavity}"} ############## #mensaje final que se enviará al robot
                 if "REL" in cavity:
+                    print("relay detectado, se hace true opción de Inserción Manual")
                     temp = ""
                     if "60" in fuse[1]:
+                        ####if "RELX" in cavity:
+                        #si se trata de un relevador se activa esta variable para pedir su inserción mediante el botón
+                        self.model.waiting_button_inserted_singal[self.module] = True
+                        comm_info0 = {
+                            "lbl_info0" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
+                            }
+                        publish.single(self.model.pub_topics["gui"],json.dumps(comm_info0),hostname='127.0.0.1', qos = 2)
                         temp = "RELAY_132"
                     elif "70" in fuse[1]:
                         temp = "RELAY_112"
-                    command["trigger"] =  f"{temp},{box},{cavity}"
+
+                    #se modifica solamente cuando se trata de un relay
+                    command["trigger"] =  f"{temp},{box},{cavity}" 
             
                 print("*******current_trig*******\n")
                 print("BOX: ",box,"\nCAVITY: ",cavity,"\nFUSE: ",fuse)
@@ -585,9 +633,11 @@ class Triggers (QState):
                     print("enviando instruccion al robot: ",self.module)
                     Timer(0.1, self.robotTrigger, args = (command, )).start()
 
-
             else: #YA NO HAY FUSIBLES EN COLA
             
+                self.model.robot_a_terminado = True
+                print("ROBOT A FINALIZÓ")
+
                 command = {"trigger": "HOME"}
                 publish.single(self.model.pub_topics[self.module] ,json.dumps(command),hostname='127.0.0.1', qos = 2)
 
@@ -633,7 +683,6 @@ class Triggers (QState):
     def robotTrigger(self, command):
 
         publish.single(self.model.pub_topics[self.module] ,json.dumps(command),hostname='127.0.0.1', qos = 2)
-
 
 class Receiver(QState):
     ok  = pyqtSignal()
@@ -737,8 +786,10 @@ class Error(QState):
         #esta variable es para detener al robot opuesto pero dejarlo intentar su ultima inserción
         self.model.detener_robot_opuesto = True
 
+        #se obtiene la caja actual en la tarea que falló, así como su cavidad
         box = self.model.robots[self.module]["current_trig"][0]
         cavity = self.model.robots[self.module]["current_trig"][1]
+
         if box == "PDC-RMID" and cavity == "F96":
             box = "F96_box"
         if box == "PDC-R" and cavity == "F96":
@@ -1013,8 +1064,7 @@ class LoadedStandby(QState):
     def __init__(self, module = "robot_a", model = None, parent = None):
         super().__init__(parent)
         self.model      = model
-        self.module     = module
-        
+        self.module     = module 
 
     def onEntry(self, QEvent):
 
@@ -1031,10 +1081,8 @@ class LoadedStandby(QState):
         command = {
             "lbl_steps" : {"text": f"Insertando en {box} posicion {cavity}", "color": "black"}
             }
-
         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
         
-
 class TriggerStandby(QState):
 
     #trigger_standby  = pyqtSignal()

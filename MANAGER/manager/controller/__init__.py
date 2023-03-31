@@ -54,6 +54,8 @@ class Controller (QObject):
         self.clamps_standby_b       = Clamps_Standby(module = "clamps_b",model = self.model, parent = self.process)
         self.clamps_standby_both    = Clamps_Standby(module = "clamps",model = self.model, parent = self.process)
         
+        self.standby_traza          = StandbyTraza(model = self.model, parent = self.process)
+
         self.config                 = Config(model = self.model)
         self.reset                  = Reset(model = self.model)
         self.finish                 = Finish(model = self.model, parent = self.process)
@@ -108,6 +110,10 @@ class Controller (QObject):
         
         #################################################################
 
+        self.finish.addTransition(self.finish.nok, self.standby_traza)                  #si el finish da nok porque no se guardaron los datos de trazabilidad, para volver a intentar publish dar start, para continuar ctrl
+        self.standby_traza.addTransition(self.client.continue_traza, self.start_cycle)  #se continúa sin hacer publish de trazabilidad
+        self.standby_traza.addTransition(self.client.retry_traza, self.finish)          #se vuelve a intentar publish de trazabilidad
+        
         self.finish.addTransition(self.finish.ok, self.start_cycle)
         self.process.addTransition(self.client.key, self.reset)
         self.reset.addTransition(self.reset.ok, self.start_cycle)
@@ -161,7 +167,7 @@ class MyThread(QThread):
                     print("Ready de Robot A: ",self.model.robots["robot_a"]["ready"])
                     print("Ready de Robot B: ",self.model.robots["robot_b"]["ready"])
 
-                    #se regresa la variable a false, para detener al robot opuesto sin interrumpirlo
+                    #se hace false para que no detenga a ningún robot
                     self.model.detener_robot_opuesto = False
 
                     #si hubo algún error de inserción se limpia el error
@@ -231,7 +237,8 @@ class MyThread(QThread):
                         sleep(1)
                         print("esperando robot opuesto")
 
-                    #///////////////////////////////////////////////////////////////////////
+                    #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    #esto solamente se hace una vez al inicio para acomodar el orden de inserción de los fusibles
                     if self.model.acomodo_listas_2:
                         self.model.acomodo_listas_2 = False
 
@@ -239,29 +246,41 @@ class MyThread(QThread):
                         robots_queue_temp = []
                         queue_fusible = []
 
+                        #self.model.robots["robot_a"]["queueIzq"] #contiene todas las tareas de inserción de fusibles de llado Izquierdo del robot a
+                        #self.model.robots["robot_a"]["queueDer"] #contiene todas las tareas de inserción de fusibles de llado Derecho del robot a
+                        # = ['PDC-R','F101','MINI,5,beige']
+
                         listas = {"queueDer","queueIzq"}
 
                         for queue in listas:
 
                             print("queue: ",queue)
 
+                            #self.model.robots[self.module][queue] es una lista de listas de 3 elementos, que contiene las tareas para ese robot y ese queue (derecho o izquierdo)
                             for i in self.model.robots[self.module][queue]:
+                                # i = ["CAJA","CAVIDAD","FUSIBLE"]
+                                # FUSIBLE = i[2] = ["type,amp,color"]  = ["ATO,25,white"] es un string
                                 queue_fusible.append(i[2])
+
+                                #si robots_queue_temp está vacío, se copia directamente el FUSIBLE dentro de esta variable(lista)
                                 if len(robots_queue_temp) == 0:
                                     robots_queue_temp.append(copy(queue_fusible))
                                 else:
+                                    #si ya tiene al menos un fusible, lo que se hace es recorrer toda la lista "robots_queue_temp" para solamente agregar tipos de FUSIBLE que aún no existan en esta lista
                                     already = False
                                     for j in range(len(robots_queue_temp)):
+                                        #si la variable es igual a una que ya existe en "robots_queue_temp" se pone already = true para indicar que esta no se agregará, solamente cuando no exista en la lista se agrega un tipo nuevo de FUSIBLE
                                         if robots_queue_temp[j][0] == queue_fusible[0]:
                                             already = True
                                         else:
                                             #si ya es la ultima j del arreglo
                                             if j == len(robots_queue_temp) - 1:
-                                                #si nunca se hizo True, es porque no hubo coincidencia
+                                                #si nunca se hizo True, es porque no hubo coincidencia, entonces es un tipo de FUSIBLE nuevo, y se agrega a la lista
                                                 if already == False:
                                                     robots_queue_temp.append(copy(queue_fusible))
                                 queue_fusible.clear()
 
+                            #se obtiene una lista de TIPOS de fusibles que lleva ese fusible y ese robot
                             print("\nrobots_queue_temp FUSIBLES: ",robots_queue_temp)
 
                             for i in self.model.robots[self.module][queue]:    
@@ -290,6 +309,22 @@ class MyThread(QThread):
                                 print(robots_queue_temp[s])
  
 
+                            #EJEMPLOOOOOOOOOOO DE LO QUE SE OBTIENE:
+                            #
+                            #robots_queue_temp FUSIBLES:  [['MINI,10,red'], ['ATO,30,green'], ['ATO,25,white'], ['MINI,7.5,brown']]
+                            #
+                            #robots_queue_temp FUSIBLE,FUSIBLES EN COLA:
+                            #[['PDC-D', 'F204', 'MINI,10,red'], ['PDC-D', 'F219', 'MINI,10,red'], ['PDC-D', 'F222', 'MINI,10,red'], ['PDC-P', 'F322', 'MINI,10,red'], ['PDC-P', 'F323', 'MINI,10,red'], ['PDC-P', 'F324', 'MINI,10,red'], [6]]
+                            #[['PDC-D', 'F209', 'ATO,30,green'], ['PDC-D', 'F211', 'ATO,30,green'], ['PDC-D', 'F214', 'ATO,30,green'], ['PDC-D', 'F215', 'ATO,30,green'], ['PDC-P', 'F326', 'ATO,30,green'], ['PDC-P', 'F327', 'ATO,30,green'], ['PDC-P', 'F328', 'ATO,30,green'], ['PDC-P', 'F329', 'ATO,30,green'], ['PDC-P', 'F333', 'ATO,30,green'], [9]]
+                            #[['PDC-D', 'F216', 'ATO,25,white'], ['PDC-P', 'F332', 'ATO,25,white'], ['PDC-P', 'F335', 'ATO,25,white'], [3]]
+                            #[['PDC-D', 'F223', 'MINI,7.5,brown'], ['PDC-D', 'F224', 'MINI,7.5,brown'], ['PDC-D', 'F226', 'MINI,7.5,brown'], ['PDC-P', 'F318', 'MINI,7.5,brown'], ['PDC-P', 'F319', 'MINI,7.5,brown'], ['PDC-P', 'F321', 'MINI,7.5,brown'], [6]]
+                            #
+                            #robots_queue_temp ORDENADOS POR CANTIDAD:
+                            #[['PDC-D', 'F209', 'ATO,30,green'], ['PDC-D', 'F211', 'ATO,30,green'], ['PDC-D', 'F214', 'ATO,30,green'], ['PDC-D', 'F215', 'ATO,30,green'], ['PDC-P', 'F326', 'ATO,30,green'], ['PDC-P', 'F327', 'ATO,30,green'], ['PDC-P', 'F328', 'ATO,30,green'], ['PDC-P', 'F329', 'ATO,30,green'], ['PDC-P', 'F333', 'ATO,30,green']]
+                            #[['PDC-D', 'F204', 'MINI,10,red'], ['PDC-D', 'F219', 'MINI,10,red'], ['PDC-D', 'F222', 'MINI,10,red'], ['PDC-P', 'F322', 'MINI,10,red'], ['PDC-P', 'F323', 'MINI,10,red'], ['PDC-P', 'F324', 'MINI,10,red']]
+                            #[['PDC-D', 'F223', 'MINI,7.5,brown'], ['PDC-D', 'F224', 'MINI,7.5,brown'], ['PDC-D', 'F226', 'MINI,7.5,brown'], ['PDC-P', 'F318', 'MINI,7.5,brown'], ['PDC-P', 'F319', 'MINI,7.5,brown'], ['PDC-P', 'F321', 'MINI,7.5,brown']]
+                            #[['PDC-D', 'F216', 'ATO,25,white'], ['PDC-P', 'F332', 'ATO,25,white'], ['PDC-P', 'F335', 'ATO,25,white']]
+
                             while len(robots_queue_temp) > 0:
 
                                 try:
@@ -310,8 +345,6 @@ class MyThread(QThread):
                                 except:
                                     pass
 
-
-
                             print("\n\nnew_queue: ")
                             for i in range(len(new_queue)):
                                 print(new_queue[i])
@@ -326,30 +359,56 @@ class MyThread(QThread):
                             print("\n\n") #<> 
 
                         try:
-                            encontrado = False
-                            #["PDC-RMID", "RELT", "RELAY,70,gray"]
-                            posicion_final = len(self.model.robots[self.module]["queueDer"]) - 1
-                            elemento_final = self.model.robots[self.module]["queueDer"][int(posicion_final)]
-                            print("posicion final: ", int(posicion_final))
-                            print("elemento en posicion final: ",self.model.robots[self.module]["queueDer"][int(posicion_final)])
 
+                            #se ubica el fusible para insertar al final
+                            #["PDC-P", "F300", "ATO,15,blue"]
+                            for elemento in self.model.robots[self.module]["queueIzq"]:
+                                if "F300" in elemento:
+                                    posicion_cavidad = self.model.robots[self.module]["queueIzq"].index(elemento)
+                                    elemento_cavidad = copy(elemento)
+                                    print("posicion cavidad F300: ",posicion_cavidad)
+                                    print("elemento cavidad: ",elemento_cavidad)
+                                    self.model.robots[self.module]["queueIzq"].pop(posicion_cavidad)
+                                    self.model.robots[self.module]["queueIzq"].append(elemento_cavidad)
+                                    print("se mueve F300 al final")
+
+                            #se elimina el RELAY y se agrega pero al final de la lista
+                            #["PDC-RMID", "RELT", "RELAY,70,gray"]
                             for elemento in self.model.robots[self.module]["queueDer"]:
                                 if "RELAY,70,gray" in elemento:
                                     posicion_relay = self.model.robots[self.module]["queueDer"].index(elemento)
-                                    elemento_relay = elemento
+                                    elemento_relay = copy(elemento)
                                     print("posicion relay: ",posicion_relay)
                                     print("elemento relay: ",elemento_relay)
-                                    encontrado = True
+                                    self.model.robots[self.module]["queueDer"].pop(posicion_relay)
+                                    self.model.robots[self.module]["queueDer"].append(elemento_relay)
+                                    print("se mueve RELAY GRIS al final")
 
-                            if encontrado:
-                                self.model.robots[self.module]["queueDer"][int(posicion_final)] = elemento_relay
-                                self.model.robots[self.module]["queueDer"][int(posicion_relay)] = elemento_final
-                                print("intercambio realizado")
-                                print("elemento nuevo en posicion media: ",self.model.robots[self.module]["queueDer"][int(posicion_final)])
-                                print("elemento nuevo en posicion relay: ",self.model.robots[self.module]["queueDer"][int(posicion_relay)])
+                            #se elimina el RELAY ROJO de RELU y se agrega pero al final de la lista
+                            for elemento in self.model.robots[self.module]["queueDer"]:
+                                if "RELAY,60,red" in elemento and "RELU" in elemento:
+                                    posicion_relay = self.model.robots[self.module]["queueDer"].index(elemento)
+                                    elemento_relay = copy(elemento)
+                                    print("posicion relay: ",posicion_relay)
+                                    print("elemento relay: ",elemento_relay)
+                                    self.model.robots[self.module]["queueDer"].pop(posicion_relay)
+                                    self.model.robots[self.module]["queueDer"].append(elemento_relay)
+                                    print("se mueve RELAY ROJO RELU al final")
+
+                            #se elimina el RELAY ROJO de RELX y se agrega pero al final de la lista
+                            for elemento in self.model.robots[self.module]["queueDer"]:
+                                if "RELAY,60,red" in elemento and "RELX" in elemento:
+                                    posicion_relay = self.model.robots[self.module]["queueDer"].index(elemento)
+                                    elemento_relay = copy(elemento)
+                                    print("posicion relay: ",posicion_relay)
+                                    print("elemento relay: ",elemento_relay)
+                                    self.model.robots[self.module]["queueDer"].pop(posicion_relay)
+                                    self.model.robots[self.module]["queueDer"].append(elemento_relay)
+                                    print("se mueve RELAY ROJO RELX al final")
+
                         except:
                             pass
-                    #///////////////////////////////////////////////////////////////////////
+                    #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         
                     self.queueIzq      = self.model.robots[self.module]["queueIzq"]
                     self.queueDer      = self.model.robots[self.module]["queueDer"]
@@ -391,7 +450,8 @@ class MyThread(QThread):
                         box             = current_trig[0]
                         cavity          = current_trig[1]
                         fuse            = current_trig[2].split(sep = ",") # ["type", "current", "color"]
-
+                        
+                        ###### Modif para imagenes de F96 #######
                         if box == "PDC-RMID" and cavity == "F96":
                             box = "F96_box"
                             command = {
@@ -438,6 +498,7 @@ class MyThread(QThread):
                                 "img_center": f"{box}2.jpg",
                                 "img_fuse": "vacio2.jpg"
                                 }
+                        #########################################
 
                         else:
                             command = {
@@ -450,6 +511,7 @@ class MyThread(QThread):
                                 command["lbl_steps"] = {"text": f"Tomando Relay", "color": "black"}
                         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
             
+                        #modificaciones especiales para triggers especiales que se mandarán como instrucciones al robot
                         if box == "TBLU":
                             cavity = "F10" + cavity[-1]
                         if box == "PDC-S":
@@ -458,14 +520,23 @@ class MyThread(QThread):
                             fuse[0] = fuse[0] + "C"
 
                         box = box.replace("-","")
-                        command = {"trigger": f"{fuse[0]}_{fuse[1]},{box},{cavity}"}
+                        command = {"trigger": f"{fuse[0]}_{fuse[1]},{box},{cavity}"} ############## #mensaje final que se enviará al robot
                         if "REL" in cavity:
                             temp = ""
                             if "60" in fuse[1]:
+                                #if "RELX" in cavity:
+                                #si se trata de un relevador se activa esta variable para pedir su inserción mediante el botón
+                                self.model.waiting_button_inserted_singal[self.module] = True
+                                comm_info0 = {
+                                    "lbl_info0" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
+                                    }
+                                publish.single(self.model.pub_topics["gui"],json.dumps(comm_info0),hostname='127.0.0.1', qos = 2)
                                 temp = "RELAY_132"
                             elif "70" in fuse[1]:
                                 temp = "RELAY_112"
-                            command["trigger"] =  f"{temp},{box},{cavity}"
+
+                            #se modifica trigger solamente cuando se trata de un relay
+                            command["trigger"] =  f"{temp},{box},{cavity}" 
 
                         print("*******current_trig*******\n")
                         print("BOX: ",box,"\nCAVITY: ",cavity,"\nFUSE: ",fuse)
@@ -488,7 +559,6 @@ class MyThread(QThread):
                             print("enviando instruccion al robot: ",self.module)
                             publish.single(self.model.pub_topics[self.module] ,json.dumps(command),hostname='127.0.0.1', qos = 2)
 
-
                     #si acabó el lado anterior  y aún tiene fusibles de este lado
                     elif len(self.queueDer) > 0:
                         self.model.popQueueIzq_2 = False
@@ -510,6 +580,7 @@ class MyThread(QThread):
                         cavity          = current_trig[1]
                         fuse            = current_trig[2].split(sep = ",") # ["type", "current", "color"]
 
+                        ###### Modif para imagenes de F96 #######
                         if box == "PDC-RMID" and cavity == "F96":
                             box = "F96_box"
                             command = {
@@ -556,6 +627,7 @@ class MyThread(QThread):
                                 "img_center": f"{box}2.jpg",
                                 "img_fuse": "vacio2.jpg"
                                 }
+                        #########################################
                         else:
                             command = {
                                 "lbl_result" : {"text": f"{fuse[0]} {fuse[1]}", "color": "green"},
@@ -567,6 +639,7 @@ class MyThread(QThread):
                                 command["lbl_steps"] = {"text": f"Tomando Relay", "color": "black"}
                         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
             
+                        #modificaciones especiales para triggers especiales que se mandarán como instrucciones al robot
                         if box == "TBLU":
                             cavity = "F10" + cavity[-1]
                         if box == "PDC-S":
@@ -575,13 +648,25 @@ class MyThread(QThread):
                             fuse[0] = fuse[0] + "C"
 
                         box = box.replace("-","")
-                        command = {"trigger": f"{fuse[0]}_{fuse[1]},{box},{cavity}"}
+                        command = {"trigger": f"{fuse[0]}_{fuse[1]},{box},{cavity}"} ############## #mensaje final que se enviará al robot
+                        
                         if "REL" in cavity:
+                            
                             temp = ""
                             if "60" in fuse[1]:
+                                #if "RELX" in cavity:
+                                #si se trata de un relevador se activa esta variable para pedir su inserción mediante el botón
+                                self.model.waiting_button_inserted_singal[self.module] = True
+                                comm_info0 = {
+                                    "lbl_info0" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
+                                    }
+                                publish.single(self.model.pub_topics["gui"],json.dumps(comm_info0),hostname='127.0.0.1', qos = 2)
                                 temp = "RELAY_132"
+
                             elif "70" in fuse[1]:
                                 temp = "RELAY_112"
+
+                            #se modifica trigger solamente cuando se trata de un relay
                             command["trigger"] =  f"{temp},{box},{cavity}"
             
                         print("*******current_trig*******\n")
@@ -606,7 +691,6 @@ class MyThread(QThread):
 
                     else: #YA NO HAY FUSIBLES EN COLA
             
-
                         command = {"trigger": "HOME"}
                         publish.single(self.model.pub_topics[self.module] ,json.dumps(command),hostname='127.0.0.1', qos = 2)
 
@@ -748,12 +832,12 @@ class MyThread(QThread):
                 if self.model.error_thread_robot == True:
                     self.model.error_thread_robot = False
                     print("|||||||Dentro de Estado Error PARALELO")
-
                     #para detener al robot opuesto pero dejar que intente sus inserciones pendientes
                     self.model.detener_robot_opuesto = True
 
                     box = self.model.robots[self.module]["current_trig"][0]
                     cavity = self.model.robots[self.module]["current_trig"][1]
+
                     if box == "PDC-RMID" and cavity == "F96":
                         box = "F96_box"
                     if box == "PDC-R" and cavity == "F96":
