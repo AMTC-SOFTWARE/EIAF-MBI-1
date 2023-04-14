@@ -193,7 +193,8 @@ class Model (object):
             }
 
         self.config_data = {
-            "trazabilidad": True
+            "trazabilidad": True,
+            "modo_manual": False
         }
   
         self.codes = {

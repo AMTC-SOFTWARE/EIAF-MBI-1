@@ -328,6 +328,7 @@ class CheckQr (QState):
 
     ok_F4   = pyqtSignal()
     ok_CTRL   = pyqtSignal()
+    ok_MANUAL = pyqtSignal() 
 
     nok     = pyqtSignal()
     rework  = pyqtSignal()
@@ -741,32 +742,44 @@ class CheckQr (QState):
                 print("dbEvent: ",dbEvent)
                 event = dbEvent.upper()
                 evento = event.replace('_',' ')
-                command = {
-                    "lbl_result" : {"text": "Datamatrix OK", "color": "green"},
-                    "lbl_steps" : {"text": "Coloca el resto de las cajas", "color": "black"},
-                    "statusBar" : orden["MODULARIDAD"]+" "+self.model.codes["HM"]+" "+evento,
-                    #"img_center" : f"boxes/{batt}.jpg"  #Aqui actualizar la imagen principal con un colage de las cajas que faltan por clampear
-                    }
-                publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
-                Timer(0.1, self.fuseBoxesClamps).start()
 
-                #################################
-                print("self.model.robots_mode EN CHECK_QR: ",self.model.robots_mode)
-                if self.model.robots_mode == 1:
-                    #"MODO UN ROBOT ACTIVADO"
-                    command = {"lbl_nuts" : {"text": "MODO: UN ROBOT", "color": "purple"}}
+                if self.model.config_data["modo_manual"] == True:
+                    command = {
+                        "lbl_result" : {"text": "Datamatrix OK", "color": "green"},
+                        "lbl_steps" : {"text": "MODO INSERCIÓN MANUAL", "color": "black"},
+                        "statusBar" : orden["MODULARIDAD"]+" "+self.model.codes["HM"]+" "+evento,
+                        #"img_center" : f"boxes/{batt}.jpg"  #Aqui actualizar la imagen principal con un colage de las cajas que faltan por clampear
+                        }
                     publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
-                    self.ok_F4.emit()
+                    self.ok_MANUAL.emit()
 
-                elif self.model.robots_mode == 2:
-                    #"MODO DOS ROBOTS ACTIVADOS"
-                    command = {"lbl_nuts" : {"text": "MODO: DOS ROBOTS", "color": "purple"}}
-                    publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
-                    self.ok_CTRL.emit()
                 else:
-                    self.nok.emit()
-                ################################
-                #self.ok.emit()
+                    command = {
+                        "lbl_result" : {"text": "Datamatrix OK", "color": "green"},
+                        "lbl_steps" : {"text": "Coloca el resto de las cajas", "color": "black"},
+                        "statusBar" : orden["MODULARIDAD"]+" "+self.model.codes["HM"]+" "+evento,
+                        #"img_center" : f"boxes/{batt}.jpg"  #Aqui actualizar la imagen principal con un colage de las cajas que faltan por clampear
+                        }
+                    publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+                    Timer(0.1, self.fuseBoxesClamps).start()
+
+                    #################################
+                    print("self.model.robots_mode EN CHECK_QR: ",self.model.robots_mode)
+                    if self.model.robots_mode == 1:
+                        #"MODO UN ROBOT ACTIVADO"
+                        command = {"lbl_nuts" : {"text": "MODO: UN ROBOT", "color": "purple"}}
+                        publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+                        self.ok_F4.emit()
+
+                    elif self.model.robots_mode == 2:
+                        #"MODO DOS ROBOTS ACTIVADOS"
+                        command = {"lbl_nuts" : {"text": "MODO: DOS ROBOTS", "color": "purple"}}
+                        publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+                        self.ok_CTRL.emit()
+                    else:
+                        self.nok.emit()
+                    ################################
+
             else:
                 self.rework.emit()
                 return

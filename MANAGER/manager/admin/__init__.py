@@ -34,12 +34,18 @@ class Admin (QDialog):
         else:
             self.ui.checkBox_2.setChecked(False)
 
+        if self.data.config_data["modo_manual"] == True:
+            self.ui.checkBox_3.setChecked(True)
+        else:
+            self.ui.checkBox_3.setChecked(False)
+
 
         self.ui.btn_reset.clicked.connect(self.resetMachine)
         self.ui.btn_off.clicked.connect(self.poweroff)
 
         self.ui.checkBox_1.stateChanged.connect(self.onClicked_1)
         self.ui.checkBox_2.stateChanged.connect(self.onClicked_2)
+        self.ui.checkBox_3.stateChanged.connect(self.onClicked_3)
 
         #self.data.transitions.torque_bw.connect(self.torqueUpdate)
 
@@ -54,26 +60,31 @@ class Admin (QDialog):
             self.ui.btn_reset.setEnabled(True)
             self.ui.checkBox_1.setEnabled(True)
             self.ui.checkBox_2.setEnabled(True)
+            self.ui.checkBox_3.setEnabled(False)
         elif self.user_type == "CALIDAD":
             self.ui.btn_off.setEnabled(False)
             self.ui.btn_reset.setEnabled(False)
             self.ui.checkBox_1.setEnabled(True)
             self.ui.checkBox_2.setEnabled(False)
+            self.ui.checkBox_3.setEnabled(True)
         elif self.user_type == "MANTENIMIENTO":
             self.ui.btn_off.setEnabled(True)
             self.ui.btn_reset.setEnabled(True)
             self.ui.checkBox_1.setEnabled(True)
             self.ui.checkBox_2.setEnabled(False)
+            self.ui.checkBox_3.setEnabled(False)
         elif self.user_type == "PRODUCCION":
             self.ui.btn_off.setEnabled(False)
             self.ui.btn_reset.setEnabled(False)
             self.ui.checkBox_1.setEnabled(False)
             self.ui.checkBox_2.setEnabled(False)
+            self.ui.checkBox_3.setEnabled(False)
         elif self.user_type == "OPERADOR":
             self.ui.btn_off.setEnabled(False)
             self.ui.btn_reset.setEnabled(False)
             self.ui.checkBox_1.setEnabled(False)
             self.ui.checkBox_2.setEnabled(False)
+            self.ui.checkBox_3.setEnabled(False)
         self.show()
 
 ###################################### MQTT Client ########################################
@@ -148,6 +159,24 @@ class Admin (QDialog):
             self.pop_out.setWindowTitle("Acción Realizada")
             QTimer.singleShot(3000, self.pop_out.button(QMessageBox.Ok).click)
             self.pop_out.exec()
+
+
+    def onClicked_3(self):
+        if self.ui.checkBox_3.isChecked():
+            self.data.config_data["modo_manual"] = True
+            print("Modo Inserción Manual Habilitado")
+            self.pop_out.setText("Modo Inserción Manual ha sido Habilitado")
+            self.pop_out.setWindowTitle("Acción Realizada")
+            QTimer.singleShot(2000, self.pop_out.button(QMessageBox.Ok).click)
+            self.pop_out.exec()
+        else:
+            self.data.config_data["modo_manual"] = False
+            print("Modo Inserción Manual Deshabilitado")
+            self.pop_out.setText("Modo Inserción Manual ha sido Deshabilitado")
+            self.pop_out.setWindowTitle("Acción Realizada")
+            QTimer.singleShot(2000, self.pop_out.button(QMessageBox.Ok).click)
+            self.pop_out.exec()
+
 ###################################### Events Functions ##################################
     def torqueUpdate(self):
         if self.torques:
