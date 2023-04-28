@@ -19,6 +19,10 @@ import requests
 import openpyxl
 import json
 import os
+from model import model
+
+datos_conexion=model()
+host,user,password,database,serverp2,dbp2,userp2,passwordp2=datos_conexion.datos_acceso()
 
 modules = {}
 
@@ -93,7 +97,7 @@ fuses_color = {
 def makeModules(data):
     global modules
     # Se manda llamar a la función encargada de consultar los módulos determinantes desde la base de datos, para posteriormente meterlos en un json llamado "pdcrVariantes".
-    endpoint = f"http://127.0.0.1:5000/api/get/{data}/pdcr/variantes"
+    endpoint = f"http://{host}:5000/api/get/{data}/pdcr/variantes"
     pdcrVariantes = requests.get(endpoint).json()
     print("Lista Final de Variantes PDC-R: \n",pdcrVariantes)
     modules = {}
@@ -192,20 +196,20 @@ def updateModules(data):
     print("updating")
     tabla = data[0]["DBEVENT"]
     print("TABLAAAAA Update Modules+-+-+-+-: ",tabla)
-    endpoint = f"http://127.0.0.1:5000/api/get/{tabla}/modulos_fusibles/all/-/-/-/-/-"
+    endpoint = f"http://{host}:5000/api/get/{tabla}/modulos_fusibles/all/-/-/-/-/-"
     existing = requests.get(endpoint).json()
     if not("MODULO" in existing):
         existing["MODULO"] = []
     for i in data:
         try:
             if not(i["MODULO"] in existing["MODULO"]):
-                endpoint = "http://127.0.0.1:5000/api/post/modulos_fusibles"
+                endpoint = f"http://{host}:5000/api/post/modulos_fusibles"
                 response = requests.post(endpoint, data = json.dumps(i))
             else:
                 #pass
                 index = existing["MODULO"].index(i["MODULO"])
                 id = existing["ID"][index]
-                endpoint = f"http://127.0.0.1:5000/api/update/modulos_fusibles/{id}"
+                endpoint = f"http://{host}:5000/api/update/modulos_fusibles/{id}"
                 response = requests.post(endpoint, data = json.dumps(i))
         except Exception as ex:
             print (ex)
@@ -246,7 +250,7 @@ def refreshModules(data):
 def makeModularities(data):
     global modules
     print("#################### Modularities ####################")
-    endpoint = f"http://127.0.0.1:5000/api/get/{data}/modulos_fusibles/all/-/-/-/-/-"
+    endpoint = f"http://{host}:5000/api/get/{data}/modulos_fusibles/all/-/-/-/-/-"
     modulesExisting = requests.get(endpoint).json()
     #print("Modulos existentes en la base de datos: ",modulesExisting["MODULO"])
     dir_path = os.path.join(os.getcwd(), '..\\ILX\\')
@@ -307,20 +311,20 @@ def updateModularities(data):
     print("updating")
     print("Data dentro de Upload Modularities: ",data)
     tabla = data[0]["DBEVENT"]
-    endpoint = f"http://127.0.0.1:5000/api/get/{tabla}/modularidades/all/-/-/-/-/-"
+    endpoint = f"http://{host}:5000/api/get/{tabla}/modularidades/all/-/-/-/-/-"
     existing = requests.get(endpoint).json()
     if not("MODULARIDAD" in existing):
         existing["MODULARIDAD"] = []
     for i in data:
         try:
             if not(i["MODULARIDAD"] in existing["MODULARIDAD"]):
-                endpoint = "http://127.0.0.1:5000/api/post/modularidades"
+                endpoint = f"http://{host}:5000/api/post/modularidades"
                 response = requests.post(endpoint, data = json.dumps(i))
             else:
                 #pass
                 index = existing["MODULARIDAD"].index(i["MODULARIDAD"])
                 id = existing["ID"][index]
-                endpoint = f"http://127.0.0.1:5000/api/update/modularidades/{id}"
+                endpoint = f"http://{host}:5000/api/update/modularidades/{id}"
                 response = requests.post(endpoint, data = json.dumps(i))
         except Exception as ex:
             print (ex)
@@ -391,20 +395,20 @@ def updateDeterminantes(data):
     print("updating")
     tabla = data[0]["DBEVENT"]
     print("Update determinantes evento+-+-+-+-: ",tabla)
-    endpoint = f"http://127.0.0.1:5000/api/get/{tabla}/definiciones/all/-/-/-/-/-"
+    endpoint = f"http://{host}:5000/api/get/{tabla}/definiciones/all/-/-/-/-/-"
     existing = requests.get(endpoint).json()
     if not("MODULO" in existing):
         existing["MODULO"] = []
     for i in data:
         try:
             if not(i["MODULO"] in existing["MODULO"]):
-                endpoint = "http://127.0.0.1:5000/api/post/definiciones"
+                endpoint = f"http://{host}:5000/api/post/definiciones"
                 response = requests.post(endpoint, data = json.dumps(i))
             else:
                 #pass
                 index = existing["MODULO"].index(i["MODULO"])
                 id = existing["ID"][index]
-                endpoint = f"http://127.0.0.1:5000/api/update/definiciones/{id}"
+                endpoint = f"http://{host}:5000/api/update/definiciones/{id}"
                 response = requests.post(endpoint, data = json.dumps(i))
         except Exception as ex:
             print (ex)

@@ -31,7 +31,8 @@ class Startup(QState):
         if self.model.local_data["user"]["type"] != "":
             Timer(0.05, self.logout, args = (copy(self.model.local_data["user"]),)).start()
         command = {
-            "lbl_info0" : {"text": "close", "color": "black"},
+            "popout_relay" : {"text": "close", "color": "black"},
+            "lbl_info0" : {"text": "", "color": "black"},
             "lbl_info1" : {"text": "", "color": "black"},
             #"lbl_info2" : {"text": "", "color": "green"}, #debe ir comentado para evitar que se reinicie el mensaje de fusibles que faltan por rellenar
             "lbl_info3" : {"text": "", "color": "black"},
@@ -60,7 +61,7 @@ class Startup(QState):
 
         #self.hideSoftware()
         #Timer(1, self.hideSoftware).start()
-        Timer(1, self.kioskMode).start()
+        ##############################################Timer(1, self.kioskMode).start()
 
         if exists("data\config"):
             with open("data\config", "rb") as f:
@@ -187,7 +188,7 @@ class StartCycle (QState):
         Timer(1, self.robots_home).start()
         Timer(0.05, self.model.log, args = ("IDLE",)).start() 
         command = {
-            "lbl_info0" : {"text": "close", "color": "red"},
+            "popout_relay" : {"text": "close", "color": "red"},
             "lbl_info1" : {"text": "", "color": "black"},
             #"lbl_info2" : {"text": "", "color": "green"},
             "lbl_info3" : {"text": "", "color": "black"},
@@ -222,6 +223,12 @@ class StartCycle (QState):
             command["lbl_info3"] = {"text": "Trazabilidad\nActivada", "color": "green"}
         else:
             command["lbl_info3"] = {"text": "Trazabilidad\nDesactivada", "color": "red"}
+        if self.model.config_data["modo_manual"] == True:
+            command["lbl_info0"] = {"text": "MODO\nMANUAL", "color": "darkmagenta"}
+            command["lbl_result"] = {"text": "Nuevo Ciclo", "color": "black"}
+            command["lbl_steps"] = {"text": 'Presionar "CTRL" para Comenzar ciclo MANUAL', "color": "black"}
+        else:
+            command["lbl_info0"] = {"text": "", "color": "red"}
         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
       
     def robots_home (self):

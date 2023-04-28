@@ -250,7 +250,7 @@ class MqttClient (QObject):
 
                                 #si no está activada la variable en ningún robot, se borra el label
                                 if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
-                                    command = {"lbl_info0" : {"text": "close", "color": "red"}}
+                                    command = {"popout_relay" : {"text": "close", "color": "red"}}
                                     self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
 
                                 print("se valida inserción de robot_a y se manda un stop start")
@@ -287,7 +287,7 @@ class MqttClient (QObject):
 
                                 #si no está activada la variable en ningún robot, se borra el label
                                 if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
-                                    command = {"lbl_info0" : {"text": "close", "color": "red"}}
+                                    command = {"popout_relay" : {"text": "close", "color": "red"}}
                                     self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
 
                                 print("se valida inserción de Relay de robot_b y se manda un stop start")
@@ -957,7 +957,7 @@ class MqttClient (QObject):
                                 self.model.waiting_button_inserted_singal["robot_a"] = False
                                 #si no está activada la variable en ningún robot, se borra el label
                                 if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
-                                    command = {"lbl_info0" : {"text": "close", "color": "red"}}
+                                    command = {"popout_relay" : {"text": "close", "color": "red"}}
                                     self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
 
                             if self.model.current_thread_robot == "robot_a":
@@ -1124,7 +1124,7 @@ class MqttClient (QObject):
                                 self.model.waiting_button_inserted_singal["robot_b"] = False
                                 #si no está activada la variable en ningún robot, se borra el label
                                 if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
-                                    command = {"lbl_info0" : {"text": "close", "color": "red"}}
+                                    command = {"popout_relay" : {"text": "close", "color": "red"}}
                                     self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
 
                             if self.model.current_thread_robot == "robot_b":

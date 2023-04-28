@@ -3,8 +3,13 @@ from datetime import datetime, timedelta, date, time
 
 class model(object):
     def __init__(self, parent=None):
-        self.host = "127.0.0.1"
-        self.user = "admin"
+
+        #self.host = "127.0.0.1"
+        #self.user = "admin"
+        #self.password = "4dm1n_001"
+
+        self.host = "10.71.82.150"
+        self.user = "dedicado"
         self.password = "4dm1n_001"
         self.database = "eiaf"
 

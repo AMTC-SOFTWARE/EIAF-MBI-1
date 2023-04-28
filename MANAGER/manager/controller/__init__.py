@@ -88,6 +88,12 @@ class Controller (QObject):
         self.qr_rework.addTransition(self.qr_rework.ok, self.check_qr)
         #self.check_qr.addTransition(self.check_qr.ok, self.clamps_monitor_a)
 
+        #al llegar la señal de modo manual se ingresa a este modo
+        self.check_qr.addTransition(self.check_qr.ok_MANUAL, self.modo_manual)
+        #al presionar la tecla CTRL se finaliza el modo manual y se hacen los publish de trazabilidad si está habilitada
+        self.modo_manual.addTransition(self.client.CTRL, self.self.finish)
+
+
         self.check_qr.addTransition(self.check_qr.ok_F4, self.clamps_monitor_a)
         self.clamps_monitor_a.addTransition(self.client.clamp, self.clamps_monitor_a)
         self.clamps_monitor_a.addTransition(self.clamps_monitor_a.ok, self.clamps_standby_a)
@@ -528,7 +534,7 @@ class MyThread(QThread):
                                 #si se trata de un relevador se activa esta variable para pedir su inserción mediante el botón
                                 self.model.waiting_button_inserted_singal[self.module] = True
                                 comm_info0 = {
-                                    "lbl_info0" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
+                                    "popout_relay" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
                                     }
                                 publish.single(self.model.pub_topics["gui"],json.dumps(comm_info0),hostname='127.0.0.1', qos = 2)
                                 temp = "RELAY_132"
@@ -658,7 +664,7 @@ class MyThread(QThread):
                                 #si se trata de un relevador se activa esta variable para pedir su inserción mediante el botón
                                 self.model.waiting_button_inserted_singal[self.module] = True
                                 comm_info0 = {
-                                    "lbl_info0" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
+                                    "popout_relay" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
                                     }
                                 publish.single(self.model.pub_topics["gui"],json.dumps(comm_info0),hostname='127.0.0.1', qos = 2)
                                 temp = "RELAY_132"
