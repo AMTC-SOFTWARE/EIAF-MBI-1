@@ -264,6 +264,7 @@ class Model (object):
         self.popQueueIzq_2 = False
         self.popQueueDer_2 = False
         self.databaseTempModel = []
+        self.modularity_manual = [] #variable lista, para guardar todo el contenido del arnés para modo manual
 
     def fusesInit(self):
         self.database["fuses"] = {
@@ -356,6 +357,7 @@ class Model (object):
         self.popQueueIzq_2 = False
         self.popQueueDer_2 = False
         self.databaseTempModel.clear()
+        self.modularity_manual.clear()
 
         self.codes = {
             "FET": "--",

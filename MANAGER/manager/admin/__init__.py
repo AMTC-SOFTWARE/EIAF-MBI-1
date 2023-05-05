@@ -60,7 +60,7 @@ class Admin (QDialog):
             self.ui.btn_reset.setEnabled(True)
             self.ui.checkBox_1.setEnabled(True)
             self.ui.checkBox_2.setEnabled(True)
-            self.ui.checkBox_3.setEnabled(False)
+            self.ui.checkBox_3.setEnabled(True)
         elif self.user_type == "CALIDAD":
             self.ui.btn_off.setEnabled(False)
             self.ui.btn_reset.setEnabled(False)

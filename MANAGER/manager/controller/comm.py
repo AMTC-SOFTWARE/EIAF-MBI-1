@@ -59,6 +59,8 @@ class MqttClient (QObject):
     color_PDCS = "blue"
     color_TBLU = "blue"
 
+    disable_ctrl = False
+
     keyboard_key = ""
     keyboard_value = False
     llave = False
@@ -151,6 +153,9 @@ class MqttClient (QObject):
         self.model.error_thread_robot       = False
         self.model.limite_reintentos_thread = False
         self.model.llave_thread             = False
+
+    def reactivar_ctrl(self):
+        self.disable_ctrl = False
 
 ################################################################################
     #se ejecuta cada que entra un mensaje MQTT nuevo (secuencial pero pueden llegar al mismo tiempo)
@@ -794,17 +799,25 @@ class MqttClient (QObject):
 
                 if self.keyboard_key == "keyboard_ctrl":
                     
-                    if self.model.problema_trazabilidad == True:
-                        self.model.problema_trazabilidad = False
-                        print("problema_trazabilidad = True, se hace false y se emite señal de continuar")
-                        self.continue_traza.emit()
-                    else:
+                    if self.disable_ctrl == False:
+                        print("CTRL presionado")
 
-                        #solo se puede modificar antes de iniciar el ciclo
-                        if self.model.robots_mode == 0:
-                            self.model.robots_mode = 2
-                            print("self.model.robots_mode keyboard_ctrl: ",self.model.robots_mode)
-                        self.CTRL.emit()
+                        self.disable_ctrl = True
+                        Timer(2, self.reactivar_ctrl).start()
+
+                        if self.model.problema_trazabilidad == True:
+                            self.model.problema_trazabilidad = False
+                            print("problema_trazabilidad = True, se hace false y se emite señal de continuar")
+                            self.continue_traza.emit()
+                        else:
+
+                            #solo se puede modificar antes de iniciar el ciclo
+                            if self.model.robots_mode == 0:
+                                self.model.robots_mode = 2
+                                print("self.model.robots_mode keyboard_ctrl: ",self.model.robots_mode)
+                            self.CTRL.emit()
+                    else:
+                        print("CTRL deshabilitado, espere 2 segundos")
                 
             if message.topic == self.model.sub_topics["gui"]:
                 if "request" in payload:

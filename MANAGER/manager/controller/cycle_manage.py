@@ -15,7 +15,9 @@ from cv2 import imread
 from os import system
 from copy import copy
 import requests
+import pprint
 import json
+import cv2
 
 from admin import Admin       
 
@@ -225,7 +227,7 @@ class StartCycle (QState):
             command["lbl_info3"] = {"text": "Trazabilidad\nDesactivada", "color": "red"}
         if self.model.config_data["modo_manual"] == True:
             command["lbl_info0"] = {"text": "MODO\nMANUAL", "color": "darkmagenta"}
-            command["lbl_result"] = {"text": "Nuevo Ciclo", "color": "black"}
+            command["lbl_result"] = {"text": "Nuevo Ciclo", "color": "green"}
             command["lbl_steps"] = {"text": 'Presionar "CTRL" para Comenzar ciclo MANUAL', "color": "black"}
         else:
             command["lbl_info0"] = {"text": "", "color": "red"}
@@ -758,6 +760,29 @@ class CheckQr (QState):
                         #"img_center" : f"boxes/{batt}.jpg"  #Aqui actualizar la imagen principal con un colage de las cajas que faltan por clampear
                         }
                     publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+
+                    self.model.modularity_manual.clear()
+
+                    #SE GUARDA LA INFORMACION EN UNA SOLA LISTA
+                    for elemento in self.model.robots["robot_a"]["queueIzq"]:
+                        self.model.modularity_manual.append(elemento)
+                    for elemento in self.model.robots["robot_a"]["queueDer"]:
+                        self.model.modularity_manual.append(elemento)
+                    for elemento in self.model.robots["robot_b"]["queueIzq"]:
+                        if "F96" in elemento[1]:
+                            elemento[0] = "F96"
+                        self.model.modularity_manual.append(elemento)
+                    for elemento in self.model.robots["robot_b"]["queueDer"]:
+                        if "F96" in elemento[1]:
+                            elemento[0] = "F96"
+                        self.model.modularity_manual.append(elemento)
+
+                    def ordenar_por_caja(elem):
+                        cajas = {"PDC-R":1,"PDC-RMID":2,"F96":3,"PDC-S":4,"TBLU":5,"PDC-D":6,"PDC-P":7}
+                        return cajas.get(elem[0],0)
+
+                    self.model.modularity_manual = sorted(self.model.modularity_manual, key=ordenar_por_caja)
+
                     self.ok_MANUAL.emit()
 
                 else:
@@ -1053,6 +1078,16 @@ class Finish (QState):
         ###########################################################
 
         print("current state: Finish (cycle_manage)")
+        command = {
+                    "lbl_result" : {"text": "Guardando Información", "color": "navy"},
+                    "lbl_steps" : {"text": 'Espere un momento', "color": "black"}
+                    }
+        publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+        Timer(0.05, self.save_info).start()
+
+
+    def save_info (self):
+
         #se reinicia el modo de los robots para escoger en el siguiente arnés
         self.model.robots_mode = 0
         self.model.thread_robot = False
@@ -1139,19 +1174,16 @@ class Finish (QState):
             }
             publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
 
-
-        Timer(0.1, self.finalMessage).start()
-        self.model.robothome_a = True # variable para activar Mensaje de enviar robot a home, se resetea sola en comm.py
-        self.model.robothome_b = True # variable para activar Mensaje de enviar robot a home, se resetea sola en comm.py
-        Timer(2,self.ok.emit).start()
-
-    def finalMessage(self):
         command = {
             "lbl_result" : {"text": "Ciclo terminado", "color": "green"},
             "lbl_steps" : {"text": "Retira las cajas", "color": "black"},
             "lbl_nuts" : {"text": "", "color": "purple"}
             }
         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+
+        self.model.robothome_a = True # variable para activar Mensaje de enviar robot a home, se resetea sola en comm.py
+        self.model.robothome_b = True # variable para activar Mensaje de enviar robot a home, se resetea sola en comm.py
+        self.ok.emit()
 
 class Reset (QState):
     ok      = pyqtSignal()
@@ -1255,3 +1287,343 @@ class Waiting_Robot (QState):
             "lbl_info3" : {"text": "", "color": "green"}
             }
         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+
+class ModoManual (QState):
+    ok      = pyqtSignal()
+    finish  = pyqtSignal()
+
+    def __init__(self, model = None, parent = None):
+        super().__init__(parent)
+        self.model = model
+
+    def onEntry(self, event):
+
+        print("---------------------ModoManual--------------------------")
+
+        #El. HMPRUEBAMANUAL01 ILX29620221004417TEST
+
+        print("Contenido de arnés: ")
+        #pprint.pprint(self.model.database["fuses"]) #también los empty
+        pprint.pprint(self.model.modularity_manual)
+
+        if len(self.model.modularity_manual) > 0:
+            caja_actual = copy(self.model.modularity_manual[0][0])
+            print("caja actual: ",caja_actual)
+
+            self.LlenadoDeImagen()
+
+            command = {
+                "lbl_result" : {"text": "Inserta los Fusibles manualmente", "color": "green"},
+                "lbl_steps" : {"text": 'Presiona "CRTL" para Finalizar caja', "color": "black"},
+                "img_center" : f"fusibles/{caja_actual}.jpg"  #Aqui actualizar la imagen principal con la siguiente CAJA
+                }
+            publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+        else:
+            command = {
+                "lbl_result" : {"text": "Finalizando Inserción", "color": "green"},
+                "lbl_steps" : {"text": 'Guardando Información', "color": "navy"},
+                "img_center" : "logo.jpg"
+                }
+            publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+            Timer(1,self.finish.emit).start()
+            #DESCOMENTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR PARA FINALIZAR MODO MANUAL
+        
+    def LlenadoDeImagen(self):
+        print("Llenando Imágen con Fusibles")
+        caja_actual = copy(self.model.modularity_manual[0][0])
+
+        fusibles_verticales = {"F400","F401","F402","F403","F404","F405","F406","F407","F408","F409","F410","F411",
+                               "F430","F431","F432","F433","F436",
+                               "F437","F438","F439","F440","F441","F442","F443","F444","F445","F446",
+                               "F450","F451","F452","F453","F454","F455","F456","F457","F458","F459","F460","F461",
+                               "1","2","3","4","5","6",
+                               "1","2","3","4","5","6","7","8","9"}
+
+        #leer imagen de caja
+        imgcaja = cv2.imread(self.model.imgs_path + "/fusibles/cajas/" + str(caja_actual) + ".jpg")
+        ancho_caja = imgcaja.shape[1] #columnas
+        alto_caja = imgcaja.shape[0] #filas
+
+        for elemento in self.model.modularity_manual:
+            if caja_actual in elemento[0]:
+                print(elemento)
+                #leer imagen de fusible
+                imgfusible = cv2.imread(self.model.imgs_path + "/fusibles/" + str(elemento[2]) + ".jpg")
+
+                if elemento[1] in fusibles_verticales:
+                    #Rotar imagen
+                    # Using cv2.rotate() method
+                    # Using cv2.ROTATE_90_CLOCKWISE rotate by 90 degrees clockwise
+                    # Using cv2.ROTATE_180 rotate by 180 degrees clockwise
+                    # Using cv2.ROTATE_90_COUNTERCLOCKWISE rotate by 270 degrees clockwise
+                    imgfusible = cv2.rotate(imgfusible, cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+                X=100
+                Y=100
+
+                if "PDC-R" in elemento[0]:
+                    if "F400" in elemento[1]:
+                        X=2490
+                        Y=1040
+                    if "F401" in elemento[1]:
+                        X=2440
+                        Y=1040
+                    if "F402" in elemento[1]:
+                        X=2390
+                        Y=1040
+                    if "F403" in elemento[1]:
+                        X=2340
+                        Y=1040
+                    if "F404" in elemento[1]:
+                        X=2290
+                        Y=1040
+                    if "F405" in elemento[1]:
+                        X=2240
+                        Y=1040
+
+
+                    if "F406" in elemento[1]:
+                        X=2125
+                        Y=1060
+                    if "F407" in elemento[1]:
+                        X=2075
+                        Y=1060
+                    if "F408" in elemento[1]:
+                        X=2025
+                        Y=1060
+                    if "F409" in elemento[1]:
+                        X=1975
+                        Y=1060
+                    if "F410" in elemento[1]:
+                        X=1925
+                        Y=1060
+                    if "F411" in elemento[1]:
+                        X=1875
+                        Y=1060
+
+
+                    if "F450" in elemento[1]:
+                        X=2490
+                        Y=355
+                    if "F451" in elemento[1]:
+                        X=2440
+                        Y=355
+                    if "F452" in elemento[1]:
+                        X=2390
+                        Y=355
+                    if "F453" in elemento[1]:
+                        X=2340
+                        Y=355
+                    if "F454" in elemento[1]:
+                        X=2290
+                        Y=355
+                    if "F455" in elemento[1]:
+                        X=2240
+                        Y=355
+
+
+                    if "F456" in elemento[1]:
+                        X=2125
+                        Y=355
+                    if "F457" in elemento[1]:
+                        X=2075
+                        Y=355
+                    if "F458" in elemento[1]:
+                        X=2025
+                        Y=355
+                    if "F459" in elemento[1]:
+                        X=1975
+                        Y=355
+                    if "F460" in elemento[1]:
+                        X=1925
+                        Y=355
+                    if "F461" in elemento[1]:
+                        X=1875
+                        Y=355
+
+
+                    if "F412" in elemento[1]:
+                        X=2585
+                        Y=1070
+                    if "F413" in elemento[1]:
+                        X=2585
+                        Y=1020
+                    if "F414" in elemento[1]:
+                        X=2585
+                        Y=970
+                    if "F415" in elemento[1]:
+                        X=2585
+                        Y=920
+                    if "F416" in elemento[1]:
+                        X=2585
+                        Y=870
+                    if "F417" in elemento[1]:
+                        X=2585
+                        Y=820
+
+
+                    if "F421" in elemento[1]:
+                        X=2585
+                        Y=705
+                    if "F422" in elemento[1]:
+                        X=2585
+                        Y=655
+                    if "F423" in elemento[1]:
+                        X=2585
+                        Y=605
+                    if "F424" in elemento[1]:
+                        X=2585
+                        Y=555
+                    if "F425" in elemento[1]:
+                        X=2585
+                        Y=505
+                    if "F426" in elemento[1]:
+                        X=2585
+                        Y=455
+
+
+                    if "F418" in elemento[1]:
+                        X=1620
+                        Y=1059
+                    if "F419" in elemento[1]:
+                        X=1620
+                        Y=943
+                    if "F420" in elemento[1]:
+                        X=1620
+                        Y=827
+
+
+                    if "F447" in elemento[1]:
+                        X=1620
+                        Y=672
+                    if "F448" in elemento[1]:
+                        X=1620
+                        Y=555
+                    if "F449" in elemento[1]:
+                        X=1620
+                        Y=440
+
+
+                    if "RELT" in elemento[1]:
+                        X=1875
+                        Y=800
+                    if "RELU" in elemento[1]:
+                        X=2100
+                        Y=800
+                    if "RELX" in elemento[1]:
+                        X=2355
+                        Y=800
+
+                if "F96" in elemento[0]:
+                    if "F96" in elemento[1]:
+                        X=100
+                        Y=100
+
+                if "PDC-S" in elemento[0]:
+                    if "1" in elemento[1]:
+                        X=440
+                        Y=205
+                    if "2" in elemento[1]:
+                        X=390
+                        Y=205
+                    if "3" in elemento[1]:
+                        X=340
+                        Y=205
+                    if "4" in elemento[1]:
+                        X=290
+                        Y=205
+                    if "5" in elemento[1]:
+                        X=240
+                        Y=205
+                    if "6" in elemento[1]:
+                        X=190
+                        Y=205
+
+                if "TBLU" in elemento[0]:
+                    if "1" in elemento[1]:
+                        X=440
+                        Y=205
+                    if "2" in elemento[1]:
+                        X=390
+                        Y=205
+                    if "3" in elemento[1]:
+                        X=340
+                        Y=205
+                    if "4" in elemento[1]:
+                        X=290
+                        Y=205
+                    if "5" in elemento[1]:
+                        X=240
+                        Y=205
+                    if "6" in elemento[1]:
+                        X=190
+                        Y=205
+                    if "7" in elemento[1]:
+                        X=140
+                        Y=205
+                    if "8" in elemento[1]:
+                        X=90
+                        Y=205
+                    if "9" in elemento[1]:
+                        X=40
+                        Y=205
+
+                #PDCRMID:
+                if "PDC-RMID" in elemento[0]:
+                    if "F401" in elemento[1]:
+                        X=2400
+                        Y=1400
+                    if "F402" in elemento[1]:
+                        X=2350
+                        Y=1400
+                    if "F403" in elemento[1]:
+                        X=2300
+                        Y=1400
+                    if "F404" in elemento[1]:
+                        X=2250
+                        Y=1400
+                    if "F405" in elemento[1]:
+                        X=2200
+                        Y=1400
+                    if "F406" in elemento[1]:
+                        X=2150
+                        Y=1400
+
+                print("X: ",X)
+                print("Y: ",Y)
+                #obtener ancho y alto de imágen de fusible
+                ancho_fusible = imgfusible.shape[1] #columnas
+                alto_fusible = imgfusible.shape[0] #filas
+                w=ancho_fusible
+                h=alto_fusible
+                #imgfusible = cv2.resize(imgfusible,(w,h))
+                imgcaja[Y:Y+h,X:X+w] = imgfusible
+
+                
+        #Guardar imagen
+        cv2.imwrite(self.model.imgs_path + f"/fusibles/{caja_actual}.jpg", imgcaja)
+
+
+
+    def onExit(self, event):
+        print("saliendo de ModoManual")
+
+        if len(self.model.modularity_manual) > 0:
+
+            print("se hace pop de la caja actual")
+            caja_actual = copy(self.model.modularity_manual[0][0]) 
+            copia_modularity = copy(self.model.modularity_manual)
+
+            #se recorre cada elemento: ['PDC-P', 'F318', 'MINI,7.5,brown'] y si el elemento 0, 'PDC-P' es igual a la caja actual, se retiran de la lista
+            for elemento in self.model.modularity_manual:
+                if caja_actual in elemento[0]:
+                    copia_modularity.pop(copia_modularity.index(elemento))
+
+            self.model.modularity_manual = copia_modularity
+
+            command = {
+                "lbl_result" : {"text": "Caja Finalizada", "color": "green"},
+                "lbl_steps" : {"text": 'Avanzando a Siguiente Caja', "color": "black"},
+                }
+            publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+        

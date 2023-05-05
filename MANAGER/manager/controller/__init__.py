@@ -55,6 +55,7 @@ class Controller (QObject):
         self.clamps_standby_both    = Clamps_Standby(module = "clamps",model = self.model, parent = self.process)
         
         self.standby_traza          = StandbyTraza(model = self.model, parent = self.process)
+        self.modo_manual            = ModoManual(model = self.model, parent = self.process)
 
         self.config                 = Config(model = self.model)
         self.reset                  = Reset(model = self.model)
@@ -88,10 +89,10 @@ class Controller (QObject):
         self.qr_rework.addTransition(self.qr_rework.ok, self.check_qr)
         #self.check_qr.addTransition(self.check_qr.ok, self.clamps_monitor_a)
 
-        #al llegar la señal de modo manual se ingresa a este modo
+        #al llegar la señal de modo manual se ingresa a este modo (se pone desde la configuración)
         self.check_qr.addTransition(self.check_qr.ok_MANUAL, self.modo_manual)
-        #al presionar la tecla CTRL se finaliza el modo manual y se hacen los publish de trazabilidad si está habilitada
-        self.modo_manual.addTransition(self.client.CTRL, self.self.finish)
+        self.modo_manual.addTransition(self.client.CTRL, self.modo_manual) #al dar CRTL se vuelve a evaluar, aquí ya con el pop de la caja que se realizó
+        self.modo_manual.addTransition(self.modo_manual.finish, self.finish) #al no haber más cajas se finaliza y se va a finish, aquí se guarda todo y se intenta el publish de traza
 
 
         self.check_qr.addTransition(self.check_qr.ok_F4, self.clamps_monitor_a)
