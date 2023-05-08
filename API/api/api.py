@@ -17,7 +17,10 @@ from flask import Flask, request
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 import requests
-
+from os.path import exists  #para saber si existe una carpeta o archivo
+from shutil import rmtree   #para eliminar carpeta con archivos dentro: rmtree("carpeta_con_archivos")
+from os import remove       #para eliminar archivo único: remove("archivo.txt")
+from os import rmdir        #para eliminar carpeta vacía: rmdir("carpeta_vacia")
 from datetime import datetime
 from time import strftime
 import pymysql
@@ -34,6 +37,27 @@ CORS(app)
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), '..\\')
 
 #####################################  Upload Files Services ####################################
+@app.route('/delete/filesmodularities', methods=['POST'])
+def delRef():
+    response = {"items": 0}
+    try:
+        path_carpeta = "..\\ILX";
+        #se obtiene true si existe la carpeta
+        existe_carpeta = os.path.isdir(path_carpeta)
+        if existe_carpeta == True:
+            try:
+                #Eliminar la carpeta (con archivos dentro) anteriormente generada, (pueden quedarse por algún error de la matriz al tratar de cargar un formato inválido)
+                #rmtree(path_carpeta)#para eliminar archivo único: from os import remove | remove("archivo.txt") ; para eliminar carpeta vacía: from os import rmdir | rmdir("carpeta_vacia")
+                print("se elimina la carpeta")
+                response = {"path" : 'Carpeta Eliminada desde la API,'}
+            except OSError as error:
+                print("ERROR AL ELIMINAR CARPETA:::\n",error)
+                response = {"exception" : ex.args}
+    except Exception as ex:
+        print("uploadRef Exception: ", ex)
+        response = {"exception" : ex.args}
+        return response
+
 @app.route('/upload/modularities', methods=['POST'])
 def uploadRef():
     response = {"items": 0}
@@ -48,6 +72,13 @@ def uploadRef():
                     filename.rsplit('.', 1)[1].lower() == "dat"
         if file and allowed_file:
             filename = secure_filename(file.filename)
+            path = os.path.join(app.config['UPLOAD_FOLDER'], 'ILX')
+            print(path, 'ACAAAAAAAA esta la ubicacion que se necesita subir')
+            isExist = os.path.exists(path)
+            if not isExist:
+                # Create a new directory because it does not exist 
+                os.makedirs(path)
+                print("The new directory is created!", path)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], "ILX", filename))
             response["items"] = 1
     except Exception as ex:
@@ -69,6 +100,16 @@ def updateModules():
     allowed_file = False
     file = None
     try:
+        path_carpeta = "..\\modules";
+        #se obtiene true si existe la carpeta
+        existe_carpeta = os.path.isdir(path_carpeta)
+        if existe_carpeta == True:
+            try:
+                #Eliminar la carpeta (con archivos dentro) anteriormente generada, (pueden quedarse por algún error de la matriz al tratar de cargar un formato inválido)
+                rmtree(path_carpeta)#para eliminar archivo único: from os import remove | remove("archivo.txt") ; para eliminar carpeta vacía: from os import rmdir | rmdir("carpeta_vacia")
+                print("se elimina la carpeta")
+            except OSError as error:
+                print("ERROR AL ELIMINAR CARPETA:::\n",error)
         data = request.form['DBEVENT']
         print("DB a la que se carga la Info: ",data)
         usuario = request.form['USUARIO']
@@ -81,6 +122,14 @@ def updateModules():
                     filename.rsplit('.', 1)[1].lower() in ['xls', 'xlsx']
         if file and allowed_file:
             filename = secure_filename(file.filename)
+            path = os.path.join(app.config['UPLOAD_FOLDER'], "modules")
+            #print(path, 'ACAAAAAAAA esta la ubicacion que se necesita subir')
+            isExist = os.path.exists(path)
+            if not isExist:
+                # Create a new directory because it does not exist 
+                os.makedirs(path)
+                print("The new directory is created!", path)
+
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], "modules", filename))
             auto_modularities.refreshModules(data)
             excelnew = {
@@ -105,6 +154,16 @@ def updateDeterminantes():
     allowed_file = False
     file = None
     try:
+        path_carpeta = "..\\determinantes";
+        #se obtiene true si existe la carpeta
+        existe_carpeta = os.path.isdir(path_carpeta)
+        if existe_carpeta == True:
+            try:
+                #Eliminar la carpeta (con archivos dentro) anteriormente generada, (pueden quedarse por algún error de la matriz al tratar de cargar un formato inválido)
+                rmtree(path_carpeta)#para eliminar archivo único: from os import remove | remove("archivo.txt") ; para eliminar carpeta vacía: from os import rmdir | rmdir("carpeta_vacia")
+                print("se elimina la carpeta")
+            except OSError as error:
+                print("ERROR AL ELIMINAR CARPETA:::\n",error)
         data = request.form['DBEVENT']
         print("DB a la que se carga la Info: ",data)
         usuario = request.form['USUARIO']
@@ -117,6 +176,13 @@ def updateDeterminantes():
                     filename.rsplit('.', 1)[1].lower() in ['xls', 'xlsx']
         if file and allowed_file:
             filename = secure_filename(file.filename)
+            path = os.path.join(app.config['UPLOAD_FOLDER'], "determinantes")
+            print(path, 'ACAAAAAAAA esta la ubicacion que se necesita subir')
+            isExist = os.path.exists(path)
+            if not isExist:
+                # Create a new directory because it does not exist 
+                os.makedirs(path)
+                print("The new directory is created!", path)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], "determinantes", filename))
             auto_modularities.refreshDeterminantes(data,usuario)
             response["items"] = 1
@@ -412,7 +478,7 @@ def newEvent():
 
     data = request.get_json(force=True)
     print("Data: ",data)
-    event_name = 'evento_'+data["EVENTO"]+"_X"+data["NUMERO"]+"_"+data["CONDUCCION"]
+    event_name = 'evento_'+data["EVENTO"]+"_"+data["NUMERO"]+"_"+data["CONDUCCION"]
     historial["USUARIO"] = data["USUARIO"]
     historial["DATETIME"] = data["DATETIME"]
     historial["DBEVENT"] = event_name

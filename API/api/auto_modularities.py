@@ -261,14 +261,49 @@ def makeModularities(data):
         "ILX": {},
         "Modulos": {}
         }
+    flujo = ""
+    numero = ""
+    if 'izquierda' in data:
+        print('EVENTO DE CONDUCCION IZQUIERDA')
+        if 'z296' in data or 'Z296' in data:
+            flujo = 'ILZ'
+            numero = '296'
+        if 'x296' in data or 'X296' in data:
+            flujo = 'ILX'
+            numero = '296'
+        if 'x294' in data or 'X294' in data: 
+            flujo = 'ILX'
+            numero = '294'
+    if 'derecha' in data:
+        print('EVENTO DE CONDUCCION DERECHA')
+        if 'z296' in data or 'Z296' in data:
+            flujo = 'IRZ'
+            numero = '296'
+        if 'x296' in data or 'X296' in data:
+            flujo = 'IRX'
+            numero = '296'
+        if 'x294' in data or 'X294' in data: 
+            flujo = 'IRX'
+            numero = '294'        
+    flujo_numero = flujo + numero
+
     for root, dirs, files in os.walk(dir_path):
         for file_name in files: 
             temp = file_name.lower()
             ILX = temp.split(sep = ".")[0].upper()
-            if temp.endswith('.dat'):
-                fic = open(dir_path + file_name)
-                lines = list(fic)
-                csv = ""
+        
+            if not(flujo_numero in file_name):# SI NO se encuentra el nombre esperado de inicio para un arnés de este tipo:
+                ilxfaltantes["ILX"][ILX] = []
+                ilxfaltantes["ILX"][ILX].append("No es un DAT válido para este evento") #se agrega el mensaje que no es un DAT válido
+                #ilxfaltantes["ILX"][ILX]["torque"].append("No es un DAT válido para este evento") #se agrega el mensaje que no es un DAT válido
+                modulosFaltantes.append(ILX) #se agrega a la lista final de módulos faltantes para que aparezca en pantalla
+                ilxfaltantes["Modulos"] = modulosFaltantes #se actualiza esta lista
+                os.remove(root+'\\'+ file_name) #se elimina el archivo de los DATS
+            else:
+                if temp.endswith('.dat'):
+                    fic = open(dir_path + file_name)
+                    lines = list(fic)
+                    csv = ""
                 for line in lines:
                     csv += line.rsplit(sep = "=")[-1][:-1] + ","
                 csv = csv[:-1]
@@ -287,15 +322,17 @@ def makeModularities(data):
                 #print("Modulos que tiene convertido a array TIPO: ",type(csv.split(",")))
                 modulosDesconocidos = set(csv.split(",")) - set(modulesExisting["MODULO"])
                 #print("Comparación; Modulos del ILX que NO están en la base de datos: ", modulosDesconocidos)
+                #print("Comparación; ILXFALTANTES: ", ilxfaltantes)
                 #print("Comparación; Modulos del ILX que NO están en la base de datos LEN: ", len(modulosDesconocidos))
                 #print("Comparación tipo", type(modulosDesconocidos))
+
                 if len(modulosDesconocidos) == 0:
                     modularities.append(temp)
                 else:
                     ilxfaltantes["ILX"][ILX] = []
                     for e in modulosDesconocidos:
                         ilxfaltantes["ILX"][ILX].append(e)
-                    #print(e)
+                        #print(e, "AAAAAAAA")
                         if not(e in modulosFaltantes):
                             modulosFaltantes.append(e)
                     ilxfaltantes["Modulos"] = modulosFaltantes
