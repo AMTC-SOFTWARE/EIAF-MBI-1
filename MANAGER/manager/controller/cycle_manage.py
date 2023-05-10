@@ -1383,211 +1383,321 @@ class ModoManual (QState):
 
 
                     if "F406" in elemento[1]:
-                        X=2125
+                        X=2120
                         Y=1060
                     if "F407" in elemento[1]:
-                        X=2075
+                        X=2070
                         Y=1060
                     if "F408" in elemento[1]:
-                        X=2025
+                        X=2020
                         Y=1060
                     if "F409" in elemento[1]:
-                        X=1975
+                        X=1970
                         Y=1060
                     if "F410" in elemento[1]:
-                        X=1925
+                        X=1920
                         Y=1060
                     if "F411" in elemento[1]:
-                        X=1875
+                        X=1870
                         Y=1060
 
 
                     if "F450" in elemento[1]:
-                        X=2490
-                        Y=355
+                        X=2470
+                        Y=325
                     if "F451" in elemento[1]:
-                        X=2440
-                        Y=355
+                        X=2420
+                        Y=325
                     if "F452" in elemento[1]:
-                        X=2390
-                        Y=355
+                        X=2370
+                        Y=325
                     if "F453" in elemento[1]:
-                        X=2340
-                        Y=355
+                        X=2320
+                        Y=325
                     if "F454" in elemento[1]:
-                        X=2290
-                        Y=355
+                        X=2270
+                        Y=325
                     if "F455" in elemento[1]:
-                        X=2240
-                        Y=355
+                        X=2220
+                        Y=325
 
 
                     if "F456" in elemento[1]:
-                        X=2125
-                        Y=355
+                        X=2105
+                        Y=325
                     if "F457" in elemento[1]:
-                        X=2075
-                        Y=355
+                        X=2055
+                        Y=325
                     if "F458" in elemento[1]:
-                        X=2025
-                        Y=355
+                        X=2005
+                        Y=325
                     if "F459" in elemento[1]:
-                        X=1975
-                        Y=355
+                        X=1955
+                        Y=325
                     if "F460" in elemento[1]:
-                        X=1925
-                        Y=355
+                        X=1905
+                        Y=325
                     if "F461" in elemento[1]:
-                        X=1875
-                        Y=355
+                        X=1855
+                        Y=325
 
 
                     if "F412" in elemento[1]:
-                        X=2585
+                        X=2555
                         Y=1070
                     if "F413" in elemento[1]:
-                        X=2585
+                        X=2555
                         Y=1020
                     if "F414" in elemento[1]:
-                        X=2585
+                        X=2555
                         Y=970
                     if "F415" in elemento[1]:
-                        X=2585
+                        X=2555
                         Y=920
                     if "F416" in elemento[1]:
-                        X=2585
+                        X=2555
                         Y=870
                     if "F417" in elemento[1]:
-                        X=2585
+                        X=2555
                         Y=820
 
 
                     if "F421" in elemento[1]:
-                        X=2585
+                        X=2555
                         Y=705
                     if "F422" in elemento[1]:
-                        X=2585
+                        X=2555
                         Y=655
                     if "F423" in elemento[1]:
-                        X=2585
+                        X=2555
                         Y=605
                     if "F424" in elemento[1]:
-                        X=2585
+                        X=2555
                         Y=555
                     if "F425" in elemento[1]:
-                        X=2585
+                        X=2555
                         Y=505
                     if "F426" in elemento[1]:
-                        X=2585
+                        X=2555
                         Y=455
 
 
                     if "F418" in elemento[1]:
-                        X=1620
+                        X=1585
                         Y=1059
                     if "F419" in elemento[1]:
-                        X=1620
+                        X=1585
                         Y=943
                     if "F420" in elemento[1]:
-                        X=1620
+                        X=1585
                         Y=827
 
 
                     if "F447" in elemento[1]:
-                        X=1620
-                        Y=672
+                        X=1585
+                        Y=664
                     if "F448" in elemento[1]:
-                        X=1620
-                        Y=555
+                        X=1585
+                        Y=551
                     if "F449" in elemento[1]:
-                        X=1620
-                        Y=440
+                        X=1585
+                        Y=438
 
 
                     if "RELT" in elemento[1]:
-                        X=1875
-                        Y=800
+                        X=1775
+                        Y=700
                     if "RELU" in elemento[1]:
-                        X=2100
-                        Y=800
+                        X=2000
+                        Y=700
                     if "RELX" in elemento[1]:
+                        X=2255
+                        Y=700
+
+                    if "F430" in elemento[1]:
                         X=2355
-                        Y=800
+                        Y=700
+                    if "F431" in elemento[1]:
+                        X=2355
+                        Y=700
+                    if "F432" in elemento[1]:
+                        X=2355
+                        Y=700
+                    if "F433" in elemento[1]:
+                        X=2355
+                        Y=700
+                    if "F436" in elemento[1]:
+                        X=2355
+                        Y=700
+
+
+                    if "F437" in elemento[1]:
+                        X=2355
+                        Y=500
+                    if "F438" in elemento[1]:
+                        X=2355
+                        Y=500
+                    if "F439" in elemento[1]:
+                        X=2355
+                        Y=500
+                    if "F440" in elemento[1]:
+                        X=2355
+                        Y=500
+                    if "F441" in elemento[1]:
+                        X=2355
+                        Y=500
+                    if "F442" in elemento[1]:
+                        X=2355
+                        Y=500
+                    if "F443" in elemento[1]:
+                        X=2355
+                        Y=500
+                    if "F444" in elemento[1]:
+                        X=2355
+                        Y=500
+                    if "F445" in elemento[1]:
+                        X=2355
+                        Y=500
+                    if "F446" in elemento[1]:
+                        X=2355
+                        Y=500
+
 
                 if "F96" in elemento[0]:
                     if "F96" in elemento[1]:
-                        X=100
-                        Y=100
+                        X=190
+                        Y=220
 
                 if "PDC-S" in elemento[0]:
                     if "1" in elemento[1]:
-                        X=440
-                        Y=205
+                        X=437
+                        Y=197
                     if "2" in elemento[1]:
-                        X=390
-                        Y=205
+                        X=387
+                        Y=197
                     if "3" in elemento[1]:
-                        X=340
-                        Y=205
+                        X=337
+                        Y=197
                     if "4" in elemento[1]:
-                        X=290
-                        Y=205
+                        X=287
+                        Y=197
                     if "5" in elemento[1]:
-                        X=240
-                        Y=205
+                        X=237
+                        Y=197
                     if "6" in elemento[1]:
-                        X=190
-                        Y=205
+                        X=187
+                        Y=197
 
                 if "TBLU" in elemento[0]:
                     if "1" in elemento[1]:
-                        X=440
-                        Y=205
+                        X=1235
+                        Y=240
                     if "2" in elemento[1]:
-                        X=390
-                        Y=205
+                        X=1125
+                        Y=240
                     if "3" in elemento[1]:
-                        X=340
-                        Y=205
+                        X=1015
+                        Y=240
                     if "4" in elemento[1]:
-                        X=290
-                        Y=205
+                        X=905
+                        Y=240
                     if "5" in elemento[1]:
-                        X=240
-                        Y=205
+                        X=795
+                        Y=240
                     if "6" in elemento[1]:
-                        X=190
-                        Y=205
+                        X=685
+                        Y=240
                     if "7" in elemento[1]:
-                        X=140
-                        Y=205
+                        X=575
+                        Y=240
                     if "8" in elemento[1]:
-                        X=90
-                        Y=205
+                        X=465
+                        Y=240
                     if "9" in elemento[1]:
-                        X=40
-                        Y=205
+                        X=355
+                        Y=240
+
+                if "PDC-D" in elemento[0]:
+                    
+                    if "F209" in elemento[1]:
+                        X=1185
+                        Y=1000
+                    if "F210" in elemento[1]:
+                        X=1585
+                        Y=1500
+                    if "F211" in elemento[1]:
+                        X=1100
+                        Y=920
+                    if "F212" in elemento[1]:
+                        X=900
+                        Y=900
+                    if "F213" in elemento[1]:
+                        X=800
+                        Y=800
+                    if "F214" in elemento[1]:
+                        X=1785
+                        Y=700
+                    if "F215" in elemento[1]:
+                        X=1585
+                        Y=600
+                    if "F216" in elemento[1]:
+                        X=1500
+                        Y=500
+
+                if "PDC-P" in elemento[0]:
+                    
+                    if "F226" in elemento[1]:
+                        X=500
+                        Y=1000
+                    if "F227" in elemento[1]:
+                        X=500
+                        Y=1500
+                    if "F228" in elemento[1]:
+                        X=100
+                        Y=900
+                    if "F229" in elemento[1]:
+                        X=900
+                        Y=900
+                    if "F230" in elemento[1]:
+                        X=800
+                        Y=800
+                    if "F231" in elemento[1]:
+                        X=1585
+                        Y=700
+                    if "F232" in elemento[1]:
+                        X=1585
+                        Y=600
+                    if "F233" in elemento[1]:
+                        X=1500
+                        Y=500
+                    if "F234" in elemento[1]:
+                        X=1500
+                        Y=500
+                    if "F235" in elemento[1]:
+                        X=1500
+                        Y=500
+
 
                 #PDCRMID:
                 if "PDC-RMID" in elemento[0]:
                     if "F401" in elemento[1]:
-                        X=2400
-                        Y=1400
+                        X=500
+                        Y=500
                     if "F402" in elemento[1]:
-                        X=2350
-                        Y=1400
+                        X=1000
+                        Y=1000
                     if "F403" in elemento[1]:
-                        X=2300
-                        Y=1400
+                        X=1500
+                        Y=1500
                     if "F404" in elemento[1]:
-                        X=2250
-                        Y=1400
+                        X=1500
+                        Y=1500
                     if "F405" in elemento[1]:
-                        X=2200
-                        Y=1400
+                        X=1500
+                        Y=1500
                     if "F406" in elemento[1]:
-                        X=2150
-                        Y=1400
+                        X=1500
+                        Y=1500
 
                 print("X: ",X)
                 print("Y: ",Y)
