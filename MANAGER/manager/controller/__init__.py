@@ -55,6 +55,7 @@ class Controller (QObject):
         self.clamps_standby_both    = Clamps_Standby(module = "clamps",model = self.model, parent = self.process)
         
         self.standby_traza          = StandbyTraza(model = self.model, parent = self.process)
+        self.modo_manual            = ModoManual(model = self.model, parent = self.process)
 
         self.config                 = Config(model = self.model)
         self.reset                  = Reset(model = self.model)
@@ -87,6 +88,13 @@ class Controller (QObject):
         self.check_qr.addTransition(self.check_qr.rework, self.qr_rework)
         self.qr_rework.addTransition(self.qr_rework.ok, self.check_qr)
         #self.check_qr.addTransition(self.check_qr.ok, self.clamps_monitor_a)
+
+        #al llegar la señal de modo manual se ingresa a este modo (se pone desde la configuración)
+        self.check_qr.addTransition(self.check_qr.ok_MANUAL, self.modo_manual)
+        self.modo_manual.addTransition(self.client.CTRL, self.modo_manual) #al dar CRTL se vuelve a evaluar, aquí ya con el pop de la caja que se realizó
+        self.modo_manual.addTransition(self.client.ESC, self.modo_manual)
+        self.modo_manual.addTransition(self.modo_manual.finish, self.finish) #al no haber más cajas se finaliza y se va a finish, aquí se guarda todo y se intenta el publish de traza
+        self.modo_manual.addTransition(self.client.regreso_manual, self.modo_manual)
 
         self.check_qr.addTransition(self.check_qr.ok_F4, self.clamps_monitor_a)
         self.clamps_monitor_a.addTransition(self.client.clamp, self.clamps_monitor_a)
@@ -197,16 +205,16 @@ class MyThread(QThread):
                         #self.model.robots[self.module]["ready"] = False
                         self.model.robots["robot_a"]["ready"] = False
                         self.model.robots["robot_b"]["ready"] = False
+                        if self.model.modo_manual_activado==False:
+                            sleep(0.2)
+                            publish.single(self.model.pub_topics["robot_b"] ,json.dumps({"command": "stop"}),hostname='127.0.0.1', qos = 2)
+                            sleep(0.4)
+                            publish.single(self.model.pub_topics["robot_b"] ,json.dumps({"command": "start"}),hostname='127.0.0.1', qos = 2) 
 
-                        sleep(0.2)
-                        publish.single(self.model.pub_topics["robot_b"] ,json.dumps({"command": "stop"}),hostname='127.0.0.1', qos = 2)
-                        sleep(0.4)
-                        publish.single(self.model.pub_topics["robot_b"] ,json.dumps({"command": "start"}),hostname='127.0.0.1', qos = 2) 
-
-                        sleep(0.2)
-                        publish.single(self.model.pub_topics["robot_a"] ,json.dumps({"command": "stop"}),hostname='127.0.0.1', qos = 2)
-                        sleep(0.4)
-                        publish.single(self.model.pub_topics["robot_a"] ,json.dumps({"command": "start"}),hostname='127.0.0.1', qos = 2)                
+                            sleep(0.2)
+                            publish.single(self.model.pub_topics["robot_a"] ,json.dumps({"command": "stop"}),hostname='127.0.0.1', qos = 2)
+                            sleep(0.4)
+                            publish.single(self.model.pub_topics["robot_a"] ,json.dumps({"command": "start"}),hostname='127.0.0.1', qos = 2)                
 
                 #set_robot solo entra cuando llega un READY del robot)
                 if self.model.set_thread_robot == True:
@@ -528,7 +536,7 @@ class MyThread(QThread):
                                 #si se trata de un relevador se activa esta variable para pedir su inserción mediante el botón
                                 self.model.waiting_button_inserted_singal[self.module] = True
                                 comm_info0 = {
-                                    "lbl_info0" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
+                                    "popout_relay" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
                                     }
                                 publish.single(self.model.pub_topics["gui"],json.dumps(comm_info0),hostname='127.0.0.1', qos = 2)
                                 temp = "RELAY_132"
@@ -658,7 +666,7 @@ class MyThread(QThread):
                                 #si se trata de un relevador se activa esta variable para pedir su inserción mediante el botón
                                 self.model.waiting_button_inserted_singal[self.module] = True
                                 comm_info0 = {
-                                    "lbl_info0" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
+                                    "popout_relay" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
                                     }
                                 publish.single(self.model.pub_topics["gui"],json.dumps(comm_info0),hostname='127.0.0.1', qos = 2)
                                 temp = "RELAY_132"

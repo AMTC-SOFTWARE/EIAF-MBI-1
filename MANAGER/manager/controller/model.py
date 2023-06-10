@@ -40,7 +40,7 @@ class Model (object):
         self.fusible_manual = False #bandera para saber que se requiere llave para continuar
         self.var_queue = 0 #variable para ir obteniendo fusibles de principio o fin de lista de triggers
         self.acomodo_listas = True #variable para hacer acomodo de listas de fusibles a insertar
-
+        self.modo_manual_activado=False
         self.detener_robot_opuesto = False
 
         self.shared_zone = ""
@@ -72,6 +72,18 @@ class Model (object):
         #variable para determinar que hubo un problema de publish de trazabilidad en la salida
         self.problema_trazabilidad = False
 
+        self.cajas_arnes=[]
+        self.modo_manual_activado=False
+        self.no_caja_actual_tecla=False
+        self.no_caja_actual=0
+        self.modularity_manual_respaldo=[]
+        self.cajas=[]
+        self.arnes_recorrido=False
+        self.control_presionado=False
+        self.regreso=False
+        self.arnes_por_finalizar=False
+        self.confirmacion_arnes_finalizado=False
+        self.arnes_finalizado=False
         #variable para habilitar una inserción por botón:
         self.waiting_button_inserted_singal = {"robot_a":False,
                                                "robot_b":False}
@@ -193,7 +205,8 @@ class Model (object):
             }
 
         self.config_data = {
-            "trazabilidad": True
+            "trazabilidad": True,
+            "modo_manual": False
         }
   
         self.codes = {
@@ -263,6 +276,7 @@ class Model (object):
         self.popQueueIzq_2 = False
         self.popQueueDer_2 = False
         self.databaseTempModel = []
+        self.modularity_manual = [] #variable lista, para guardar todo el contenido del arnés para modo manual
 
     def fusesInit(self):
         self.database["fuses"] = {
@@ -355,6 +369,7 @@ class Model (object):
         self.popQueueIzq_2 = False
         self.popQueueDer_2 = False
         self.databaseTempModel.clear()
+        self.modularity_manual.clear()
 
         self.codes = {
             "FET": "--",

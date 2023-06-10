@@ -207,10 +207,10 @@ class MainWindow (QMainWindow):
             if "request" in message:
                 if message["request"] == "status":
                     QTimer.singleShot(100, self.sendStatus)
-            if "lbl_info0" in message:
+            if "popout_relay" in message:
 
-                if "text" in message["lbl_info0"]:
-                    if message["lbl_info0"]["text"] == "close":
+                if "text" in message["popout_relay"]:
+                    if message["popout_relay"]["text"] == "close":
                         print("Ocultando ventanas de mensajes pop_out_manual y qw_img_popout")
                         #self.pop_out_manual.close() #cuando tienen el método def closeEvent(self, event): event.ignore() no se pueden cerrar las ventanas tampoco usando close
                         #self.qw_img_popout.close() #pero si se pueden ocultar y volver a mostrar
@@ -238,10 +238,10 @@ class MainWindow (QMainWindow):
                         self.qw_img_popout.show()
 
                         #se modifica el estilo del texto y se muestra
-                        #self.pop_out_manual.setStyleSheet("QLabel{min-width: 800px; min-height: 80;font: 18pt; color: " + message["lbl_info0"]["color"] + ";} QPushButton{ width:50px; font: 10pt;}")
-                        self.pop_out_manual.setStyleSheet("QLabel{min-width: 800px; min-height: 120;font: 18pt; color: " + message["lbl_info0"]["color"] + ";}")
+                        #self.pop_out_manual.setStyleSheet("QLabel{min-width: 800px; min-height: 80;font: 18pt; color: " + message["popout_relay"]["color"] + ";} QPushButton{ width:50px; font: 10pt;}")
+                        self.pop_out_manual.setStyleSheet("QLabel{min-width: 800px; min-height: 120;font: 18pt; color: " + message["popout_relay"]["color"] + ";}")
                         self.pop_out_manual.MainWindow.resize(800, 120)
-                        self.pop_out_manual.label.setText(message["lbl_info0"]["text"])
+                        self.pop_out_manual.label.setText(message["popout_relay"]["text"])
                         self.pop_out_manual.setWindowTitle("INSTRUCCIÓN")
 
                         #se mueve de posición la pantalla y se ejecuta mensaje de poput
@@ -249,7 +249,10 @@ class MainWindow (QMainWindow):
                         self.pop_out_manual.show()
                         self.pop_out_manual.setFocusPolicy(Qt.StrongFocus)
 
-
+            if "lbl_info0" in message:
+                self.ui.lbl_info0.setText(message["lbl_info0"]["text"])
+                if "color" in message["lbl_info0"]:
+                    self.ui.lbl_info0.setStyleSheet("color: " + message["lbl_info0"]["color"])
             if "lbl_info1" in message:
                 self.ui.lbl_info1.setText(message["lbl_info1"]["text"])
                 if "color" in message["lbl_info1"]:

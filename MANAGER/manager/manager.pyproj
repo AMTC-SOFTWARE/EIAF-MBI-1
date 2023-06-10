@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>manager</Name>
     <RootNamespace>manager</RootNamespace>
-    <InterpreterId>Global|VisualStudio|MercedesBenz</InterpreterId>
+    <InterpreterId>Global|VisualStudio|env (Python 3.7 (64-bit))</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,9 +40,6 @@
     <Compile Include="test\mqttClientTest.py" />
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="Global|VisualStudio|MercedesBenz" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="admin\" />
     <Folder Include="controller\" />
     <Folder Include="data\" />
@@ -55,6 +52,9 @@
     <Content Include="data\imgs\logo.jpg" />
     <Content Include="data\imgs\users\blanco.jpg" />
     <Content Include="requirements.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|VisualStudio|env (Python 3.7 (64-bit))" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

@@ -32,9 +32,10 @@ class MqttClient (QObject):
     available       =   pyqtSignal()
     F4              =   pyqtSignal()
     CTRL            =   pyqtSignal()
+    ESC             =   pyqtSignal()
     retry_traza     =   pyqtSignal()
     continue_traza  =   pyqtSignal()
-
+    regreso_manual  =   pyqtSignal()
     ra_home    = ""
     rb_home    = ""
 
@@ -59,6 +60,8 @@ class MqttClient (QObject):
     color_PDCS = "blue"
     color_TBLU = "blue"
 
+    disable_ctrl = False
+    disable_left_arrow=False
     keyboard_key = ""
     keyboard_value = False
     llave = False
@@ -151,6 +154,11 @@ class MqttClient (QObject):
         self.model.error_thread_robot       = False
         self.model.limite_reintentos_thread = False
         self.model.llave_thread             = False
+
+    def reactivar_ctrl(self):
+        self.disable_ctrl = False
+    def reactivar_left_arrow(self):
+        self.disable_left_arrow=False
 
 ################################################################################
     #se ejecuta cada que entra un mensaje MQTT nuevo (secuencial pero pueden llegar al mismo tiempo)
@@ -250,7 +258,7 @@ class MqttClient (QObject):
 
                                 #si no está activada la variable en ningún robot, se borra el label
                                 if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
-                                    command = {"lbl_info0" : {"text": "close", "color": "red"}}
+                                    command = {"popout_relay" : {"text": "close", "color": "red"}}
                                     self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
 
                                 print("se valida inserción de robot_a y se manda un stop start")
@@ -287,7 +295,7 @@ class MqttClient (QObject):
 
                                 #si no está activada la variable en ningún robot, se borra el label
                                 if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
-                                    command = {"lbl_info0" : {"text": "close", "color": "red"}}
+                                    command = {"popout_relay" : {"text": "close", "color": "red"}}
                                     self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
 
                                 print("se valida inserción de Relay de robot_b y se manda un stop start")
@@ -785,26 +793,55 @@ class MqttClient (QObject):
 
                 #    Timer(10, self.reiniciar_robots).start()
 
+                
+                
                 if self.keyboard_key == "keyboard_F4":
                     #solo se puede modificar antes de iniciar el ciclo
                     if self.model.robots_mode == 0:
                         self.model.robots_mode = 1
                         print("self.model.robots_mode keyboard_F4: ",self.model.robots_mode)
                     self.F4.emit()
+                
+                if self.keyboard_key=="keyboard_esc":
+                    if self.model.arnes_por_finalizar==True:
+                        self.model.confirmacion_arnes_finalizado=True
+                        self.ESC.emit()
 
-                if self.keyboard_key == "keyboard_ctrl":
+                if self.keyboard_key == "keyboard_arrow_left":
+                    print("left_comm")
+                    self.model.regreso=True
                     
-                    if self.model.problema_trazabilidad == True:
-                        self.model.problema_trazabilidad = False
-                        print("problema_trazabilidad = True, se hace false y se emite señal de continuar")
-                        self.continue_traza.emit()
-                    else:
+                    print("modo_manual_activado")
+                    if self.disable_left_arrow == False:
+                        print("left presionado")
 
-                        #solo se puede modificar antes de iniciar el ciclo
-                        if self.model.robots_mode == 0:
-                            self.model.robots_mode = 2
-                            print("self.model.robots_mode keyboard_ctrl: ",self.model.robots_mode)
-                        self.CTRL.emit()
+                        self.disable_left_arrow = True
+                        Timer(3, self.reactivar_left_arrow).start()
+                        self.model.no_caja_actual_tecla=True
+                        print("se regresa 1 imagen: ")
+                    self.regreso_manual.emit()
+                
+                if self.keyboard_key == "keyboard_ctrl":
+                    self.model.confirmacion_arnes_finalizado=False
+                    if self.disable_ctrl == False:
+                        print("CTRL presionado")
+                        self.model.control_presionado=True
+                        self.disable_ctrl = True
+                        Timer(3, self.reactivar_ctrl).start()
+
+                        if self.model.problema_trazabilidad == True:
+                            self.model.problema_trazabilidad = False
+                            print("problema_trazabilidad = True, se hace false y se emite señal de continuar")
+                            self.continue_traza.emit()
+                        else:
+
+                            #solo se puede modificar antes de iniciar el ciclo
+                            if self.model.robots_mode == 0:
+                                self.model.robots_mode = 2
+                                print("self.model.robots_mode keyboard_ctrl: ",self.model.robots_mode)
+                            self.CTRL.emit()
+                    else:
+                        print("CTRL deshabilitado, espere 2 segundos")
                 
             if message.topic == self.model.sub_topics["gui"]:
                 if "request" in payload:
@@ -957,7 +994,7 @@ class MqttClient (QObject):
                                 self.model.waiting_button_inserted_singal["robot_a"] = False
                                 #si no está activada la variable en ningún robot, se borra el label
                                 if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
-                                    command = {"lbl_info0" : {"text": "close", "color": "red"}}
+                                    command = {"popout_relay" : {"text": "close", "color": "red"}}
                                     self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
 
                             if self.model.current_thread_robot == "robot_a":
@@ -1124,7 +1161,7 @@ class MqttClient (QObject):
                                 self.model.waiting_button_inserted_singal["robot_b"] = False
                                 #si no está activada la variable en ningún robot, se borra el label
                                 if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
-                                    command = {"lbl_info0" : {"text": "close", "color": "red"}}
+                                    command = {"popout_relay" : {"text": "close", "color": "red"}}
                                     self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
 
                             if self.model.current_thread_robot == "robot_b":

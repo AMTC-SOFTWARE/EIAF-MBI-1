@@ -472,7 +472,7 @@ class Triggers (QState):
                         #si se trata de un relevador se activa esta variable para pedir su inserción mediante el botón
                         self.model.waiting_button_inserted_singal[self.module] = True
                         comm_info0 = {
-                            "lbl_info0" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
+                            "popout_relay" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
                             }
                         publish.single(self.model.pub_topics["gui"],json.dumps(comm_info0),hostname='127.0.0.1', qos = 2)
                         temp = "RELAY_132"
@@ -602,7 +602,7 @@ class Triggers (QState):
                         #si se trata de un relevador se activa esta variable para pedir su inserción mediante el botón
                         self.model.waiting_button_inserted_singal[self.module] = True
                         comm_info0 = {
-                            "lbl_info0" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
+                            "popout_relay" : {"text": "\tNO OLVIDAR INSERTAR Relevador (1008695) en \n\tla cavidad "+ str(cavity)+" y presionar BOTÓN AMARILLO para continuar", "color": "red"}
                             }
                         publish.single(self.model.pub_topics["gui"],json.dumps(comm_info0),hostname='127.0.0.1', qos = 2)
                         temp = "RELAY_132"

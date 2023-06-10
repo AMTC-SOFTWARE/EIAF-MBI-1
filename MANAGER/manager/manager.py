@@ -1,8 +1,8 @@
 """
 Authors: MC Marco Rutiaga
-         MC Aarón Castillo (master en comentarios)
-         Ing Rogelio García (master en API)
-         MC César Velázquez (master en cuidado de pinzas)
+         MC Aarón Castillo
+         Ing Rogelio García
+         MC César Velázquez
 
 pyinstaller --add-data data;data --noconfirm manager.py
 """

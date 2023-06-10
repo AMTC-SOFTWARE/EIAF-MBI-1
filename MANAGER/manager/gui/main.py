@@ -301,7 +301,7 @@ class Ui_main(object):
         self.lbl_info0.setMaximumSize(QtCore.QSize(150, 16777215))
         font = QtGui.QFont()
         font.setFamily("Century Schoolbook")
-        font.setPointSize(14)
+        font.setPointSize(23)
         font.setBold(True)
         font.setWeight(75)
         self.lbl_info0.setFont(font)
@@ -510,7 +510,7 @@ class Ui_main(object):
         self.lbl_steps.setText(_translate("main", "PASOS"))
         self.lbl_info2.setText(_translate("main", "INFO2"))
         self.lbl_user.setText(_translate("main", "AMTC\nWacks"))
-        self.lbl_info0.setText(_translate("main", ""))
+        self.lbl_info0.setText(_translate("main", "lbl_info0"))
         self.lbl_info3.setText(_translate("main", "lbl_info3"))
         self.lbl_nuts.setText(_translate("main", "lbl_nuts"))
         ########################################################
