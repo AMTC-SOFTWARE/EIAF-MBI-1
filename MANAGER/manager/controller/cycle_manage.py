@@ -186,6 +186,9 @@ class StartCycle (QState):
 
         #se reinicia variable que dice que el robot A finalizó
         self.model.robot_a_terminado = False
+        #se reinician variables por si se da llave en el momento de la inserción manual del relay
+        self.model.waiting_button_inserted_singal["robot_a"] = False
+        self.model.waiting_button_inserted_singal["robot_b"] = False
 
         if self.model.modo_manual_activado==False:
             Timer(1, self.robots_home).start()
@@ -1207,6 +1210,12 @@ class Reset (QState):
         self.model = model
 
     def onEntry(self, event):
+        #se reinicia variable que dice que el robot A finalizó
+        self.model.robot_a_terminado = False
+
+        #se reinician variables por si se da llave en el momento de la inserción manual del relay
+        self.model.waiting_button_inserted_singal["robot_a"] = False
+        self.model.waiting_button_inserted_singal["robot_b"] = False
 
         if "HM000000011936" in self.model.codes["HM"]:
             self.model.config_data["trazabilidad"] = True
