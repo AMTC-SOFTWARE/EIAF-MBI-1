@@ -291,13 +291,7 @@ class MqttClient (QObject):
 
                             #si la señal de espera de botón del robot B es true, y el robot A ya finalizó sus inserciones...
                             elif self.model.waiting_button_inserted_singal["robot_b"] == True and self.model.robot_a_terminado == True:
-                                self.model.waiting_button_inserted_singal["robot_b"] = False
-
-                                #si no está activada la variable en ningún robot, se borra el label
-                                if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
-                                    command = {"popout_relay" : {"text": "close", "color": "red"}}
-                                    self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
-
+                                
                                 print("se valida inserción de Relay de robot_b y se manda un stop start")
 
                                 self.client.publish(self.model.pub_topics["robot_b"],json.dumps({"command": "stop"}), qos = 2)
@@ -308,6 +302,7 @@ class MqttClient (QObject):
                                     self.model.init_thread_robot = True
                                     print("init_thread_robot = ",self.model.init_thread_robot)
                                     self.model.inserted_thread_robot = True
+                                    self.model.waiting_button_inserted_singal["robot_b"] = False
                                     print(" self.model.inserted_thread_robot = ", self.model.inserted_thread_robot)
                                     print("retry_btn para robot_a emit()")
                                     self.retry_btn.emit()
@@ -325,15 +320,51 @@ class MqttClient (QObject):
                                         self.model.init_thread_robot = True #porque se vuelve false cada que hay un error en el robot paralelo, esta línea es necesaria para reactivar el reobot paralelo si el otro robot ya terminó.
                                         print("self.model.robot_principal = ",self.model.robot_principal)
                                         print("self.model.init_thread_robot = ",self.model.init_thread_robot)
+
+                                #si no está activada la variable en ningún robot, se borra el label
+                                if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
+                                    command = {"popout_relay" : {"text": "close", "color": "red"}}
+                                    self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
                             
                             #si la señal de espera de botón del robot B es true, y el robot A NO ha finalizado sus inserciones...
                             elif self.model.waiting_button_inserted_singal["robot_b"] == True and self.model.robot_a_terminado == False:
-                                
-                                print("NO MOVER ROBOT B")
-                                #apagar todos los triggers de robot paralelo
-                                self.thread_triggers_off()
-                                print("retry_btn emit() para robotA")
-                                self.retry_btn.emit()
+                                self.queueIzq      = self.model.robots[self.module]["queueIzq"]
+                                self.queueDer      = self.model.robots[self.module]["queueDer"]
+                                print("len(self.queueIzq)",len(self.queueIzq))
+                                print("len(self.queueDer)",len(self.queueDer))
+                                if len(self.queueIzq) <= 0 and len(self.queueDer) <= 2:
+                                    self.model.robot_a_terminado = True
+                                    if self.model.current_thread_robot == "robot_b":
+                                        self.model.init_thread_robot = True
+                                        print("init_thread_robot = ",self.model.init_thread_robot)
+                                        self.model.inserted_thread_robot = True
+                                        print(" self.model.inserted_thread_robot = ", self.model.inserted_thread_robot)
+                                        print("retry_btn para robot_a emit()")
+                                        self.model.waiting_button_inserted_singal["robot_b"] = False
+                                        self.retry_btn.emit()
+                                    else:
+                                        print("inserted para robot_b emit()")
+                                        self.inserted.emit()
+                                        #apagar todos los triggers de robot paralelo
+                                        self.thread_triggers_off()
+                                        #encender estado retry de robot paralelo
+                                        print("self.model.retry_thread_robot = True para robot_a")
+                                        self.model.retry_thread_robot = True
+                                        #si el robot principal ya terminó:
+                                        if self.model.robot_principal == True:
+                                            self.model.init_thread_robot = True #porque se vuelve false cada que hay un error en el robot paralelo, esta línea es necesaria para reactivar el reobot paralelo si el otro robot ya terminó.
+                                            print("self.model.robot_principal = ",self.model.robot_principal)
+                                            print("self.model.init_thread_robot = ",self.model.init_thread_robot)
+                                    #si no está activada la variable en ningún robot, se borra el label
+                                    if self.model.waiting_button_inserted_singal["robot_a"] == False and self.model.waiting_button_inserted_singal["robot_b"] == False:
+                                        command = {"popout_relay" : {"text": "close", "color": "red"}}
+                                        self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+                                else:
+                                    print("NO MOVER ROBOT B")
+                                    #apagar todos los triggers de robot paralelo
+                                    self.thread_triggers_off()
+                                    print("retry_btn emit() para robotA")
+                                    self.retry_btn.emit()
 
                             #Funcionamiento Normal si no se ha activado ninguna variable de espera de botón...
                             else:
