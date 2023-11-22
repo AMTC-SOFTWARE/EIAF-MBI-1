@@ -833,12 +833,12 @@ class MqttClient (QObject):
                         print("self.model.robots_mode keyboard_F4: ",self.model.robots_mode)
                     self.F4.emit()
                 
-                if self.keyboard_key=="keyboard_esc":
+                if self.keyboard_key=="keyboard_esc" and self.model.modo_manual_activado==True:
                     if self.model.arnes_por_finalizar==True:
                         self.model.confirmacion_arnes_finalizado=True
                         self.ESC.emit()
 
-                if self.keyboard_key == "keyboard_arrow_left":
+                if self.keyboard_key == "keyboard_arrow_left" and self.model.modo_manual_activado==True:
                     print("left_comm")
                     self.model.regreso=True
                     
