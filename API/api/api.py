@@ -1,6 +1,7 @@
 
 """
 @author: MS. Marco Rutiaga Quezada
+         MS. Aarón Castillo Tobías
 
 Upload file. Basic front code:
     <!doctype html>
@@ -12,6 +13,7 @@ Upload file. Basic front code:
     </form>
     ###############################################################################
         command to exe generation_
+        pyinstaller --noconfirm api.py
         pyinstaller --noconsole --icon=icon.ico --add-data data;data api.py
         pyinstaller --icon=icon.ico --add-data data;data api.py
         python -m PyInstaller --icon=icon.ico --add-data data;data api.py
@@ -354,8 +356,13 @@ def preview(ILX):
     flag_l = False
     flag_m = False
     flag_s = False
+
     endpoint = f"http://{host}:5000/api/get/modularidades/MODULARIDAD/=/{ILX}/ACTIVO/=/1"
     response = requests.get(endpoint).json()
+    if "exception" in response:
+        endpoint = f"http://{host}:5000/api/get/modularidades/MODULARIDAD/=/{ILX}/ACTIVE/=/1"
+        response = requests.get(endpoint).json()
+
     #arrayModules = response["MODULOS_FUSIBLES"][0].split(",")
     modules = response["MODULOS_FUSIBLES"][0].split(sep = ",")
     print(f"\n\t\tMODULOS_FUSIBLES:\n{modules}")
@@ -419,8 +426,13 @@ def variantes():
     "large": [],
     "battery-2": []
     }
+
     endpoint = f"http://{host}:5000/api/get/definiciones/ACTIVO/=/1/_/_/_"
     pdcrVariantesDB = requests.get(endpoint).json()
+    if "exception" in pdcrVariantesDB:
+        endpoint = f"http://{host}:5000/api/get/definiciones/ACTIVE/=/1/_/_/_"
+        pdcrVariantesDB = requests.get(endpoint).json()
+
     #print("pdcrVariantesDB-------",pdcrVariantesDB)
     if len(pdcrVariantesDB["MODULO"]) > 0:
         #print("Cantidad de Módulos: ",len(pdcrVariantesDB["MODULO"]))
@@ -500,7 +512,12 @@ def newEvent():
     historial["DATETIME"] = data["DATETIME"]
     historial["DBEVENT"] = event_name
     print(data)
-    activo["ACTIVO"] = data["ACTIVO"]
+
+    if "ACTIVO" in data:
+        activo["ACTIVO"] = data["ACTIVO"]
+    elif "ACTIVE" in data:
+        activo["ACTIVO"] = data["ACTIVE"]
+
     activo["DBEVENT"] = event_name
     try:
         connection = pymysql.connect(host = host_fase, user = user_fase, passwd = password_fase)
@@ -620,16 +637,26 @@ def eventos():
                     respHistorial = requests.get(endpoint).json()
                     endpoint = f"http://{host}:5000/api/get/{i[0]}/activo/all/-/-/-/-/-"
                     respActivo = requests.get(endpoint).json()
+                    if "exception" in respActivo:
+                        endpoint = f"http://{host}:5000/api/get/{i[0]}/active/all/-/-/-/-/-"
+                        respActivo = requests.get(endpoint).json()
+
                     #print("Respuesta de Historial: ",respHistorial)
                     #print("Respuesta de Historial Archivo: ",respHistorial["ARCHIVO"])
                     #print("Respuesta de Activo: ",respActivo)
                     #print("Respuesta de Activo: ",respActivo["ACTIVO"])
+
+                    if "ACTIVO" in respActivo:
+                        respuestaActivoo = respActivo["ACTIVO"]
+                    elif "ACTIVE" in respActivo:
+                        respuestaActivoo = respActivo["ACTIVE"]
+
                     if type(respHistorial["ARCHIVO"]) == list:
                         #print("Es una lista!")
-                        lista["eventos"][i[0]] = [respHistorial["ARCHIVO"][-1],respActivo["ACTIVO"]]
+                        lista["eventos"][i[0]] = [respHistorial["ARCHIVO"][-1],respuestaActivoo]
                     else:
                         #print("No es una lista, es posible que sea solo un elemento o esté vacío")
-                        lista["eventos"][i[0]] = [respHistorial["ARCHIVO"],respActivo["ACTIVO"]]
+                        lista["eventos"][i[0]] = [respHistorial["ARCHIVO"],respuestaActivoo]
             #print("Lista de bases de datos: ",x)
             print("Lista de eventos final: ",lista)
         connection.commit()
@@ -682,8 +709,13 @@ def previewEvent(ILX,db):
     flag_l = False
     flag_m = False
     flag_s = False
+
     endpoint = f"http://{host}:5000/api/get/{db}/modularidades/MODULARIDAD/=/{ILX}/ACTIVO/=/1"
     response = requests.get(endpoint).json()
+    if "exception" in response:
+        endpoint = f"http://{host}:5000/api/get/{db}/modularidades/MODULARIDAD/=/{ILX}/ACTIVE/=/1"
+        response = requests.get(endpoint).json()
+
     #arrayModules = response["MODULOS_FUSIBLES"][0].split(",")
     modules = response["MODULOS_FUSIBLES"][0].split(sep = ",")
     print(f"\n\t\tMODULOS_FUSIBLES:\n{modules}")
