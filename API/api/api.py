@@ -778,9 +778,13 @@ def variantesEvent(db):
     "medium": [],
     "large": [],
     }
+
     endpoint = f"http://{host}:5000/api/get/{db}/definiciones/ACTIVE/=/1/_/_/_"
     pdcrVariantesDB = requests.get(endpoint).json()
-    #print("pdcrVariantesDB-------",pdcrVariantesDB)
+    if "exception" in pdcrVariantesDB:
+        endpoint = f"http://{host}:5000/api/get/{db}/definiciones/ACTIVO/=/1/_/_/_"
+        pdcrVariantesDB = requests.get(endpoint).json()
+
     try:
         if len(pdcrVariantesDB["MODULO"]) > 0:
             #print("Cantidad de Módulos: ",len(pdcrVariantesDB["MODULO"]))
