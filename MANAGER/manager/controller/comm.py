@@ -328,11 +328,11 @@ class MqttClient (QObject):
                             
                             #si la señal de espera de botón del robot B es true, y el robot A NO ha finalizado sus inserciones...
                             elif self.model.waiting_button_inserted_singal["robot_b"] == True and self.model.robot_a_terminado == False:
-                                self.queueIzq      = self.model.robots[self.module]["queueIzq"]
-                                self.queueDer      = self.model.robots[self.module]["queueDer"]
+                                self.queueIzq      = self.model.robots["robot_a"]["queueIzq"]
+                                self.queueDer      = self.model.robots["robot_a"]["queueDer"]
                                 print("len(self.queueIzq)",len(self.queueIzq))
                                 print("len(self.queueDer)",len(self.queueDer))
-                                if len(self.queueIzq) <= 0 and len(self.queueDer) <= 2:
+                                if len(self.queueIzq) <= 0 and len(self.queueDer) <= 0:
                                     self.model.robot_a_terminado = True
                                     if self.model.current_thread_robot == "robot_b":
                                         self.model.init_thread_robot = True
