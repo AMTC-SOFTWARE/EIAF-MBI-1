@@ -379,6 +379,30 @@ class Ui_main(object):
         self.lbl_nuts.setFont(font)
         self.lbl_nuts.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.lbl_nuts.setObjectName("lbl_nuts")
+        ############################# LCD ######################################
+        self.gridLayout_3 = QtWidgets.QGridLayout()
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.lbl_cant = QtWidgets.QLabel(main)
+        self.lbl_cant.setMinimumSize(QtCore.QSize(110, 15))
+        self.lbl_cant.setMaximumSize(QtCore.QSize(300, 50))
+        font = QtGui.QFont()
+        font.setFamily("Sitka Text")
+        font.setPointSize(28)
+        font.setBold(True)
+        font.setWeight(75)
+        
+        self.lbl_cant.setAlignment(QtCore.Qt.AlignCenter)
+        self.lbl_cant.setObjectName("lbl_cant")
+        #self.lbl_cant.setStyleSheet("font-size:20px; margin-bottom: 5px"  )
+        self.lbl_cant.setStyleSheet("color: #214562; font-size:20px; border-radius:20px; background-color: #a7c3d1; margin-bottom: 5px"  )
+        
+        self.lcdNumber = QtWidgets.QLCDNumber(main)
+        self.lcdNumber.setMinimumSize(QtCore.QSize(147, 0))
+        self.lcdNumber.setObjectName("lcdNumber")
+        self.lcdNumber.setStyleSheet("border-style: none")
+        self.lcdNumber.setGeometry(1650,910, 200 , 100)
+        self.lbl_cant.setGeometry(1650,870, 200 , 100)
+
         ######################################################################
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -524,6 +548,7 @@ class Ui_main(object):
         ########################################################
         self.lbl_info4.setText(_translate("main", "INFO4"))
         self.menuMenu.setTitle(_translate("main", "Menu"))
+        self.lbl_cant.setText(_translate("main", "PIEZAS"))
 import resources_rc
 
 
