@@ -522,13 +522,20 @@ class Ui_main(object):
         self.statusbar.setObjectName("statusbar")
         main.setStatusBar(self.statusbar)
         self.menubar.addAction(self.menuMenu.menuAction())
-
+         #se crean después del menuMenu para que aparezcan sobre este y no debajo
+        self.btn_hxh = QtWidgets.QPushButton(main)
+        self.btn_hxh.setGeometry(QtCore.QRect(250, 50, 140, 35)) #posx, posy, ancho, alto
+        self.btn_hxh.setObjectName("btn_eimf")
+        #self.btn_eimf.setStyleSheet('background-color: silver; color: white; font-weight:bold; font-size:15pt; font: Century Schoolbook')
+        self.btn_hxh.setStyleSheet('background-color: cyan; color: black; font-weight:bold; font-size:12pt; font: Segoe UI Black')
         self.retranslateUi(main)
         QtCore.QMetaObject.connectSlotsByName(main)
 
     def retranslateUi(self, main):
         _translate = QtCore.QCoreApplication.translate
         main.setWindowTitle(_translate("main", "MainWindow"))
+        ########################################################
+        self.btn_hxh.setText(_translate("main", "Hora por Hora"))
         self.lbl_info1.setText(_translate("main", "INFO1"))
         self.lbl_result.setText(_translate("main", "RESULTADOS_1234567890"))
         self.lbl_steps.setText(_translate("main", "PASOS"))

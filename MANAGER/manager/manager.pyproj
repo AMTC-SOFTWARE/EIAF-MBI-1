@@ -37,6 +37,7 @@
     <Compile Include="gui\main.py" />
     <Compile Include="gui\model.py" />
     <Compile Include="gui\scanner.py" />
+    <Compile Include="gui\Tabla_horas.py" />
     <Compile Include="gui\__init__.py" />
     <Compile Include="manager.py" />
     <Compile Include="test\mqttClientTest.py" />
