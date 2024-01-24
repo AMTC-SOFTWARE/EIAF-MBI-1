@@ -255,6 +255,20 @@ class StartCycle (QState):
             "1":["07-00","18-59"],
             "2":["19-00","06-59"],
             }
+            endpoint = "http://{}/contar/historial/FIN".format(self.model.server)
+            response = requests.get(endpoint, data=json.dumps(turnos))
+            response = response.json()
+            print("response: ",response)
+            print("Startup para mostrar conteo de arneses")
+            command["lcdNumber"] = {"value": response["conteo"]}
+            publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+        except Exception as ex:
+            print("Error en el conteo ", ex)
+        try:
+            turnos = {
+            "1":["07-00","18-59"],
+            "2":["19-00","06-59"],
+            }
             horario_turno1={"7":0,
                         "8":0,
                         "9":0,
