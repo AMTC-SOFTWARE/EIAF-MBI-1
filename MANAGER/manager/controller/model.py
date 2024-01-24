@@ -4,7 +4,7 @@ from time import strftime
 from pickle import load
 import requests
 import json
-
+from datetime import datetime, timedelta, date, time
 from PyQt5.QtCore import QState, pyqtSignal, QObject
 from paho.mqtt import publish
 from threading import Timer
@@ -28,6 +28,8 @@ class Model (object):
         self.retries = {}
         self.id_HM = None
 
+        self.fechaAnterior = self.get_currentTime() #se inicializa con la fecha del servidor
+        self.fechaLocalAnterior = datetime.now() #se inicializa con la fecha local actual
         ###############################################################
         self.robothome_a = False
         self.robothome_b = False
@@ -42,7 +44,7 @@ class Model (object):
         self.acomodo_listas = True #variable para hacer acomodo de listas de fusibles a insertar
         self.modo_manual_activado=False
         self.detener_robot_opuesto = False
-
+        self.cronometro_ciclo=False
         self.shared_zone = ""
 
         self.current_thread_robot = ""
@@ -426,3 +428,45 @@ class Model (object):
             resp = requests.post(f"http://{self.server}/api/post/log",data=json.dumps(data))
         except Exception as ex:
             print("Log request Exception: ", ex)
+
+    def get_currentTime(self):
+
+        fecha_actuaal = None
+        try:
+            endpoint = "http://{}/server_famx/hora_servidor".format(self.server) #self.model.server
+            respuesta_hora = requests.get(endpoint).json()
+            if "exception" in respuesta_hora:
+                fecha_actuaal = datetime.now() #se toma la hora local de la PC
+                print("////////// fecha_local")
+            else:
+                fecha_actuaal = datetime.strptime(respuesta_hora["HORA_ACTUAL"], "%Y-%m-%d %H:%M:%S") #se toma la hora del servidor en el formato deseado
+                print("////////// fecha_servidor")
+        except Exception as ex:
+            print("exception hora_servidor: ",ex)
+            fecha_actuaal = datetime.now()
+            print("////////// fecha_local")
+        print("//////// Actualizando Fecha: ",fecha_actuaal)
+        return fecha_actuaal
+
+    def update_fecha_actual(self,fechaLocalActual,fechaActual):
+
+        #print("fechaActual: ",fechaActual)
+        segundos_transcurridos = fechaLocalActual - self.fechaLocalAnterior #se obtiene la diferencia del tiempo transcurrido en cada iteración de la ejecución paralela
+
+        self.fechaLocalAnterior = fechaLocalActual
+        #print("segundos_transcurridos por iteración: ",segundos_transcurridos)
+        
+        diferencia = fechaActual - self.fechaAnterior #se obtiene el tiempo total que ha transcurrido desde la última actualización de la hora desde el servidor (donde se han ido acumulando los segundos transcurridos de cada iteración y la fecha original obtenida del servidor)
+        # Compara si han pasado más de 3 minutos (180 segundos)
+        #print("diferenciaLocalAcumulada: ",diferencia)
+
+        if diferencia > timedelta(minutes=3) or diferencia < timedelta(minutes=0):
+            #print("Han pasado más de 3 minutos. Actualizando hora desde servidor...")
+            fechaActual = self.get_currentTime() #se actualiza del servidor la fecha
+            print("update pedido desde update_fecha_actual")
+            self.fechaAnterior = fechaActual #se guarda la última fecha obtenida de la actualización del servidor
+        else:
+            fechaActual = fechaActual + segundos_transcurridos
+            #print("tiempo transcurrido: ",diferencia)
+
+        return fechaActual

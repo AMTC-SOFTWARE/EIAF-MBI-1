@@ -7,7 +7,8 @@ from paho.mqtt.client import Client # Librería necesaria para conexión, para h
 #from shutil import copyfile
 #from math import ceil
 
-
+import pandas as pd
+import math
 from paho.mqtt import publish
 from datetime import datetime
 from threading import Timer
@@ -66,7 +67,8 @@ class Controller (QObject):
         self.robot_both             = robot.Robot(module = "robot_a", model = self.model, parent = self.process)
         self.objeto_mythread        = MyThread(module = "robot_b", model = self.model, client = self.client, parent = self)
         self.objeto_mythread.start()
-
+        self.reloj_mythread         = MyThreadReloj(self.model, self.process)
+        self.reloj_mythread.start()
         self.waiting_robot          = Waiting_Robot(model = self.model, parent = self.process)
         
         self.startup.addTransition(self.startup.ok, self.show_login)
@@ -1031,7 +1033,77 @@ class MyThread(QThread):
                 #necesario para recibir los mensajes de robot_b en modo un robot
                 self.model.current_thread_robot = ""
 
+class MyThreadReloj(QThread):
+
+    #check_material = pyqtSignal()
+
+    def __init__(self, model = None, parent = None):
+        super().__init__(parent)
+        self.model  = model
+
+        print("MyThreadReloj")
+        print("se crea un objeto de la clase MyThread con padre QThread")
+        print("con entrada del objeto model de la clase model que está en model.py")
+        print("y el objeto client de la clase MqttClient que está en comm.py")
         
+    def run(self):
+
+        fechaActual = self.model.get_currentTime() #se obtiene la fecha desde el servidor por primera vez
+        print("update pedido desde MyThreadReloj inicial")
+        toma_tiempo=True
+
+        while 1:
+
+            #tiempo de espera para no alentar las ejecuciones de otros procesos
+            sleep(1)
+
+            if self.model.cronometro_ciclo==True:
+                if toma_tiempo:
+                    hora_inicial = datetime.now()
+                    toma_tiempo=False
+                #print("self.model.timer_cyc: " + str(self.model.timer_cyc) + " seg.")
+                hora_actual = datetime.now()
+                # Calcula la diferencia de tiempo en segundos como un valor de punto flotante
+                #diferencia_tiempo = (hora_actual - hora_anterior).total_seconds()
+                diferencia_tiempo = (hora_actual - hora_inicial).total_seconds()
+                
+                minutoss = int(diferencia_tiempo//60)
+                segundoss = int(diferencia_tiempo - (minutoss*60))
+                segundoss_int = copy(segundoss)
+                if minutoss < 10:
+                    minutoss = "0" + str(minutoss)
+                else:
+                    minutoss = str(minutoss)
+                if segundoss < 10:
+                    segundoss = "0" + str(segundoss)
+                else:
+                    segundoss = str(segundoss)
+                string_timer_cyc = minutoss + ":" + segundoss
+
+                command = {
+                    "lcdcronometro" : {"value": string_timer_cyc},
+                          }
+                
+                publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+            else:
+                
+                toma_tiempo=True
+
+            fechaLocalActual = datetime.now() #se actualiza la fecha local Actual
+            fechaActual = self.model.update_fecha_actual(fechaLocalActual,fechaActual)
+
+            #td = timedelta(1)
+            #beforefechaActual = fechaActual - td
+            #afterfechaActual = fechaActual + td
+            #hoy = fechaActual.strftime('%Y-%m-%d')
+            #mañana = afterfechaActual.strftime('%Y-%m-%d')
+            #hora_actual = fechaActual.time()
+
+            command = {
+                    "lbl_clock":{"fecha":str(fechaActual)},
+                    }
+            publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2) 
+            
 
 
 class MyThreadTimer(QThread):

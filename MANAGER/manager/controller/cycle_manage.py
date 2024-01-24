@@ -18,7 +18,7 @@ import requests
 import pprint
 import json
 import cv2
-
+import pandas as pd
 from admin import Admin       
 
 class Startup(QState):
@@ -64,7 +64,20 @@ class Startup(QState):
         #self.hideSoftware()
         #Timer(1, self.hideSoftware).start()
         ##############################################Timer(1, self.kioskMode).start()
-
+        try:
+            turnos = {
+            "1":["07-00","18-59"],
+            "2":["19-00","06-59"],
+            }
+            endpoint = "http://{}/contar/historial/FIN".format(self.model.server)
+            response = requests.get(endpoint, data=json.dumps(turnos))
+            response = response.json()
+            print("response: ",response)
+            print("Startup para mostrar conteo de arneses")
+            command["lcdNumber"] = {"value": response["conteo"]}
+            publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+        except Exception as ex:
+            print("Error en el conteo ", ex)
         if exists("data\config"):
             with open("data\config", "rb") as f:
                 data = load(f)
@@ -242,6 +255,31 @@ class StartCycle (QState):
             "1":["07-00","18-59"],
             "2":["19-00","06-59"],
             }
+            horario_turno1={"7":0,
+                        "8":0,
+                        "9":0,
+                        "10":0,
+                        "11":0,
+                        "12":0,
+                        "13":0,
+                        "14":0,
+                        "15":0,
+                        "16":0,
+                        "17":0,
+                        "18":0,
+                        "19":0,
+                        "20":0,
+                        "21":0,
+                        "22":0,
+                        "23":0,
+                        "00":0,
+                        "01":0,
+                        "02":0,
+                        "03":0,
+                        "04":0,
+                        "05":0,
+                        "06":0,
+                        }
             endpoint = "http://{}/contar/historial/FIN".format(self.model.server)
             response = requests.get(endpoint, data=json.dumps(turnos))
             response = response.json()
@@ -249,8 +287,49 @@ class StartCycle (QState):
             print("Startup para mostrar conteo de arneses")
             command["lcdNumber"] = {"value": response["conteo"]}
             publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+
+
+            endpoint = "http://{}/horaxhora/historial/FIN".format(self.model.server)
+            response = requests.get(endpoint, data=json.dumps(turnos))
+            response = response.json()
+            
+            arneses_turno=pd.DataFrame({'HM': response['HM'],
+                   'INICIO': response['INICIO'],
+                   'FIN': response['FIN'],
+                   'RESULTADO': response['RESULTADO'],
+                   'USUARIO': response['USUARIO']})
+            
+            
+            arneses_turno['INICIO']=pd.to_datetime(arneses_turno['INICIO'])
+            arneses_turno['FIN']=pd.to_datetime(arneses_turno['FIN'])
+            arneses_turno['RESULTADO']=arneses_turno['RESULTADO'].astype("string")
+
+            base_temporal = arneses_turno[(arneses_turno["RESULTADO"]=="BUENO")]
+            #Calcula Duración de ciclo de los arneses
+            arneses_turno["INTERVALO"]=base_temporal['FIN']-base_temporal['INICIO']
+            
+            promedio_ciclo_turno=arneses_turno["INTERVALO"].mean().total_seconds() / 60
+            
+            # Obtener la parte entera y decimal
+            parte_entera = int(promedio_ciclo_turno)
+            parte_decimal = promedio_ciclo_turno - parte_entera
+            
+            # Convertir la parte decimal a segundos
+            segundos = round(parte_decimal * 60)
+            if segundos<10:
+                segundos="0"+str(segundos)
+            tiempo_ciclo_promedio=str(parte_entera)+":"+str(segundos)
+
+            command = {
+            "lcdNumtiempo": {"label_name": "Tiempo Ciclo\n Promedio", "color":"#68FD94", "value": tiempo_ciclo_promedio}
+            }
+
+
+            publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+
+
         except Exception as ex:
-            print("Error en el conteo ", ex)
+            print("Error en el promedio ", ex)
       
     def robots_home (self):
         print("self.model.modo_manual_activado",self.model.modo_manual_activado)
@@ -387,6 +466,7 @@ class CheckQr (QState):
             self.model.codes["REF"] = "--"
             #correct_lbl = False
             correct_lbl = True
+            self.model.cronometro_ciclo=True
             for i in temp:
                 if "HM" in i:
                     self.model.codes["HM"] = i
@@ -413,6 +493,7 @@ class CheckQr (QState):
                 if "EL." in i:
                     correct_lbl = True
             if not(correct_lbl):
+                self.model.cronometro_ciclo=False
                 command = {
                         "lbl_result" : {"text": "Datamatrix incorrecto", "color": "red"},
                         "lbl_steps" : {"text": "Inténtalo de nuevo", "color": "black"}
@@ -430,6 +511,7 @@ class CheckQr (QState):
                     print("Respuesta de FAMX2: \n",famx2response)
                     #No existen coincidencias del HM en FAMX2
                     if "items" in famx2response:
+                        self.model.cronometro_ciclo=False
                         print("ITEMS por que no se encontraron coincidencias en FAMX2")
                         command = {
                             "lbl_result" : {"text": "HM no registrado en Sistema de Trazabilidad", "color": "red"},
@@ -482,7 +564,7 @@ class CheckQr (QState):
                                         print("respTrazabilidad del update: ",respTrazabilidad)
 
                                         if "exception" in respTrazabilidad:
-
+                                            self.model.cronometro_ciclo=False
                                             print("no se logró hacer el update en trazabilidad")
                                             command = {
                                                         "lbl_result" : {"text": "No se logró hacer el update de Trazabilidad", "color": "red"},
@@ -494,7 +576,7 @@ class CheckQr (QState):
                                 #### Trazabilidad FAMX2 Update de Información
 
                             else:                    
-
+                                self.model.cronometro_ciclo=False
                                 print("El Arnés se encuentra en otra ubicación de entrada")
                                 command = {
                                 "lbl_result" : {"text": "Ubicación de HM Incorrecta:", "color": "red"},
@@ -506,6 +588,7 @@ class CheckQr (QState):
 
                         #Si la columna que indica la hora de salida de TORQUE es None, significa que no ha completado esa estación y NO puede entrar aún a Inserción.
                         else:
+                            self.model.cronometro_ciclo=False
                             print("El Arnés no ha pasado por la estación anterior (TORQUE) por lo que no puede entrar a Torque")
                             command = {
                             "lbl_result" : {"text": "Arnés sin Fecha de Historial de TORQUE", "color": "red"},
@@ -515,6 +598,7 @@ class CheckQr (QState):
                             self.nok.emit()
                             return
                 except Exception as ex:
+                    self.model.cronometro_ciclo=False
                     print("Conexión con FAMX2 exception: ", ex)
                     command = {
                             "lbl_result" : {"text": "Error de Conexión con Sistema de Trazabilidad", "color": "red", "font": "40pt"},
@@ -548,6 +632,7 @@ class CheckQr (QState):
             if dbEvent != None:
                 print("La Modularidad pertenece al Evento: ",dbEvent)
                 if coincidencias != 1:
+                    self.model.cronometro_ciclo=False
                     print("Datamatrix Redundante")
                     command = {
                         "lbl_result" : {"text": "Datamatrix redundante", "color": "red"},
@@ -559,6 +644,7 @@ class CheckQr (QState):
                 else:
                     print("Datamatrix Correcto")
             else:
+                self.model.cronometro_ciclo=False
                 print("La Modularidad NO pertenece a ningún evento")
                 command = {
                     "lbl_result" : {"text": "Datamatrix no registrado", "color": "green"},
@@ -706,6 +792,7 @@ class CheckQr (QState):
                                                         self.nok.emit()
                                                         return
                         else:
+                            self.model.cronometro_ciclo=False
                             print("response[MODULO]",response["MODULO"])
                             command = {
                                     "lbl_result" : {"text": f"Módulo {i} redundante en Matriz de evento", "color": "red"},
@@ -1126,7 +1213,7 @@ class Finish (QState):
         self.model.acomodo_listas_2 = True
         self.model.no_caja_actual=0
         self.model.arnes_por_finalizar=False
-        
+        self.model.cronometro_ciclo=False
         command = {}
         for i in self.model.database["fuses"]:
                 command[i] = False
@@ -1228,6 +1315,7 @@ class Reset (QState):
         #se reinicia variable que dice que el robot A finalizó
         self.model.robot_a_terminado = False
 
+        self.model.cronometro_ciclo=False
         #se reinician variables por si se da llave en el momento de la inserción manual del relay
         self.model.waiting_button_inserted_singal["robot_a"] = False
         self.model.waiting_button_inserted_singal["robot_b"] = False
