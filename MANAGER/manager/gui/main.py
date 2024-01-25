@@ -538,17 +538,19 @@ class Ui_main(object):
         self.lbl_box7.setObjectName("lbl_box7") ######### Modificación para F96 #########
 
         ######################################################################
-        self.lbl_info4 = QtWidgets.QLabel(self.splitter_3)
+        self.lbl_info4 = QtWidgets.QLabel(main)
         self.lbl_info4.setMinimumSize(QtCore.QSize(150, 0))
         self.lbl_info4.setMaximumSize(QtCore.QSize(340, 300))
         font = QtGui.QFont()
         font.setFamily("Century Schoolbook")
-        font.setPointSize(14)
+        font.setPointSize(20)
         font.setBold(True)
         font.setWeight(75)
         self.lbl_info4.setFont(font)
         self.lbl_info4.setAlignment(QtCore.Qt.AlignCenter)
         self.lbl_info4.setObjectName("lbl_info4")
+        self.lbl_info4.setGeometry(1600,900, 450 , 100)
+
         self.gridLayout.addWidget(self.splitter_4, 0, 0, 1, 1)
         main.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(main)
