@@ -579,7 +579,7 @@ class Ui_main(object):
 
          #se crean después del menuMenu para que aparezcan sobre este y no debajo
         self.lbl_clock = QtWidgets.QLabel(main)
-        self.lbl_clock.setGeometry(QtCore.QRect(1150, 0, 300, 100)) #posx, posy, ancho, alto
+        self.lbl_clock.setGeometry(QtCore.QRect(1250, 0, 300, 100)) #posx, posy, ancho, alto
         self.lbl_clock.setObjectName("lbl_clock")
         self.lbl_clock.setStyleSheet('background-color: navy; color: white; font-weight:bold; font-size:15pt; font: Century Schoolbook')
 
