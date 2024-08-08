@@ -20,7 +20,8 @@ import openpyxl
 import json
 import os
 from model import model
-
+import pymysql
+import pyodbc
 datos_conexion=model()
 host,user,password,database,serverp2,dbp2,userp2,passwordp2=datos_conexion.datos_acceso()
 
@@ -74,6 +75,33 @@ fuses_types = {
     'PDC-S': {
         '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
     }, 
+    'PDC-S9': {
+        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
+    }, 
+    'PDC-S10': {
+        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
+    }, 
+    'PDC-S21': {
+        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
+    }, 
+    'PDC-S18': {
+        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
+    }, 
+    'PDC-S17': {
+        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
+    }, 
+    'PDC-S19': {
+        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
+    },
+    'PDC-S20': {
+        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
+    },
+    'F96-1': {
+        'F96': "ATO"
+    },
+    'F96': {
+        'F96': "ATO"
+    }, 
     'TBLU': {
         '9': "ATO", '8': "ATO", '7': "ATO", '6': "ATO", '5': "ATO", '4': "ATO", '3': "ATO", '2': "ATO", '1': "ATO"
     }
@@ -105,6 +133,14 @@ def makeModules(data):
     print("Modulos anteriormente cargados: ",modules)
     dir_path = os.path.join(os.getcwd(), '..\\modules\\')
     file_name = None
+    # Establece la conexión a la base de datos
+    connection = pymysql.connect(
+        host=host,
+        user=user,
+        password=password,
+        database= data
+    )
+    cursor = connection.cursor()
     for root, dirs, files in os.walk(dir_path):
         for file_name in files: 
             if file_name.endswith('.xls') or file_name.endswith('.xlsx'):
@@ -123,18 +159,48 @@ def makeModules(data):
                             value = currentSheet.cell(row = row, column = column).value
                             if value == "x" or value == "X":
                                 box = currentSheet.cell(row = row, column = 1).value
+                                box = box.strip()
                                 if box =="Fuse Box F55":
                                     box = "TBLU"
                                 fuse = currentSheet.cell(row = row, column = 2).value
                                 if box == "TBLU":
                                     fuse = fuse.replace("A", "")
-                                if box == "PDC-S":
-                                    fuse = str(fuse)
-                                    #print("Tipo del Fuse Ya convertido: ",type(fuse))
-                                if box == "F96":
-                                    print("Caja F96 AQUI",module)
-                                    box = "PDC-RMID"
-                                    print("CAJA F96 TRANSFORMADA A PDC-RMID")
+                                if "PDC-S" in  box or "F96" in box:
+                                    
+                                        #print('BOX', box)
+                                        #print('BOX', data)
+                                        try:
+                                            # Consulta para verificar si la columna existe
+                                            check_column_query = f"""
+                                            SELECT COUNT(*)
+                                            FROM INFORMATION_SCHEMA.COLUMNS 
+                                            WHERE TABLE_NAME = 'modulos_fusibles' AND COLUMN_NAME = '{box}';
+                                            """
+
+                                            # Ejecutar la consulta de verificación
+                                            cursor.execute(check_column_query)
+                                            column_exists = cursor.fetchone()[0]
+
+                                            # Si la columna no existe, agregarla
+                                            if column_exists == 0:
+                                                add_column_query = f"""
+                                                ALTER TABLE `modulos_fusibles` 
+                                                ADD COLUMN `{box}` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL;
+                                                """
+                                                cursor.execute(add_column_query)
+                                                print(f"Columna '{box}' agregada a la tabla '{data}'.")
+                                            #else:
+                                                #print(f"La columna '{box}' ya existe en la tabla '{data}'.")
+
+                                            # Confirmar los cambios
+                                            connection.commit()
+
+                                            fuse = str(fuse)
+                                            fuse = fuse.strip()
+                                        except Exception as ex :
+                                            print('Exception BOX', ex)
+                                        
+                                #print("Tipo del Fuse Ya convertido: ",type(fuse))
                                 if box == "PDC-R":
                                     if module in pdcrVariantes["large"]:
                                         box = "PDC-R"
@@ -163,28 +229,40 @@ def makeModules(data):
             "PDC-S": {},
             "TBLU": {},
             "PDC-D": {},
-            "PDC-P": {}
+            "PDC-P": {},
+            "F96": {},
+            "F96-1": {},
+            "PDC-S9": {}, 
+            "PDC-S10": {}, 
+            "PDC-S21": {}, 
+            "PDC-S18": {}, 
+            "PDC-S17": {}, 
+            "PDC-S19": {},
+            "PDC-S20": {},
             }
 
         temp["MODULO"] = module
         for box in modules[module]:
             for fuse in modules[module][box]:
                 try:
-                    amp     = modules[module][box][fuse]
                     Type    = fuses_types[box][fuse]
+                    amp     = modules[module][box][fuse]
+                    print('TYPE',Type)
+                    print('AMP',amp)
+                    # #print(fuses_types['PDC-S21']['3'])
                     color = ""
                     if Type == "RELAY":
-                        if amp == "60":
-                            color = "red"
-                        elif amp == "70":
-                            color = "gray"
+                         if amp == "60":
+                             color = "red"
+                         elif amp == "70":
+                             color = "gray"
                     else:
-                        color   = fuses_color[amp]
+                         color   = fuses_color[amp]
                     if box == "TBLU":
-                        color = color + "_clear"
+                         color = color + "_clear"
                     temp[box][fuse] = Type + "," + amp + "," + color
                 except Exception as ex:
-                    print("\nexception in [", module, "] [", box, "] [", fuse, "]")
+                    print("\nexception in [",module,"] [",box,"] [",fuse,"]")
                     print(ex)
         structured_data.append(temp)
 
