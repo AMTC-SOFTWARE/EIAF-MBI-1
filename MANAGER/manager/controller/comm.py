@@ -43,6 +43,12 @@ class MqttClient (QObject):
     nido_PDCP = ""
     nido_PDCR = ""
     nido_PDCS = ""
+    nido_PDCS21 = ""
+    nido_PDCS20 = ""
+    nido_PDCS19 = ""
+    nido_PDCS17 = ""
+    nido_PDCS9 = ""
+    nido_F96_1 = ""
     nido_TBLU = ""
 
     # 1 para PDCRMID, 0 para PDCR
@@ -52,12 +58,24 @@ class MqttClient (QObject):
     raffiPDCP = 0
     raffiPDCR = 0
     raffiPDCS = 0
+    raffiPDCS21 = 0
+    raffiPDCS20 = 0
+    raffiPDCS19 = 0
+    raffiPDCS9 = 0
+    raffiPDCS17 = 0
+    raffiF96_1 = 0
     raffiTBLU = 0
 
     color_PDCD = "blue"
     color_PDCP = "blue"
     color_PDCR = "blue"
     color_PDCS = "blue"
+    color_PDCS21 = "blue"
+    color_PDCS20 = "blue"
+    color_PDCS19 = "blue"
+    color_PDCS9 = "blue"
+    color_PDCS17 = "blue"
+    color_F96_1 = "blue"
     color_TBLU = "blue"
 
     disable_ctrl = False
@@ -243,7 +261,7 @@ class MqttClient (QObject):
                 if "retry_btn" in payload:
                     self.model.plc["retry_btn"] = bool(payload["retry_btn"])
                     if payload["retry_btn"] == True:
-
+                        
                         #si hubo problema en la publicación final de resultados de trazabilidad de ciclo...
                         if self.model.problema_trazabilidad == True:
                             self.model.problema_trazabilidad = False
@@ -327,7 +345,7 @@ class MqttClient (QObject):
                                     self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
                             
                             #si la señal de espera de botón del robot B es true, y el robot A NO ha finalizado sus inserciones...
-                            elif self.model.waiting_button_inserted_singal["robot_b"] == True and self.model.robot_a_terminado == False:
+                            elif self.model.waiting_button_inserted_singal["robot_b"] == True and self.model.robot_a_terminado == False:                                
                                 self.queueIzq      = self.model.robots["robot_a"]["queueIzq"]
                                 self.queueDer      = self.model.robots["robot_a"]["queueDer"]
                                 print("len(self.queueIzq)",len(self.queueIzq))
@@ -464,6 +482,48 @@ class MqttClient (QObject):
                             self.raffiPDCS = 0
                         elif self.raffiPDCS == 0:
                             self.raffiPDCS = 1
+
+                if "raffi_PDC-S21" in payload_str:
+                    if payload["raffi_PDC-S21"] == True:
+                        if self.raffiPDCS21 == 1:
+                            self.raffiPDCS21 = 0
+                        elif self.raffiPDCS21 == 0:
+                            self.raffiPDCS21 = 1
+
+                if "raffi_PDC-S20" in payload_str:
+                    if payload["raffi_PDC-S20"] == True:
+                        if self.raffiPDCS20 == 1:
+                            self.raffiPDCS20 = 0
+                        elif self.raffiPDCS20 == 0:
+                            self.raffiPDCS20 = 1
+
+                if "raffi_PDC-S19" in payload_str:
+                    if payload["raffi_PDC-S19"] == True:
+                        if self.raffiPDCS19 == 1:
+                            self.raffiPDCS19 = 0
+                        elif self.raffiPDCS19 == 0:
+                            self.raffiPDCS19 = 1
+
+                if "raffi_PDC-S17" in payload_str:
+                    if payload["raffi_PDC-S17"] == True:
+                        if self.raffiPDCS17 == 1:
+                            self.raffiPDCS17 = 0
+                        elif self.raffiPDCS17 == 0:
+                            self.raffiPDCS17 = 1
+                
+                if "raffi_PDC-S9" in payload_str:
+                    if payload["raffi_PDC-S9"] == True:
+                        if self.raffiPDCS9 == 1:
+                            self.raffiPDCS9 = 0
+                        elif self.raffiPDCS9 == 0:
+                            self.raffiPDCS9 = 1
+
+                if "raffi_F96-1" in payload_str:
+                    if payload["raffi_F96-1"] == True:
+                        if self.raffiF96_1 == 1:
+                            self.raffiF96_1 = 0
+                        elif self.raffiF96_1 == 0:
+                            self.raffiF96_1 = 1
 
                 if "raffi_TBLU" in payload_str:
                     if payload["raffi_TBLU"] == True:
@@ -654,6 +714,180 @@ class MqttClient (QObject):
 
                     command = {
                                 "lbl_box4" : {"text": f"{self.nido_PDCS}", "color": f"{self.color_PDCS}"}
+                              }
+                    self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+
+                if "PDC-S21" in payload_str:
+                    if "PDC-S21" in payload:
+                        if payload["PDC-S21"] == True:
+                            self.nido_PDCS21 = "PDC-S21:\n Habilitada"
+                            self.color_PDCS21 = "blue"
+                            self.raffiPDCS21 = 0 # se reinicia el raffi a 0 (desactivado)
+                        if payload["PDC-S21"] == False:
+                            self.nido_PDCS21 = ""
+                            self.color_PDCS21 = "blue"
+                            self.raffiPDCS21 = 0 # se reinicia el raffi a 0 (desactivado)
+                    if "PDC-S21_ERROR" in payload:
+                        if payload["PDC-S21_ERROR"] == True:
+                            self.nido_PDCS21 = "PDC-S21:\n clampeo incorrecto"
+                            self.color_PDCS21 = "red"
+                    if "clamp_PDC-S21" in payload:
+                        if payload["clamp_PDC-S21"] == True:
+                            self.nido_PDCS21 = "PDC-S21:\n clampeo correcto"
+                            self.color_PDCS21 = "green"
+                            self.raffiPDCS21 = 0 # se reinicia el raffi a 0 (desactivado)
+                    if "PDC-S21" in self.nido_PDCS21: # si nido esta habilitado, correcto o incorrecto
+                        if self.raffiPDCS21 == 1:
+                            self.nido_PDCS21 = "PDC-S21:\n raffi activado"
+                            self.color_PDCS21 = "orange"
+
+                    command = {
+                                "lbl_box8" : {"text": f"{self.nido_PDCS21}", "color": f"{self.color_PDCS21}"}
+                              }
+                    self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+
+
+                if "PDC-S20" in payload_str:
+                    if "PDC-S20" in payload:
+                        if payload["PDC-S20"] == True:
+                            self.nido_PDCS20 = "PDC-S20:\n Habilitada"
+                            self.color_PDCS20 = "blue"
+                            self.raffiPDCS20 = 0 # se reinicia el raffi a 0 (desactivado)
+                        if payload["PDC-S20"] == False:
+                            self.nido_PDCS20 = ""
+                            self.color_PDCS20 = "blue"
+                            self.raffiPDCS20 = 0 # se reinicia el raffi a 0 (desactivado)
+                    if "PDC-S20_ERROR" in payload:
+                        if payload["PDC-S20_ERROR"] == True:
+                            self.nido_PDCS20 = "PDC-S20:\n clampeo incorrecto"
+                            self.color_PDCS20 = "red"
+                    if "clamp_PDC-S20" in payload:
+                        if payload["clamp_PDC-S20"] == True:
+                            self.nido_PDCS20 = "PDC-S20:\n clampeo correcto"
+                            self.color_PDCS20 = "green"
+                            self.raffiPDCS20 = 0 # se reinicia el raffi a 0 (desactivado)
+                    if "PDC-S20" in self.nido_PDCS20: # si nido esta habilitado, correcto o incorrecto
+                        if self.raffiPDCS20 == 1:
+                            self.nido_PDCS20 = "PDC-S20:\n raffi activado"
+                            self.color_PDCS20 = "orange"
+
+                    command = {
+                                "lbl_box9" : {"text": f"{self.nido_PDCS20}", "color": f"{self.color_PDCS20}"}
+                              }
+                    self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+
+                if "PDC-S19" in payload_str:
+                    if "PDC-S19" in payload:
+                        if payload["PDC-S19"] == True:
+                            self.nido_PDCS19 = "PDC-S19:\n Habilitada"
+                            self.color_PDCS19 = "blue"
+                            self.raffiPDCS19 = 0 # se reinicia el raffi a 0 (desactivado)
+                        if payload["PDC-S19"] == False:
+                            self.nido_PDCS19 = ""
+                            self.color_PDCS19 = "blue"
+                            self.raffiPDCS19 = 0 # se reinicia el raffi a 0 (desactivado)
+                    if "PDC-S19_ERROR" in payload:
+                        if payload["PDC-S19_ERROR"] == True:
+                            self.nido_PDCS19 = "PDC-S19:\n clampeo incorrecto"
+                            self.color_PDCS19 = "red"
+                    if "clamp_PDC-S19" in payload:
+                        if payload["clamp_PDC-S19"] == True:
+                            self.nido_PDCS19 = "PDC-S19:\n clampeo correcto"
+                            self.color_PDCS19 = "green"
+                            self.raffiPDCS19 = 0 # se reinicia el raffi a 0 (desactivado)
+                    if "PDC-S19" in self.nido_PDCS19: # si nido esta habilitado, correcto o incorrecto
+                        if self.raffiPDCS19 == 1:
+                            self.nido_PDCS19 = "PDC-S19:\n raffi activado"
+                            self.color_PDCS19 = "orange"
+
+                    command = {
+                                "lbl_box10" : {"text": f"{self.nido_PDCS19}", "color": f"{self.color_PDCS19}"}
+                              }
+                    self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+
+                if "PDC-S17" in payload_str:
+                    if "PDC-S17" in payload:
+                        if payload["PDC-S17"] == True:
+                            self.nido_PDCS17 = "PDC-S17:\n Habilitada"
+                            self.color_PDCS17 = "blue"
+                            self.raffiPDCS17 = 0 # se reinicia el raffi a 0 (desactivado)
+                        if payload["PDC-S17"] == False:
+                            self.nido_PDCS17 = ""
+                            self.color_PDCS17 = "blue"
+                            self.raffiPDCS17 = 0 # se reinicia el raffi a 0 (desactivado)
+                    if "PDC-S17_ERROR" in payload:
+                        if payload["PDC-S17_ERROR"] == True:
+                            self.nido_PDCS17 = "PDC-S17:\n clampeo incorrecto"
+                            self.color_PDCS17 = "red"
+                    if "clamp_PDC-S17" in payload:
+                        if payload["clamp_PDC-S17"] == True:
+                            self.nido_PDCS17 = "PDC-S17:\n clampeo correcto"
+                            self.color_PDCS17 = "green"
+                            self.raffiPDCS17 = 0 # se reinicia el raffi a 0 (desactivado)
+                    if "PDC-S17" in self.nido_PDCS17: # si nido esta habilitado, correcto o incorrecto
+                        if self.raffiPDCS17 == 1:
+                            self.nido_PDCS17 = "PDC-S17:\n raffi activado"
+                            self.color_PDCS17 = "orange"
+
+                    command = {
+                                "lbl_box11" : {"text": f"{self.nido_PDCS17}", "color": f"{self.color_PDCS17}"}
+                              }
+                    self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+
+                if "PDC-S9" in payload_str:
+                    if "PDC-S9" in payload:
+                        if payload["PDC-S9"] == True:
+                            self.nido_PDCS9 = "PDC-S9:\n Habilitada"
+                            self.color_PDCS9 = "blue"
+                            self.raffiPDCS9 = 0 # se reinicia el raffi a 0 (desactivado)
+                        if payload["PDC-S9"] == False:
+                            self.nido_PDCS9 = ""
+                            self.color_PDCS9 = "blue"
+                            self.raffiPDCS9 = 0 # se reinicia el raffi a 0 (desactivado)
+                    if "PDC-S9_ERROR" in payload:
+                        if payload["PDC-S9_ERROR"] == True:
+                            self.nido_PDCS9 = "PDC-S9:\n clampeo incorrecto"
+                            self.color_PDCS9 = "red"
+                    if "clamp_PDC-S9" in payload:
+                        if payload["clamp_PDC-S9"] == True:
+                            self.nido_PDCS9 = "PDC-S9:\n clampeo correcto"
+                            self.color_PDCS9 = "green"
+                            self.raffiPDCS9 = 0 # se reinicia el raffi a 0 (desactivado)
+                    if "PDC-S9" in self.nido_PDCS9: # si nido esta habilitado, correcto o incorrecto
+                        if self.raffiPDCS9 == 1:
+                            self.nido_PDCS9 = "PDC-S9:\n raffi activado"
+                            self.color_PDCS9 = "orange"
+
+                    command = {
+                                "lbl_box13" : {"text": f"{self.nido_PDCS9}", "color": f"{self.color_PDCS9}"}
+                              }
+                    self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+                if "F96-1" in payload_str:
+                    if "F96-1" in payload:
+                        if payload["F96-1"] == True:
+                            self.nido_F96_1 = "F96-1:\n Habilitada"
+                            self.color_F96_1 = "blue"
+                            self.raffiF96_1 = 0 # se reinicia el raffi a 0 (desactivado)
+                        if payload["F96-1"] == False:
+                            self.nido_F96_1 = ""
+                            self.color_F96_1 = "blue"
+                            self.raffiF96_1 = 0 # se reinicia el raffi a 0 (desactivado)
+                    if "F96-1_ERROR" in payload:
+                        if payload["F96-1_ERROR"] == True:
+                            self.nido_F96_1 = "F96-1:\n clampeo incorrecto"
+                            self.color_F96_1 = "red"
+                    if "clamp_F96-1" in payload:
+                        if payload["clamp_F96-1"] == True:
+                            self.nido_F96_1 = "F96-1:\n clampeo correcto"
+                            self.color_F96_1 = "green"
+                            self.raffiF96_1 = 0 # se reinicia el raffi a 0 (desactivado)
+                    if "F96-1" in self.nido_F96_1: # si nido esta habilitado, correcto o incorrecto
+                        if self.raffiF96_1 == 1:
+                            self.nido_F96_1 = "F96-1:\n raffi activado"
+                            self.color_F96_1 = "orange"
+
+                    command = {
+                                "lbl_box12" : {"text": f"{self.nido_F96_1}", "color": f"{self.color_F96_1}"}
                               }
                     self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
 
@@ -902,8 +1136,15 @@ class MqttClient (QObject):
                         self.model.shutdown = True 
 
             if message.topic == self.model.sub_topics["robot_a"]:
+
+                print("self.model.current_thread_robot: ",self.model.current_thread_robot)
+
+                print("mensaje desde RobotA")
                 ###############################################################
-                payload_str = json.dumps(payload) 
+                payload_str = json.dumps(payload)
+
+                print("payload_str RA: ",payload_str)
+
                 if self.model.robothome_a == True:
                             self.ra_home = "ESPERE ROBOT A"
                             command = {"lbl_box6" : {"text": f"{self.ra_home} {self.rb_home}", "color": "black"}}
@@ -1073,8 +1314,15 @@ class MqttClient (QObject):
                                 print("REINTENTOS: ",self.model.retries)
 
             if message.topic == self.model.sub_topics["robot_b"]:
+
+                print("self.model.current_thread_robot: ",self.model.current_thread_robot)
+
+                print("mensaje desde RobotB")
                 ###############################################################
-                payload_str = json.dumps(payload) 
+                payload_str = json.dumps(payload)
+
+                print("payload_str RB: ",payload_str)
+
                 if self.model.robothome_b == True:
                             self.rb_home = "\n ESPERE ROBOT B"
                             command = {"lbl_box6" : {"text": f"{self.ra_home} {self.rb_home}", "color": "black"}}
@@ -1199,7 +1447,7 @@ class MqttClient (QObject):
                                 self.model.inserted_thread_robot = True
                             else:
                                 self.inserted.emit()
-                            print("Inserción por robot no válida, debe ser por botón")
+                                print("Inserción por robot no válida, debe ser por botón")
                         if "READY" in payload["response"]:
                             if self.model.waiting_button_inserted_singal["robot_b"] == False:
                                 print("READY recibido porque self.model.waiting_button_inserted_singal[robot_b] = False")

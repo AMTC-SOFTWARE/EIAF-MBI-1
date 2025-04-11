@@ -457,7 +457,7 @@ class Triggers (QState):
                 #modificaciones especiales para triggers especiales que se mandarán como instrucciones al robot
                 if box == "TBLU":
                     cavity = "F10" + cavity[-1]
-                if box == "PDC-S":
+                if "PDC-S" in box:
                     cavity = "F11" + cavity[-1]
                 if "_clear" in fuse[2]:
                     fuse[0] = fuse[0] + "C"
@@ -587,7 +587,7 @@ class Triggers (QState):
                 #modificaciones especiales para triggers especiales que se mandarán como instrucciones al robot
                 if box == "TBLU":
                     cavity = "F10" + cavity[-1]
-                if box == "PDC-S":
+                if "PDC-S" in box:
                     cavity = "F11" + cavity[-1]
                 if "_clear" in fuse[2]:
                     fuse[0] = fuse[0] + "C"
@@ -646,6 +646,8 @@ class Triggers (QState):
                     self.model.databaseTempModel.clear()
                     self.model.databaseTempModel.append("PDC-D")
                     self.model.databaseTempModel.append("PDC-P")
+                    self.model.databaseTempModel.append("PDC-S17")
+                    self.model.databaseTempModel.append("PDC-S21")
 
                 if self.module == "robot_b":
                     self.model.databaseTempModel.clear()
@@ -653,14 +655,20 @@ class Triggers (QState):
                     self.model.databaseTempModel.append("PDC-RMID")
                     self.model.databaseTempModel.append("PDC-S")
                     self.model.databaseTempModel.append("TBLU")
+                    self.model.databaseTempModel.append("PDC-S19")
+                    self.model.databaseTempModel.append("PDC-S20")
+                    self.model.databaseTempModel.append("PDC-S9")
+                    self.model.databaseTempModel.append("F96-1")
 
                 command = {}
                 for i in self.model.databaseTempModel:
                     print("i Caja a liberar: ",i)
                     command[i] = False
+
+                command = json.dumps(command)
                 print("Command Final para liberar cajas: ",command)
                 #command = {f"{self.model.box_change}": False}
-                publish.single(self.model.pub_topics["plc"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+                publish.single(self.model.pub_topics["plc"],command,hostname='127.0.0.1', qos = 2)
 
                 #print("Enviando robots a Home - STOP - START")
                 #sleep(0.2)

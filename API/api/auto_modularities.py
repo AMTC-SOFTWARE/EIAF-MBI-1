@@ -233,12 +233,10 @@ def makeModules(data):
             "F96": {},
             "F96-1": {},
             "PDC-S9": {}, 
-            "PDC-S10": {}, 
-            "PDC-S21": {}, 
-            "PDC-S18": {}, 
-            "PDC-S17": {}, 
             "PDC-S19": {},
             "PDC-S20": {},
+            "PDC-S21": {}, 
+            "PDC-S17": {}, 
             }
 
         temp["MODULO"] = module

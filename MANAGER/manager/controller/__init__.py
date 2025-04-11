@@ -524,7 +524,7 @@ class MyThread(QThread):
                         #modificaciones especiales para triggers especiales que se mandarán como instrucciones al robot
                         if box == "TBLU":
                             cavity = "F10" + cavity[-1]
-                        if box == "PDC-S":
+                        if "PDC-S" in box:
                             cavity = "F11" + cavity[-1]
                         if "_clear" in fuse[2]:
                             fuse[0] = fuse[0] + "C"
@@ -652,7 +652,7 @@ class MyThread(QThread):
                         #modificaciones especiales para triggers especiales que se mandarán como instrucciones al robot
                         if box == "TBLU":
                             cavity = "F10" + cavity[-1]
-                        if box == "PDC-S":
+                        if "PDC-S" in box:
                             cavity = "F11" + cavity[-1]
                         if "_clear" in fuse[2]:
                             fuse[0] = fuse[0] + "C"
@@ -709,6 +709,8 @@ class MyThread(QThread):
                             self.model.databaseTempModel.clear()
                             self.model.databaseTempModel.append("PDC-D")
                             self.model.databaseTempModel.append("PDC-P")
+                            self.model.databaseTempModel.append("PDC-S17")
+                            self.model.databaseTempModel.append("PDC-S21")
 
                         if self.module == "robot_b":
                             self.model.databaseTempModel.clear()
@@ -716,13 +718,19 @@ class MyThread(QThread):
                             self.model.databaseTempModel.append("PDC-RMID")
                             self.model.databaseTempModel.append("PDC-S")
                             self.model.databaseTempModel.append("TBLU")
+                            self.model.databaseTempModel.append("PDC-S19")
+                            self.model.databaseTempModel.append("PDC-S20")
+                            self.model.databaseTempModel.append("PDC-S9")
+                            self.model.databaseTempModel.append("F96-1")
 
                         command = {}
                         for i in self.model.databaseTempModel:
                             print("i Caja a liberar: ",i)
                             command[i] = False
+
+                        command = json.dumps(command)
                         print("Command Final para liberar cajas: ",command)
-                        publish.single(self.model.pub_topics["plc"],json.dumps(command),hostname='127.0.0.1', qos = 2)
+                        publish.single(self.model.pub_topics["plc"],command,hostname='127.0.0.1', qos = 2)
 
                         #print("Enviando robot a Home - STOP - START")
                         #sleep(0.1)
@@ -1103,7 +1111,7 @@ class MyThreadReloj(QThread):
                     "lbl_clock":{"fecha":str(fechaActual)},
                     }
             publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2) 
-            
+
 
 
 class MyThreadTimer(QThread):
@@ -1113,13 +1121,13 @@ class MyThreadTimer(QThread):
         self.model  = model
         self.module = module
         self.client = client
-        
+
         print("se crea un objeto de la clase MyThread con padre QThread")
         print("con entrada del objeto model de la clase model que está en model.py")
         print("y el objeto client de la clase MqttClient que está en comm.py")
-        
+
     def run(self):
-        
+
         ejecution_timer = 0
 
         while 1:

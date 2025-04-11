@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>manager</Name>
     <RootNamespace>manager</RootNamespace>
-    <InterpreterId>Global|VisualStudio|env (Python 3.7 (64-bit))</InterpreterId>
+    <InterpreterId>Global|PythonCore|3.9-32</InterpreterId>
     <SuppressEnvironmentCreationPrompt>True</SuppressEnvironmentCreationPrompt>
     <SuppressPackageInstallationPrompt>True</SuppressPackageInstallationPrompt>
   </PropertyGroup>
@@ -57,7 +57,9 @@
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.9-32" />
     <InterpreterReference Include="Global|VisualStudio|env (Python 3.7 (64-bit))" />
+    <InterpreterReference Include="Global|VisualStudio|testenv" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

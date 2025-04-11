@@ -397,75 +397,6 @@ def UPDATE(table, ID):
         connection.close()
         return response
 
-@app.route("/api/get/preview/modularity/<ILX>",methods=["GET"])
-def preview(ILX):
-    endpoint = f"http://{host}:5000/api/get/pdcr/variantes"
-    pdcrVariantes = requests.get(endpoint).json()
-    print("Lista Final de Variantes PDC-R: \n",pdcrVariantes)
-    flag_l = False
-    flag_m = False
-    flag_s = False
-
-    endpoint = f"http://{host}:5000/api/get/modularidades/MODULARIDAD/=/{ILX}/ACTIVO/=/1"
-    response = requests.get(endpoint).json()
-    if "exception" in response:
-        endpoint = f"http://{host}:5000/api/get/modularidades/MODULARIDAD/=/{ILX}/ACTIVE/=/1"
-        response = requests.get(endpoint).json()
-
-    #arrayModules = response["MODULOS_FUSIBLES"][0].split(",")
-    modules = response["MODULOS_FUSIBLES"][0].split(sep = ",")
-    print(f"\n\t\tMODULOS_FUSIBLES:\n{modules}")
-    #print("Modulos SPLIT: ",arrayModules)
-    modularity = {
-        'PDC-P': {},
-        'PDC-D': {},
-        'PDC-R': {},
-        'PDC-RMID': {},
-        'PDC-RS': {},
-        'PDC-S': {}, 
-        'TBLU': {},
-        'variante': {}
-    }
-    for module in modules:
-        if module in pdcrVariantes["large"]:
-            flag_l = True
-        if module in pdcrVariantes["medium"]:
-            flag_m = True
-        if module in pdcrVariantes["small"]:
-            flag_s = True
-        #print("Module i de la Lista: "+module)
-        endpoint_Module= f"http://{host}:5000/api/get/modulos_fusibles/MODULO/=/{module}/_/=/_"
-        #print("Endpoint del módulo"+endpoint_Module)
-        response = requests.get(endpoint_Module).json()
-        #print("Modulo Informacion",response)
-        if "MODULO" in response:
-            if len(response["MODULO"]) == 1: 
-                for j in response:
-                    if j == "ID" or j == "MODULO":
-                        response[j] = response[j][0]
-                    else:
-                        #print("j!!!!: ",j)
-                        if "F96" in j:
-                            continue
-                        response[j] = json.loads(response[j][0])
-                        #print("response[j]",response[j])
-                        for k in response[j]:
-                            #print(k)
-                            if response[j][k] != "empty":
-                                modularity[j][k] = [response[j][k],module]
-    print("\t\t+++++++++++ FLAGS de",ILX,":+++++++++++\n Flag S - ",flag_s," Flag M - ",flag_m," Flag L - ",flag_l)
-    if flag_l == True:
-        variante = "PDC-R"
-    if flag_m == True and flag_l == False:
-        variante = "PDC-RMID"
-    if flag_s == True and flag_m == False:
-        variante = "PDC-RS"
-    if flag_s == False and flag_m == False and flag_l == False:
-        variante = "N/A"
-        print("La caja no contiene módulos pertenecientes a las categorías.")
-    modularity["variante"] = variante
-    print("Variante de Caja: ",variante)
-    return modularity
 
 @app.route("/api/get/pdcr/variantes",methods=["GET"])
 def variantes():
@@ -594,7 +525,14 @@ def newEvent():
             `PDC-RMID` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
             `PDC-RS` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
             `PDC-S` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-            TBLU longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+            `PDC-S9` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+            `PDC-S19` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+            `PDC-S20` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+            `PDC-S21` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+            `PDC-S17` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+            `F96` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+            `F96-1` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+            `TBLU` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
             `PDC-D` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
             `PDC-P` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL
             )"""
@@ -750,75 +688,80 @@ def eventGET(table, column_1, operation_1, value_1, column_2, operation_2, value
         connection.close()
         return response
 
-# @app.route("/api/get/<db>/preview/modularity/<ILX>",methods=["GET"])
-# def previewEvent(ILX,db):
-#     endpoint = f"http://{host}:5000/api/get/{db}/pdcr/variantes"
-#     pdcrVariantes = requests.get(endpoint).json()
-#     print("Lista Final de Variantes PDC-R: \n",pdcrVariantes)
-#     flag_l = False
-#     flag_m = False
-#     flag_s = False
-
-#     endpoint = f"http://{host}:5000/api/get/{db}/modularidades/MODULARIDAD/=/{ILX}/ACTIVO/=/1"
-#     response = requests.get(endpoint).json()
-#     if "exception" in response:
-#         endpoint = f"http://{host}:5000/api/get/{db}/modularidades/MODULARIDAD/=/{ILX}/ACTIVE/=/1"
-#         response = requests.get(endpoint).json()
-
-#     #arrayModules = response["MODULOS_FUSIBLES"][0].split(",")
-#     modules = response["MODULOS_FUSIBLES"][0].split(sep = ",")
-#     print(f"\n\t\tMODULOS_FUSIBLES:\n{modules}")
-#     #print("Modulos SPLIT: ",arrayModules)
-#     modularity = {
-#         'PDC-P': {},
-#         'PDC-D': {},
-#         'PDC-R': {},
-#         'PDC-RMID': {},
-#         'PDC-RS': {},
-#         'PDC-S': {}, 
-#         'TBLU': {},
-#         'variante': {}
-#     }
-#     for module in modules:
-#         if module in pdcrVariantes["large"]:
-#             flag_l = True
-#         if module in pdcrVariantes["medium"]:
-#             flag_m = True
-#         if module in pdcrVariantes["small"]:
-#             flag_s = True
-#         #print("Module i de la Lista: "+module)
-#         endpoint_Module= f"http://{host}:5000/api/get/{db}/modulos_fusibles/MODULO/=/{module}/_/=/_"
-#         #print("Endpoint del módulo"+endpoint_Module)
-#         response = requests.get(endpoint_Module).json()
-#         #print("Modulo Informacion",response)
-#         if "MODULO" in response:
-#             if len(response["MODULO"]) == 1: 
-#                 for j in response:
-#                     if j == "ID" or j == "MODULO":
-#                         response[j] = response[j][0]
-#                     else:
-#                         #print("j!!!!: ",j)
-#                         if j == "F96":
-#                             continue
-#                         response[j] = json.loads(response[j][0])
-#                         #print("response[j]",response[j])
-#                         for k in response[j]:
-#                             #print(k)
-#                             if response[j][k] != "empty":
-#                                 modularity[j][k] = [response[j][k],module]
-#     print("\t\t+++++++++++ FLAGS de",ILX,":+++++++++++\n Flag S - ",flag_s," Flag M - ",flag_m," Flag L - ",flag_l)
-#     if flag_l == True:
-#         variante = "PDC-R"
-#     if flag_m == True and flag_l == False:
-#         variante = "PDC-RMID"
-#     if flag_s == True and flag_m == False:
-#         variante = "PDC-RS"
-#     if flag_s == False and flag_m == False and flag_l == False:
-#         variante = "N/A"
-#         print("La caja no contiene módulos pertenecientes a las categorías.")
-#     modularity["variante"] = variante
-#     print("Variante de Caja: ",variante)
-#     return modularity
+@app.route("/api/get/<db>/preview/modularity/<ILX>",methods=["GET"])
+def previewEvent(ILX,db):
+     endpoint = f"http://{host}:5000/api/get/{db}/pdcr/variantes"
+     pdcrVariantes = requests.get(endpoint).json()
+     print("Lista Final de Variantes PDC-R: \n",pdcrVariantes)
+     flag_l = False
+     flag_m = False
+     flag_s = False
+     endpoint = f"http://{host}:5000/api/get/{db}/modularidades/MODULARIDAD/=/{ILX}/ACTIVO/=/1"
+     response = requests.get(endpoint).json()
+     if "exception" in response:
+         endpoint = f"http://{host}:5000/api/get/{db}/modularidades/MODULARIDAD/=/{ILX}/ACTIVE/=/1"
+         response = requests.get(endpoint).json()
+     #arrayModules = response["MODULOS_FUSIBLES"][0].split(",")
+     modules = response["MODULOS_FUSIBLES"][0].split(sep = ",")
+     print(f"\n\t\tMODULOS_FUSIBLES:\n{modules}")
+     #print("Modulos SPLIT: ",arrayModules)
+     modularity = {
+         'PDC-P': {},
+         'PDC-D': {},
+         'PDC-R': {},
+         'PDC-RMID': {},
+         'PDC-RS': {},
+         'PDC-S': {}, 
+         'PDC-S9': {}, 
+         'PDC-S19': {}, 
+         'PDC-S20': {}, 
+         'PDC-S21': {}, 
+         'PDC-S17': {}, 
+         'F96-1': {}, 
+         'F96': {}, 
+         'TBLU': {},
+         'variante': {}
+     }
+     for module in modules:
+         if module in pdcrVariantes["large"]:
+             flag_l = True
+         if module in pdcrVariantes["medium"]:
+             flag_m = True
+         if module in pdcrVariantes["small"]:
+             flag_s = True
+         #print("Module i de la Lista: "+module)
+         endpoint_Module= f"http://{host}:5000/api/get/{db}/modulos_fusibles/MODULO/=/{module}/_/=/_"
+         #print("Endpoint del módulo"+endpoint_Module)
+         response = requests.get(endpoint_Module).json()
+         #print("Modulo Informacion",response)
+         if "MODULO" in response:
+             if len(response["MODULO"]) == 1: 
+                 for j in response:
+                     if j == "ID" or j == "MODULO":
+                         response[j] = response[j][0]
+                     else:
+                         #print("j!!!!: ",j)
+                         if j == "F96":
+                             continue
+                         response[j] = json.loads(response[j][0])
+                         #print("response[j]",response[j])
+                         for k in response[j]:
+                             #print(k)
+                             if response[j][k] != "empty":
+                                 modularity[j][k] = [response[j][k],module]
+     print("\t\t+++++++++++ FLAGS de",ILX,":+++++++++++\n Flag S - ",flag_s," Flag M - ",flag_m," Flag L - ",flag_l)
+     if flag_l == True:
+         variante = "PDC-R"
+     if flag_m == True and flag_l == False:
+         variante = "PDC-RMID"
+     if flag_s == True and flag_m == False:
+         variante = "PDC-RS"
+     if flag_s == False and flag_m == False and flag_l == False:
+         variante = "N/A"
+         print("La caja no contiene módulos pertenecientes a las categorías.")
+     modularity["variante"] = variante
+     print("Variante de Caja: ",variante)
+     return modularity
 
 @app.route("/api/get/<db>/pdcr/variantes",methods=["GET"])
 def variantesEvent(db):

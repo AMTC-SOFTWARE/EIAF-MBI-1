@@ -10,7 +10,7 @@ from time import strftime #para obtener hora actual y fecha actual gg
 ########### MODIFICACION ########### 
 from os.path import exists
 from time import strftime
-from pickle import load
+from pickle import TRUE, load
 from cv2 import imread
 from os import system
 from copy import copy
@@ -39,7 +39,7 @@ class Startup(QState):
             #"lbl_info2" : {"text": "", "color": "green"}, #debe ir comentado para evitar que se reinicie el mensaje de fusibles que faltan por rellenar
             "lbl_info3" : {"text": "", "color": "black"},
             "lbl_info4" : {"text": "", "color": "black"},
-            "lbl_nuts" : {"text": "", "color": "purple"},
+            "lbl_nuts" :  {"text": "", "color": "purple"},
             #"lbl_nuts" : {"text": "  F1: Enviar a Home\nF12: Reiniciar Robots", "color": "purple"},
             ##############################################
             "lbl_box1"  : {"text": "", "color": "black"},
@@ -49,6 +49,12 @@ class Startup(QState):
             "lbl_box5"  : {"text": "", "color": "black"},
             "lbl_box6"  : {"text": "", "color": "black"},
             "lbl_box7"  : {"text": "", "color": "black"}, ######### Modificación para F96 #########
+            "lbl_box8" :  {"text": "", "color": "orange"},
+            "lbl_box9" :  {"text": "", "color": "orange"},
+            "lbl_box10" : {"text": "", "color": "orange"},
+            "lbl_box11" : {"text": "", "color": "orange"},
+            "lbl_box12" : {"text": "", "color": "orange"},
+            "lbl_box13" : {"text": "", "color": "orange"},
             ##############################################
             "lbl_result" : {"text": "Se requiere un login para continuar", "color": "green"},
             "lbl_steps" : {"text": "Ingresa tu código de acceso", "color": "black"},
@@ -221,6 +227,12 @@ class StartCycle (QState):
             "lbl_box5" : {"text": "", "color": "orange"},
             "lbl_box6" : {"text": "", "color": "orange"},
             "lbl_box7" : {"text": "", "color": "orange"},######### Modificación para F96 #########
+            "lbl_box8" : {"text": "", "color": "orange"},
+            "lbl_box9" : {"text": "", "color": "orange"},
+            "lbl_box10" : {"text": "", "color": "orange"},
+            "lbl_box11" : {"text": "", "color": "orange"},
+            "lbl_box12" : {"text": "", "color": "orange"},
+            "lbl_box13" : {"text": "", "color": "orange"},
             #############################################
             "lbl_result" : {"text": "Nuevo ciclo, Coloca las cajas. Seleccionar:", "color": "green"},
             "lbl_steps" : {"text": '"CTRL" / "START" para DOS Robots; "F4" para UN Robot', "color": "black"},
@@ -798,6 +810,7 @@ class CheckQr (QState):
                                                     if self.model.database["fuses"][j][k] == "empty":
                                                         self.model.database["fuses"][j][k] = response[j][k]
                                                     elif  self.model.database["fuses"][j][k] != response[j][k]:
+                                                        self.model.cronometro_ciclo=False
                                                         command = {
                                                             "lbl_result" : {"text": f'DB Error con Módulo {response["MODULO"]}  en el fusible {j}: {k}", "color": "red'},
                                                             "lbl_steps" : {"text": "Inténtalo de nuevo", "color": "black"}
@@ -816,6 +829,7 @@ class CheckQr (QState):
                             self.nok.emit()
                             return
                     else:
+                        self.model.cronometro_ciclo=False
                         command = {
                                 "lbl_result" : {"text": f"Modulo {i} no encontrado", "color": "red"},
                                 "lbl_steps" : {"text": "Inténtalo de nuevo", "color": "black"}
@@ -846,7 +860,7 @@ class CheckQr (QState):
 
                             ##################### SE ASIGNAN LAS TAREAS PARA EL ROBOTA y ROBOTB, EN LADO IZQ Y DER ####################
 
-                            if i == "PDC-D" or i == "PDC-P":
+                            if i == "PDC-D" or i == "PDC-P" or i == "PDC-S17" or i == "PDC-S21":
                                 #print("**** Robot A ****")
                                 #print("Fusible: ",self.model.database["fuses"][i][j])
                                 if self.model.database["fuses"][i][j] in self.model.AfusesIzq:
@@ -857,7 +871,7 @@ class CheckQr (QState):
                                     self.model.robots["robot_a"]["queueDer"].append([i, j, self.model.database["fuses"][i][j]])
                                 
 
-                            if i == "PDC-R" or i == "PDC-RMID" or i == "PDC-S" or i == "TBLU":
+                            if i == "PDC-R" or i == "PDC-RMID" or i == "PDC-S" or i == "PDC-S9" or i == "PDC-S19" or i == "PDC-S20" or i == "F96-1" or i == "TBLU":
                                 #print("**** Robot B ****")
                                 #print("Fusible: ",self.model.database["fuses"][i][j])
                                 if self.model.database["fuses"][i][j] in self.model.BfusesIzq:
@@ -900,7 +914,7 @@ class CheckQr (QState):
                         self.model.modularity_manual.append(elemento)
 
                     def ordenar_por_caja(elem):
-                        cajas = {"PDC-R":1,"PDC-RMID":2,"F96":3,"PDC-S":4,"TBLU":5,"PDC-D":6,"PDC-P":7}
+                        cajas = {"PDC-R":1,"PDC-RMID":2,"F96":3,"PDC-S":4,"TBLU":5,"PDC-D":6,"PDC-P":7, "PDC-S19":8, "PDC-S20":9, "PDC-S17":10, "PDC-S21":11, "PDC-S9":12}
                         return cajas.get(elem[0],0)
 
                     self.model.modularity_manual = sorted(self.model.modularity_manual, key=ordenar_por_caja)
@@ -964,6 +978,8 @@ class CheckQr (QState):
                 command[i] = True
             else:
                 command[i] = False
+
+        print( f"cajas a clampear {command}")
         publish.single(self.model.pub_topics["plc"],json.dumps(command),hostname='127.0.0.1', qos = 2)
 
 class QrRework (QState):
@@ -1025,6 +1041,9 @@ class ClampsMonitor(QState):
             if not("PDC-D" in database_temp):
                 if "PDC-D" in self.model.database["clamps"]:
                      database_temp.append("PDC-D")
+            if not("PDC-S17" in database_temp):
+                if "PDC-S17" in self.model.database["clamps"]:
+                    database_temp.append("PDC-S17")
             if not("PDC-P" in database_temp):
                 if "PDC-P" in self.model.database["clamps"]:
                     database_temp.append("PDC-P")
@@ -1039,6 +1058,21 @@ class ClampsMonitor(QState):
             if not("PDC-S" in  database_temp):
                 if "PDC-S" in self.model.database["clamps"]:
                      database_temp.append("PDC-S")
+            if not("PDC-S9" in  database_temp):
+                if "PDC-S9" in self.model.database["clamps"]:
+                     database_temp.append("PDC-S9")
+            if not("PDC-S19" in  database_temp):
+                if "PDC-S19" in self.model.database["clamps"]:
+                     database_temp.append("PDC-S19")
+            if not("PDC-S20" in  database_temp):
+                if "PDC-S20" in self.model.database["clamps"]:
+                     database_temp.append("PDC-S20")
+            if not("PDC-S21" in  database_temp):
+                if "PDC-S21" in self.model.database["clamps"]:
+                    database_temp.append("PDC-S21")
+            if not("F96-1" in  database_temp):
+                if "F96-1" in self.model.database["clamps"]:
+                     database_temp.append("F96-1")
             if not("TBLU" in  database_temp):
                 if "TBLU" in self.model.database["clamps"]:
                      database_temp.append("TBLU")
@@ -1108,6 +1142,26 @@ class ClampsMonitorBoth(QState):
         if not("PDC-S" in  database_temp):
             if "PDC-S" in self.model.database["clamps"]:
                     database_temp.append("PDC-S")
+        if not("PDC-S9" in  database_temp):
+                if "PDC-S9" in self.model.database["clamps"]:
+                     database_temp.append("PDC-S9")
+        if not("PDC-S19" in  database_temp):
+            if "PDC-S19" in self.model.database["clamps"]:
+                    database_temp.append("PDC-S19")
+        if not("PDC-S20" in  database_temp):
+            if "PDC-S20" in self.model.database["clamps"]:
+                    database_temp.append("PDC-S20")
+        if not("PDC-S17" in  database_temp):
+            if "PDC-S17" in self.model.database["clamps"]:
+                    database_temp.append("PDC-S17")
+        if not("PDC-S21" in  database_temp):
+            if "PDC-S21" in self.model.database["clamps"]:
+                    database_temp.append("PDC-S21")
+        if not("F96-1" in  database_temp):
+            if "F96-1" in self.model.database["clamps"]:
+                    database_temp.append("F96-1")
+
+
         if not("TBLU" in  database_temp):
             if "TBLU" in self.model.database["clamps"]:
                     database_temp.append("TBLU")

@@ -30,6 +30,8 @@ class Model (object):
 
         self.fechaAnterior = self.get_currentTime() #se inicializa con la fecha del servidor
         self.fechaLocalAnterior = datetime.now() #se inicializa con la fecha local actual
+        self.cronometro_ciclo=False
+
         ###############################################################
         self.robothome_a = False
         self.robothome_b = False
@@ -44,7 +46,7 @@ class Model (object):
         self.acomodo_listas = True #variable para hacer acomodo de listas de fusibles a insertar
         self.modo_manual_activado=False
         self.detener_robot_opuesto = False
-        self.cronometro_ciclo=False
+
         self.shared_zone = ""
 
         self.current_thread_robot = ""
@@ -92,6 +94,7 @@ class Model (object):
 
         #variable para saber que robot A ya terminó
         self.robot_a_terminado = False
+
 
         #Variable para guardar todos los tiempos de inserción de fusibles
         self.insertion_times = {}
@@ -163,10 +166,41 @@ class Model (object):
             'F96_box':{
                 'F96':[(257, 346), (480, 417)]
                 },
+            'F96-1':{
+                'F96':[(257, 346), (480, 417)]
+                },
             'PDC-S': {
                 '1': [(439, 218), (486, 392)], '2': [(494, 218), (540, 389)], '3': [(550, 218), (596, 387)], '4': [(607, 219), (653, 387)], 
                 '5': [(661, 218), (711, 382)], '6': [(719, 218), (763, 380)]
-                }, 
+                },
+            'PDC-S17': {
+                '1': [(439, 218), (486, 392)], '2': [(494, 218), (540, 389)], '3': [(550, 218), (596, 387)], '4': [(607, 219), (653, 387)], 
+                '5': [(661, 218), (711, 382)], '6': [(719, 218), (763, 380)]
+                },
+            'PDC-S18': {
+                '1': [(439, 218), (486, 392)], '2': [(494, 218), (540, 389)], '3': [(550, 218), (596, 387)], '4': [(607, 219), (653, 387)], 
+                '5': [(661, 218), (711, 382)], '6': [(719, 218), (763, 380)]
+                },
+            'PDC-S21': {
+                '1': [(439, 218), (486, 392)], '2': [(494, 218), (540, 389)], '3': [(550, 218), (596, 387)], '4': [(607, 219), (653, 387)], 
+                '5': [(661, 218), (711, 382)], '6': [(719, 218), (763, 380)]
+                },
+            'PDC-S19': {
+                '1': [(439, 218), (486, 392)], '2': [(494, 218), (540, 389)], '3': [(550, 218), (596, 387)], '4': [(607, 219), (653, 387)], 
+                '5': [(661, 218), (711, 382)], '6': [(719, 218), (763, 380)]
+                },
+            'PDC-S20': {
+                '1': [(439, 218), (486, 392)], '2': [(494, 218), (540, 389)], '3': [(550, 218), (596, 387)], '4': [(607, 219), (653, 387)], 
+                '5': [(661, 218), (711, 382)], '6': [(719, 218), (763, 380)]
+                },
+            'PDC-S9': {
+                '1': [(439, 218), (486, 392)], '2': [(494, 218), (540, 389)], '3': [(550, 218), (596, 387)], '4': [(607, 219), (653, 387)], 
+                '5': [(661, 218), (711, 382)], '6': [(719, 218), (763, 380)]
+                },
+            'PDC-S10': {
+                '1': [(439, 218), (486, 392)], '2': [(494, 218), (540, 389)], '3': [(550, 218), (596, 387)], '4': [(607, 219), (653, 387)], 
+                '5': [(661, 218), (711, 382)], '6': [(719, 218), (763, 380)]
+                },
             'TBLU': {
                 '9': [(79, 531), (117, 600)], '8': [(125, 532), (159, 599)], '7': [(167, 532), (207, 599)], '6': [(212, 532), (251, 600)], 
                 '5': [(257, 531), (296, 600)], '4': [(300, 530), (338, 601)], '3': [(347, 533), (385, 600)], '2': [(388, 531), (428, 598)], 
@@ -269,7 +303,7 @@ class Model (object):
                 }
             }
 
-        self.AfusesIzq = ['MINI,5,beige','MINI,15,blue','MULTI,7.5,brown','ATO,5,beige','ATO,15,blue','MULTI,5,beige','ATO,10,red']
+        self.AfusesIzq = ['MINI,5,beige','MINI,15,blue','MULTI,7.5,brown','ATO,5,beige','ATO,15,blue','MULTI,5,beige','ATO,10,red','ATO,20,yellow']
         self.AfusesDer = ['ATO,30,green','ATO,25,white','ATO,7.5,brown','MINI,7.5,brown','MINI,10,red']
         self.BfusesIzq = ['MINI,5,beige','MINI,7.5,brown','MINI,10,red','ATO,25,white','ATO,7.5,brown','ATO,15,blue_clear','MINI,15,blue','MAXI,50,red']
         self.BfusesDer = ['RELAY,60,red','RELAY,70,gray','MAXI,40,amber','MAXI,30,green','ATO,30,green','ATO,10,red_clear','ATO,5,beige_clear','ATO,20,yellow','ATO,5,beige','ATO,10,red','ATO,15,blue']
@@ -325,8 +359,40 @@ class Model (object):
                 'F449': 'empty', 'F448': 'empty', 'F447': 'empty', 'RELX': 'empty', 'RELU': 'empty', 'RELT': 'empty', 'F96': 'empty'
                 },
             'PDC-S': {
-                '1': 'empty', '2': 'empty', '3': 'empty', '4': 'empty', '5': 'empty', '6': 'empty'
-                }, 
+                '1': 'empty', '2': 'empty', '3': 'empty', '4': 'empty', 
+                '5': 'empty', '6': 'empty'
+                },
+            'PDC-S17': {
+                '1': 'empty', '2': 'empty', '3': 'empty', '4': 'empty', 
+                '5': 'empty', '6': 'empty'
+                },
+            'PDC-S18': {
+                '1': 'empty', '2': 'empty', '3': 'empty', '4': 'empty', 
+                '5': 'empty', '6': 'empty'
+                },
+            'PDC-S21': {
+                '1': 'empty', '2': 'empty', '3': 'empty', '4': 'empty', 
+                '5': 'empty', '6': 'empty'
+                },
+            'PDC-S19': {
+                '1': 'empty', '2':'empty', '3': 'empty', '4': 'empty', 
+                '5': 'empty', '6': 'empty'
+                },
+            'PDC-S20': {
+                '1': 'empty', '2': 'empty', '3': 'empty', '4': 'empty', 
+                '5': 'empty', '6': 'empty'
+                },
+            'PDC-S9': {
+                '1': 'empty', '2': 'empty', '3': 'empty', '4': 'empty', 
+                '5': 'empty', '6': 'empty'
+                },
+            'PDC-S10': {
+                '1': 'empty', '2': 'empty', '3': 'empty', '4': 'empty', 
+                '5': 'empty', '6': 'empty'
+                },
+            'F96-1': {
+                'F96': 'empty'
+                },
             'TBLU': {
                 '1': 'empty', '2': 'empty', '3': 'empty', '4': 'empty', '5': 'empty', '6': 'empty', '7': 'empty', '8': 'empty', '9': 'empty'
                 }

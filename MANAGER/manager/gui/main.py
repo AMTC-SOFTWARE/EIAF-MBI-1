@@ -508,7 +508,7 @@ class Ui_main(object):
         self.lbl_box7.setSizePolicy(sizePolicy) ######### Modificación para F96 #########
         self.lbl_box7.setMinimumSize(QtCore.QSize(250, 70)) ######### Modificación para F96 #########
         self.lbl_box7.setMaximumSize(QtCore.QSize(250, 70)) ######### Modificación para F96 #########
-
+        font.setPointSize(16)
         self.lbl_box1.setFont(font)
         self.lbl_box1.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
         self.lbl_box1.setObjectName("lbl_box1")
@@ -537,6 +537,48 @@ class Ui_main(object):
         self.lbl_box7.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop) ######### Modificación para F96 #########
         self.lbl_box7.setObjectName("lbl_box7") ######### Modificación para F96 #########
 
+
+        self.lbl_box8 = QtWidgets.QLabel(main)
+        self.lbl_box8.setGeometry(QtCore.QRect(1450, 280, 250, 90))
+        self.lbl_box8.setFont(font)
+        self.lbl_box8.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop) ######### Modificación para F96 #########
+        self.lbl_box8.setObjectName("lbl_box8")
+        self.lbl_box8.setText("PSC-S21")
+        
+        self.lbl_box9 = QtWidgets.QLabel(main)
+        self.lbl_box9.setGeometry(QtCore.QRect(1450, 350, 250, 90))
+        self.lbl_box9.setFont(font)
+        self.lbl_box9.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop) ######### Modificación para F96 #########
+        self.lbl_box9.setObjectName("lbl_box9")
+        self.lbl_box9.setText("PDC-S20")
+        
+        self.lbl_box10 = QtWidgets.QLabel(main)
+        self.lbl_box10.setGeometry(QtCore.QRect(1450, 420, 250, 90))
+        self.lbl_box10.setFont(font)
+        self.lbl_box10.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop) ######### Modificación para F96 #########
+        self.lbl_box10.setObjectName("lbl_box10")
+        self.lbl_box10.setText("PDC-S19")
+
+        self.lbl_box11 = QtWidgets.QLabel(main)
+        self.lbl_box11.setGeometry(QtCore.QRect(1450, 490, 250, 90))
+        self.lbl_box11.setFont(font)
+        self.lbl_box11.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop) ######### Modificación para F96 #########
+        self.lbl_box11.setObjectName("lbl_box11")
+        self.lbl_box11.setText("PDC-S17")
+        
+        self.lbl_box12 = QtWidgets.QLabel(main)
+        self.lbl_box12.setGeometry(QtCore.QRect(1450, 560, 250, 90))
+        self.lbl_box12.setFont(font)
+        self.lbl_box12.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop) ######### Modificación para F96 #########
+        self.lbl_box12.setObjectName("lbl_box12")
+        self.lbl_box12.setText("F96-1")
+
+        self.lbl_box13 = QtWidgets.QLabel(main)
+        self.lbl_box13.setGeometry(QtCore.QRect(1450, 210, 250, 90))
+        self.lbl_box13.setFont(font)
+        self.lbl_box13.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop) ######### Modificación para F96 #########
+        self.lbl_box13.setObjectName("lbl_box13")
+        self.lbl_box13.setText("PDC-S9")
         ######################################################################
         self.lbl_info4 = QtWidgets.QLabel(main)
         self.lbl_info4.setMinimumSize(QtCore.QSize(150, 0))
@@ -575,7 +617,7 @@ class Ui_main(object):
         self.statusbar.setObjectName("statusbar")
         main.setStatusBar(self.statusbar)
         self.menubar.addAction(self.menuMenu.menuAction())
-         #se crean después del menuMenu para que aparezcan sobre este y no debajo
+        #se crean después del menuMenu para que aparezcan sobre este y no debajo
 
          #se crean después del menuMenu para que aparezcan sobre este y no debajo
         self.lbl_clock = QtWidgets.QLabel(main)
