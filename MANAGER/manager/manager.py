@@ -5,6 +5,7 @@ Authors: MC Marco Rutiaga
          MC César Velázquez
 
 pyinstaller --add-data data;data --noconfirm manager.py
+pyinstaller --onedir --icon=icon.ico --contents-directory "." --add-data data;data manager.py
 """
 from gui import MainWindow
 from controller import Controller

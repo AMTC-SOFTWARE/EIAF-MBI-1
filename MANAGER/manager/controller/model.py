@@ -71,6 +71,10 @@ class Model (object):
         self.waiting_key_thread = False
         self.robot_principal = False
         self.var_queue_2 = 0 #variable para ir obteniendo fusibles de principio o fin de lista de triggers
+
+        self.pdcs9_flag = False #bandera para saber si se está trabajando con PDC-S9
+        self.conjunto = []
+        
         ###############################################################
 
         #variable para determinar que hubo un problema de publish de trazabilidad en la salida

@@ -761,11 +761,14 @@ class MqttClient (QObject):
                         if payload["PDC-S20_ERROR"] == True:
                             self.nido_PDCS20 = "PDC-S20:\n clampeo incorrecto"
                             self.color_PDCS20 = "red"
+                            if "PDC-S20" in self.model.conjunto:
+                                self.model.conjunto.remove("PDC-S20")
                     if "clamp_PDC-S20" in payload:
                         if payload["clamp_PDC-S20"] == True:
                             self.nido_PDCS20 = "PDC-S20:\n clampeo correcto"
                             self.color_PDCS20 = "green"
                             self.raffiPDCS20 = 0 # se reinicia el raffi a 0 (desactivado)
+                            self.model.conjunto.append("PDC-S20") # se agrega a conjunto de cajas clampeadas
                     if "PDC-S20" in self.nido_PDCS20: # si nido esta habilitado, correcto o incorrecto
                         if self.raffiPDCS20 == 1:
                             self.nido_PDCS20 = "PDC-S20:\n raffi activado"
@@ -790,11 +793,14 @@ class MqttClient (QObject):
                         if payload["PDC-S19_ERROR"] == True:
                             self.nido_PDCS19 = "PDC-S19:\n clampeo incorrecto"
                             self.color_PDCS19 = "red"
+                            if "PDC-S19" in self.model.conjunto:
+                                 self.model.conjunto.remove("PDC-S19")
                     if "clamp_PDC-S19" in payload:
                         if payload["clamp_PDC-S19"] == True:
                             self.nido_PDCS19 = "PDC-S19:\n clampeo correcto"
                             self.color_PDCS19 = "green"
                             self.raffiPDCS19 = 0 # se reinicia el raffi a 0 (desactivado)
+                            self.model.conjunto.append("PDC-S19") # se agrega a conjunto de cajas clampeadas
                     if "PDC-S19" in self.nido_PDCS19: # si nido esta habilitado, correcto o incorrecto
                         if self.raffiPDCS19 == 1:
                             self.nido_PDCS19 = "PDC-S19:\n raffi activado"
@@ -983,6 +989,11 @@ class MqttClient (QObject):
                         self.plural = "S"
                     else:
                         self.plural = ""
+
+                if self.model.pdcs9_flag == True and "PDC-S19" in self.model.conjunto and "PDC-S20" in self.model.conjunto:
+                    print("ACTIVANDO CAJA PDC-S9")
+                    self.client.publish(self.model.pub_topics["plc"],json.dumps({"PDC-S9": True}), qos = 2)
+                    self.model.pdcs9_flag = False
 
                 if self.puertaA == "" and self.puertaB == "" and self.puertaC == "":
                     command = {"lbl_info4" : {"text": f"{self.cortina}", "color": "red"}}

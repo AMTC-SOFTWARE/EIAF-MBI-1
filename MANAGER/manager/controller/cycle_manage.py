@@ -208,6 +208,7 @@ class StartCycle (QState):
         #se reinician variables por si se da llave en el momento de la inserción manual del relay
         self.model.waiting_button_inserted_singal["robot_a"] = False
         self.model.waiting_button_inserted_singal["robot_b"] = False
+        self.model.conjunto = []
 
         if self.model.modo_manual_activado==False:
             Timer(1, self.robots_home).start()
@@ -243,7 +244,6 @@ class StartCycle (QState):
             "cycle_started": False,
             "statusBar": "clear"
             }
-
         if self.model.shutdown == True:
             Timer(0.05, self.logout, args = (self.model.local_data["user"],)).start()
             command["lbl_result"] = {"text": "Apagando equipo...", "color": "green"}
@@ -975,7 +975,10 @@ class CheckQr (QState):
         command = {}
         for i in self.model.database["fuses"]:
             if i in self.model.database["clamps"]:
-                command[i] = True
+               if "PDC-S9" in i:
+                    command[i] = False
+               else:
+                    command[i] = True
             else:
                 command[i] = False
 
@@ -1060,7 +1063,8 @@ class ClampsMonitor(QState):
                      database_temp.append("PDC-S")
             if not("PDC-S9" in  database_temp):
                 if "PDC-S9" in self.model.database["clamps"]:
-                     database_temp.append("PDC-S9")
+                    self.model.pdcs9_flag = True
+                    database_temp.append("PDC-S9")
             if not("PDC-S19" in  database_temp):
                 if "PDC-S19" in self.model.database["clamps"]:
                      database_temp.append("PDC-S19")
@@ -1144,7 +1148,8 @@ class ClampsMonitorBoth(QState):
                     database_temp.append("PDC-S")
         if not("PDC-S9" in  database_temp):
                 if "PDC-S9" in self.model.database["clamps"]:
-                     database_temp.append("PDC-S9")
+                    self.model.pdcs9_flag = True
+                    database_temp.append("PDC-S9")
         if not("PDC-S19" in  database_temp):
             if "PDC-S19" in self.model.database["clamps"]:
                     database_temp.append("PDC-S19")
