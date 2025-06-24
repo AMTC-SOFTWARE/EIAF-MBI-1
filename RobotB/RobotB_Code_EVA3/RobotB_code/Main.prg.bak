@@ -25,7 +25,8 @@ Function main
 	Print #202, "SUCCESSFUL CONNECTION TCP/IP"
 	
 	
-	
+	'TLSet 1, XY(-81.748, -47.950, 0, 0)17-FEBRER0-2023 
+	'TLSet 2, XY(-79.069, 45.672, 0, 0) 
 	
 	Off 544
 	AVAILABLE = 512

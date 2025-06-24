@@ -148,9 +148,10 @@ Function Insercion_PistonExtendido
     Loop
 
 	Check_Vacio = 0
-	'Pause
-	Move P(cavity) +Z(14)
+
+	Move P(cavity) +Z(40)
 	Pause
+	
 	Move P(cavity)
 	Monitoreo_Insercion
 

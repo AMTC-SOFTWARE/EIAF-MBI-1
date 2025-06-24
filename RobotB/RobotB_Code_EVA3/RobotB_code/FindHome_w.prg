@@ -14,7 +14,7 @@ Function FindHome_w
 	crear_zona
 	actualizar_zona
 		
-	
+	error_vacioo = 0
 	
 	Print("Salu2 desde el wall-E")
 	Print (Zona1)

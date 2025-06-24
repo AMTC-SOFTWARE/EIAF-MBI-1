@@ -122,4 +122,15 @@ Function main
 	
 Fend
 
+Function mantenimiento_z
+	Motor On
+	Power High
+	Speed 80
+	Accel 80, 80
+	
+	Do
+		Go P900
+		Go P901
+	Loop
+Fend
 

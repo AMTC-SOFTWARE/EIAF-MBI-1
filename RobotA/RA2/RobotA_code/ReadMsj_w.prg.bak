@@ -1,21 +1,14 @@
 Function LeerMensaje_w
 	TmReset 1
 	Do While (lectura$ = "empty" Or lectura$ = "test")
-			Do While (ChkNet(202) <= 0)
-				If Tmr(1) > 0.8 Then
-					Print "Esperando Instrucción"
-					TmReset 1
-				EndIf
-			Loop
-			
-			Print("//////////////////////////////////////////////////////")
-			Tiempo_Envio_Mensaje = (Tmr(5))
-			'Wait (0.05)
-			Print #202, "TIEMPO_ENVIO_MENSAJE: " + Str$((Tmr(5))) + " s"
-			TmReset 5
-			
-			Read #202, lectura$, ChkNet(202)
-			Print "Msensaje: " + lectura$
+		Do While (ChkNet(202) <= 0)
+			If Tmr(1) > 0.8 Then
+				Print "Esperando Instrucción"
+				TmReset 1
+			EndIf
+		Loop
+		Read #202, lectura$, ChkNet(202)
+		Print "Msensaje: " + lectura$
 	Loop
 	
 	'"ATO_15,PDCR,F400,ERROR"
@@ -23,12 +16,12 @@ Function LeerMensaje_w
 	
 	If lectura$ <> "HOME" Then
 		
-			dividir_lectura
-				
-			Print "Fusible: " + fusible$
-			Print "Caja: " + caja$
-			Print "Cavidad: " + cavidad$
+		dividir_lectura
 			
+		Print "Fusible: " + fusible$
+		Print "Caja: " + caja$
+		Print "Cavidad: " + cavidad$
+		
 	EndIf
 	
 	
@@ -42,10 +35,10 @@ Function ActualizarMensaje_w
 					TmReset 1
 				EndIf
 	Loop
-	
+		
 	Print("//////////////////////////////////////////////////////")
 	Tiempo_Envio_Mensaje = (Tmr(5))
-	'Wait (0.05)
+	
 	Print #202, "TIEMPO_ENVIO_MENSAJE: " + Str$((Tmr(5))) + " s"
 	TmReset 5
 	
@@ -80,15 +73,11 @@ Function RevisarMensaje_w
 	If lectura$ <> "HOME" Then
 	
 		If CheckMsj$ = "ERROR" Then
-				Print "Instrucción no válida"
-				ActualizarMensaje_w
+			Print "Instrucción no válida"
+			ActualizarMensaje_w
 		Else
 			dividir_lectura
-			
-			
-			
-			
-			
+		
 			If (caja$ = "PDCD" Or caja$ = "PDCP") Then
 				If PDef(P(cavity)) Then
 				Else
@@ -112,17 +101,14 @@ Function RevisarMensaje_w
 			
 			
 			If caja$ = "PDCP" Then
-                If (cavidad$ = "MF1" Or cavidad$ = "MF2") Then
-                Else
+	            If (cavidad$ = "MF1" Or cavidad$ = "MF2") Then
+	            Else
 					If cavity < 299 Then
 						Print "cavidad no válida para esta caja"
 						ActualizarMensaje_w
 					EndIf
 				EndIf
 			EndIf
-			
-			
-			
 		EndIf
 	EndIf
 	

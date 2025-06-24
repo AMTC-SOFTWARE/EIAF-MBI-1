@@ -1,6 +1,6 @@
 'String fusible$
 Global Real Incremento
-Global Integer Gripper
+Global Integer Gripper, contador_reintentos_toma
 
 '------------------------------Funcion de toma de fusibles------------------------------------
 Function tomaFusible							'Subrutina de toma de fusible
@@ -166,15 +166,16 @@ Function Toma2Fusible
 	Fuse_Presence_Function
 
 
-	'Move P911 +Z(4)
-	'Pause
+'	Move P911 +Z(4)
+'	Pause
 
 	Move P911							'tomar fusible
 	
 	TmReset 0						 	'Timer para vacio
 	TmReset 1							'Timer para imprimir mensaje
 	Incremento = 0
-	Do While (Sw(vacio_ok) = 0)			'Esperar mientras se detecta que se tomo el fusible
+	contador_reintentos_toma = 0
+	Do While (Sw(vacio_ok) = 0 And contador_reintentos_toma < 4)			'Esperar mientras se detecta que se tomo el fusible
 		If Tmr(1) > 0.8 Then
 			Print "Esperando Toma de Fusible"
 			TmReset 1
@@ -187,26 +188,49 @@ Function Toma2Fusible
 			If Incremento < 0.5 Then
 				Move P911 +Z(-Incremento)
 				Incremento = Incremento + 0.1
+				contador_reintentos_toma = contador_reintentos_toma + 1
 			EndIf
 			Fuse_Presence_Function
 			On cilindro
 			On vacio
 			Wait 0.7
 		EndIf
-	Loop								'fin de ciclo
-	Print "fusible tomado"
+	Loop
+	If contador_reintentos_toma >= 3 Then
+		'CONEXION TCP/IP
+		OpenNet #203 As Client
+		WaitNet #203
+		Print #203, "ERROR_insertion"
+		On 544
+				
+		Off cilindro
+		Pause
+	Else
+		
+		Print "fusible tomado"
 	
-	Abrir_Gripper
+		Abrir_Gripper
+	EndIf
+	
+	If fusible$ = "MULTI_7.5" Or fusible$ = "MULTI_5" Then
+		Wait 0.5
+	EndIf
 	
 	If fusible$ = "ATO_10" Then
 		Wait 1.5
 	EndIf
-	
+	If fusible$ = "ATO_25" Then
+		Wait 1.5
+	EndIf
 	Off cilindro						'cilindro regresando a su posicion retraida
-	
+	If fusible$ = "ATO_25" Then
+		Wait 1.5
+	EndIf
 	Move P910								'moverse a la posicion superior de ATO bowl
 	Work_Speed
-	Wait 0.7
+	If fusible$ = "ATO_30" Or fusible$ = "ATO_25" Then
+		Wait 0.6
+	EndIf
 	Off Gripper ' CERRAR GRIPPER ' NUEVO
 
 	Check_Vacio = 1
@@ -228,6 +252,9 @@ Function Fuse_Presence_Function
 	
 	If FP = 1 Then
 		Wait 2
+		If fusible$ = "MINI_10" Then
+			Wait 2
+		EndIf
 	EndIf
 	
 	Print "fusible en gripper"

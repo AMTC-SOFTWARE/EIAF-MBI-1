@@ -71,10 +71,10 @@ Function Ajustes
     	
     EndIf
     
-    If cavity = 335 Then
-    	ajustY = ajustY - 0.343
-    	ajustX = ajustX + 0.309
-    EndIf
+'    If cavity = 335 Then
+'    	ajustY = ajustY - 0.343
+'    	ajustX = ajustX + 0.309
+'    EndIf
     If cavidad$ = "MF1" Then
     	ajustY = ajustY + 0.7
     	ajustX = ajustX + 0.0
@@ -90,7 +90,51 @@ Function Ajustes
 		ajustX = ajustX - 0.4
 	EndIf
     
+    If caja$ = "PDCD" Then
+	    If fusible$ = "MINI_10" Then
+	    	If cavity >= 200 And cavity <= 208 Then
+	    		ajustX = ajustX - 0.3
+	    	EndIf
+	    EndIf
+    EndIf
     
+    If fusible$ = "MINI_5" Then
+	    	If cavity >= 301 And cavity <= 305 Then
+	    		ajustY = ajustY + 0.4
+	    		
+	    	EndIf
+	    	If cavity = 303 Then
+	    		ajustY = ajustY - 0.4
+	    		ajustX = ajustX + 0.3
+	    	EndIf
+	    EndIf
+'	    
+	If caja$ = "PDCP" Then
+		ajustY = ajustY - 0.2
+    	ajustX = ajustX + 0.2
+    	ajustZ = ajustZ - 0.4
+'    	ajustU = ajustU + 0.2
+	EndIf
+	
+	
+	If cavity = 322 Then
+		Print("ajuste para fusible F322, por ahora cero")
+		ajustY = ajustY + 0
+    	ajustX = ajustX + 0
+    	ajustZ = ajustZ + 0
+    EndIf
+	
+	If caja$ = "PDCD" Then
+		ajustY = ajustY - 0.7
+		ajustX = ajustX - 0.8
+	EndIf
+	
+	
+	If cavity = 222 Then
+		ajustY = ajustY + 1.5
+    	ajustX = ajustX + 2
+    EndIf
+	
     Print("adjustX: " + Str$(ajustX))
 	Print("adjustY: " + Str$(ajustY))
 	Print("adjustZ: " + Str$(ajustZ))

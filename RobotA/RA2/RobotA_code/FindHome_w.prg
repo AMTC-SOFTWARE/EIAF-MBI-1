@@ -1,7 +1,9 @@
 Global Double Ymax1, Ymin1
 Global Double Xmax1, Xmin1
 Global Double Xmax2, Xmin2
-Global Integer Zona1, Zona2
+Global Integer Zona1, Zona2, Zona3
+Global Double Ymax3, Ymin3
+Global Double Xmax3, Xmin3
 Global Integer digital_outputs
 	
 Function FindHome_w
@@ -30,6 +32,20 @@ Function FindHome_after_error
 	Tool 4
 	SubirRobot_Z 'En SubirRobot_Z hay un Work_Speed
 	Home_Speed
+	Box 3, Xmin3, Xmax3, Ymin3, Ymax3, 0, 0
+	Zona3 = GetRobotInsideBox(3)
+	If Zona3 = 1 Then
+		Print "Zona actual: PDCP"
+		
+		RobotHand = Hand(RealPos)
+		If RobotHand = 1 Then
+			Print "Codo actual: Derecho"
+		Else
+			Print "Codo actual: Izquierdo"
+			Go RETROCEDER
+		EndIf
+    EndIf
+	
 	Go HOME_R
 	Off vacio
 Fend
@@ -39,8 +55,8 @@ Function crear_zona
 	'Zona cerca de los nidos
 	Ymax1 = 490;
 	Ymin1 = 180;
-	Xmax1 = 420;
-	Xmin1 = -460;
+	Xmax1 = 60;
+	Xmin1 = -90;
 	
 	Xmax2 = -380
 	Xmin2 = -700
@@ -50,17 +66,38 @@ Function crear_zona
 	Box 2, Xmin2, Xmax2, 0, 0, 0, 0
 	
 	
+	Ymax3 = 580;
+	Ymin3 = 450;
+	Xmax3 = 420;
+	Xmin3 = -460;
+	
+	Box 3, Xmin3, Xmax3, Ymin3, Ymax3, 0, 0
+	
 Fend
 
 Function actualizar_zona
 	
 	Zona1 = GetRobotInsideBox(1)
 	Zona2 = GetRobotInsideBox(2)
+	Zona3 = GetRobotInsideBox(3)
+	
 	'If Zona1 = 1 Then
 	'	Print "Zona actual: Delantera"
 	'Else
 	'	Print "Zona actual: Feeders"
 	'EndIf
+	
+	If Zona3 = 1 Then
+		Print "Zona actual: PDCP"
+		
+		RobotHand = Hand(RealPos)
+		If RobotHand = 1 Then
+			Print "Codo actual: Derecho"
+		Else
+			Print "Codo actual: Izquierdo"
+			Go RETROCEDER
+		EndIf
+    EndIf
 	
 Fend
 

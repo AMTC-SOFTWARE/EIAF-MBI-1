@@ -38,7 +38,8 @@ Function main
 	CollisionDetect Off	' Checar descripcion de Error 5057 para mas informacion >:)
 
 
-	Off 544										'Apagar torreta
+	Off 544
+	Off 531									'Apagar torreta
 	AVAILABLE = 512
     vacio = 521									'variable de la valvula de vacio
     switch = 522 								'variable para activar válvula de switch para hacer vacío por uno u otro cilindro
@@ -63,16 +64,14 @@ Function main
 	'Generación de puntos de inserción
 	generar_puntos
 	
-	TLSet 1, XY(-87.7, -42.7, 0.2, 0) 'PARA ATO
-	TLSet 2, XY(85.1, -53.048, 0, 0) 'PARA MINI
-	TLSet 4, XY(0, 0, 0, 0) 'PARA HOME
-	
 	Motor On
-	Tool 4									'Encender motores del robot
+	Tool 0									'Encender motores del robot
 	FindHome_w
 	
 	Print #202, "READY"
 	On 542                                      'C756 en PLC, avisar que programa está corriendo (andon verde)
+	
+
 	
 	LeerMensaje_w
 		

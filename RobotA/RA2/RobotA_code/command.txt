@@ -1,5 +1,147 @@
-> GO HERE + y(-.4)
-> GO HERE + X(-.4)
+> on 512
+> on 513
+> on 514
+> on 515
+> off 512;off 513;off 514;off 515; off 516; off 517
 > 
 > 
 > 
+> 
+> 
+> off 525; off 526; off 527
+> 
+> 
+> 
+> 
+> 
+> on 512; on 513; on 514; on 515; on 516; on 517
+> 
+> 
+> 
+> on 525
+> on 527
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> on 512
+> on 513
+> on 514
+> 
+> reset;motor On;power high
+
+> > 
+
+!!Error: 3201, Expected ','.
+> 
+>>  go here + x(0.4)
+!!Error: 3100, Syntax error.
+> Go Here + X(0.4)
+> Go Here - X(0.8)
+> Go Here + Y(-0.5)
+> 
+!!Error: 4025, Cannot execute a motion command during emergency stop condition.
+> on 523
+> 
+> 
+> 
+> TOOL 2
+> 
+> TOOL
+	   2
+> 
+	   1
+> 
+	   4
+> 
+> 
+> 
+> off 523
+> 
+> 
+> 
+> TOOL 2
+> 
+> 
+> go up_calibration_cB
+> 
+> ON 531
+> 
+> 
+> 
+> 
+> OFF 531
+> 
+> 
+!!Error: 1037, Cannot execute when Remote Ethernet enabled except from the remote Ethernet device.
+> 
+> 
+> print(IN(0))
+ 0
+> on 524
+> 
+> 
+> 
+> 
+> 
+> off 524
+> 
+> 
+> reset;motor On;power high
+> 
+> go here + X(0.5)
+> go here + Y(0.5)
+> go here + Y(0.5)
+> 
+> 
+> 
+> 
+> 
+> on 524
+> 
+> OFF 524
+> ON 523 
+> 
+> OFF 523
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> go ATO25_bw_up
+> 
+!!Error: 4031, Cannot execute a motion command when the motor is in the off state.
+> 
+!!Error: 2513, Specified point label is not defined.
+> reset; motor on
+> 
+> 
+> 
+> 
+> go here + Y(-0.4)
+> go here + Y(-0.3)
+> go here + X(-0.3)
+> go here + X(-0.5)
+> 
+> PRIINT(Hand(RealPos))
+!!Error: 3100, Syntax error.
+> HAND(rEALpOS)
+!!Error: 3100, Syntax error.
+> print(Hand(RealPos))
+ 1
+> 
+> move aux_mf2
+> move aux_mf2_2

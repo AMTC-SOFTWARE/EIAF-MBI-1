@@ -31,9 +31,8 @@ Function Estatus_Vacio
 					Print "______________________________________"
 					Print "VACIO NO OK Retirar Fusible y reintentar inserción"
 					Print "______________________________________"
-					Off vacio
 					Off cilindro
-					
+					Off vacio
 	'				'zona = 1 significa dentro de la zona
 	'				'zona = 0 significa fuera de la zona
 	'				Box 3, -120, -90, 430, 450, 0, 0

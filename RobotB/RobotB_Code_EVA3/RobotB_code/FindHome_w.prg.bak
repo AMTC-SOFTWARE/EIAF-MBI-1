@@ -9,7 +9,7 @@ Global Integer digital_outputs
 
 
 Function FindHome_w
-	Tool 0
+	Tool 5
 	Home_Speed
 	crear_zona
 	actualizar_zona
@@ -67,7 +67,7 @@ Function FindHome_w
 Fend
 
 Function FindHome_after_error
-	Tool 0
+	Tool 5
 
 	SubirRobot_Z 'En SubirRobot_Z hay un Work_Speed
 	Home_Speed

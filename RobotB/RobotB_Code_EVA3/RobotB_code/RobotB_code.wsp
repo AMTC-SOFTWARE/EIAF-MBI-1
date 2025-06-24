@@ -1,5 +1,5 @@
-ENVT0100,LM:2023/02/18 21:50:55:938,DS:0000004474,CS:01597,MA:00-93-37-88-D1-36,EI:           
-sActiveChild="Ajustes.prg"
+ENVT0100,LM:2025/02/18 23:46:01:567,DS:0000004497,CS:27248,MA:88-A4-C2-74-1D-70,EI:           
+sActiveChild="TomaFusible_n.prg"
 bMdiMaximized=False
 nProgramFileCount=12
 ProgramFile1 {
@@ -7,43 +7,43 @@ ProgramFile1 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=114
-		nTop=62
-		nWidth=938
-		nHeight=746
+		nLeft=4
+		nTop=-8
+		nWidth=1082
+		nHeight=762
 	}
 }
 ProgramFile2 {
 	sName="ListaFusibles.prg"
-	bOpened=False
+	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=0
-		nTop=0
-		nWidth=0
-		nHeight=0
+		nLeft=-56
+		nTop=-64
+		nWidth=719
+		nHeight=463
 	}
 }
 ProgramFile3 {
 	sName="FindHome_w.prg"
 	bOpened=True
-	nWinState=0
+	nWinState=1
 	Window {
-		nLeft=0
-		nTop=1
-		nWidth=715
-		nHeight=462
+		nLeft=513
+		nTop=59
+		nWidth=498
+		nHeight=650
 	}
 }
 ProgramFile4 {
 	sName="Main.prg"
 	bOpened=True
-	nWinState=1
+	nWinState=0
 	Window {
-		nLeft=64
-		nTop=34
-		nWidth=1127
-		nHeight=619
+		nLeft=68
+		nTop=21
+		nWidth=710
+		nHeight=668
 	}
 }
 ProgramFile5 {
@@ -53,8 +53,8 @@ ProgramFile5 {
 	Window {
 		nLeft=0
 		nTop=0
-		nWidth=0
-		nHeight=0
+		nWidth=720
+		nHeight=644
 	}
 }
 ProgramFile6 {
@@ -62,21 +62,21 @@ ProgramFile6 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=0
-		nTop=0
-		nWidth=721
-		nHeight=891
+		nLeft=156
+		nTop=-64
+		nWidth=1068
+		nHeight=874
 	}
 }
 ProgramFile7 {
 	sName="Calibracion_a.prg"
-	bOpened=False
+	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=0
-		nTop=0
-		nWidth=722
-		nHeight=474
+		nLeft=200
+		nTop=5
+		nWidth=717
+		nHeight=459
 	}
 }
 ProgramFile8 {
@@ -84,21 +84,21 @@ ProgramFile8 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=92
-		nTop=26
+		nLeft=234
+		nTop=32
 		nWidth=1007
-		nHeight=711
+		nHeight=721
 	}
 }
 ProgramFile9 {
 	sName="Revisar_vacio.prg"
 	bOpened=True
-	nWinState=0
+	nWinState=1
 	Window {
-		nLeft=679
-		nTop=193
-		nWidth=722
-		nHeight=474
+		nLeft=209
+		nTop=186
+		nWidth=719
+		nHeight=463
 	}
 }
 ProgramFile10 {
@@ -106,10 +106,10 @@ ProgramFile10 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=482
-		nTop=118
-		nWidth=717
-		nHeight=676
+		nLeft=38
+		nTop=-156
+		nWidth=709
+		nHeight=655
 	}
 }
 ProgramFile11 {
@@ -117,32 +117,32 @@ ProgramFile11 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=251
-		nTop=110
-		nWidth=717
-		nHeight=756
+		nLeft=42
+		nTop=-21
+		nWidth=710
+		nHeight=738
 	}
 }
 ProgramFile12 {
 	sName="Point_Generation.prg"
-	bOpened=False
+	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=67
-		nTop=48
-		nWidth=720
-		nHeight=799
+		nLeft=11
+		nTop=-13
+		nWidth=712
+		nHeight=779
 	}
 }
 nIncludeFileCount=0
 nPointFileCount=1
 PointFile1 {
 	sName="robot1.pts"
-	bOpened=False
+	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=109
-		nTop=47
+		nLeft=130
+		nTop=56
 		nWidth=0
 		nHeight=0
 	}
@@ -152,24 +152,24 @@ sActiveWindow="main.prg"
 CmdWindow {
 	bOpened=False
 	Window {
-		nLeft=849
-		nTop=151
-		nWidth=873
-		nHeight=552
+		nLeft=284
+		nTop=97
+		nWidth=865
+		nHeight=459
 	}
 	nWinState=0
 }
 RunWindow {
 	bOpened=False
 	Window {
-		nLeft=19
-		nTop=65
-		nWidth=720
-		nHeight=448
+		nLeft=93
+		nTop=132
+		nWidth=733
+		nHeight=463
 	}
-	nWinState=0
+	nWinState=1
 	nNumOfDisplays=1
-	nSplitterDistance=364
+	nSplitterDistance=359
 	Display1 {
 		nCamera=0
 		sSequences="1"
@@ -208,8 +208,8 @@ IOLabelEditor {
 IOMonitor {
 	bOpened=False
 	Window {
-		nLeft=968
-		nTop=364
+		nLeft=1023
+		nTop=228
 		nWidth=520
 		nHeight=708
 	}
@@ -244,10 +244,10 @@ Macros {
 RobotMgr {
 	bOpened=False
 	Window {
-		nLeft=563
-		nTop=109
-		nWidth=946
-		nHeight=595
+		nLeft=171
+		nTop=99
+		nWidth=747
+		nHeight=518
 	}
 }
 UserErrorEditor {

@@ -41,15 +41,15 @@ Fend
 Function Work_Speed
 	'Power High; Speed 80; SpeedS 550; SpeedR 90; Accel 30, 60; AccelS 600, 600; AccelR 100, 100;
 	Power High;
-	Speed 100;				Accel 60, 60;
+	Speed 100;				Accel 80, 80;
 	SpeedS 2000;			AccelS 10000, 10000;
 	SpeedR 150;				AccelR 150, 150;
 	
 	If cavidad$ = "MF1" Or cavidad$ = "MF2" Then
 		Power High;
-		Speed 40;				Accel 40, 40;
-		SpeedS 600;				AccelS 2000, 2000;
-		SpeedR 60;				AccelR 60, 60;
+		Speed 20;				Accel 20, 20;
+		SpeedS 300;				AccelS 1000, 1000;
+		SpeedR 30;				AccelR 30, 30;
 	EndIf
 	'Extra_Low_Speed
 Fend

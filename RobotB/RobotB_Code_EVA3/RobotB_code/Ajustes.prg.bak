@@ -170,23 +170,119 @@ Function Ajuste
 		
 		
 		
-		
-	If caja$ = "PDCS" Then
-		If cavity = 111 Then
-			ajustY = ajustY + 1.5
-		EndIf
-	EndIf
 	
 	If mid = True Then
 	    If (cavity >= 412 And cavity <= 417) Then
-	        ajustY = ajustY + 0.6
+	        ajustY = ajustY + 0.3
+	    EndIf
+	    If (cavity >= 456 And cavity <= 461) Then
+	        ajustX = ajustX - 0.3
 	    EndIf
 	    If (cavity >= 421 And cavity <= 426) Then
-	        ajustY = ajustY + 0.3
+	        ajustY = ajustY + 0.6
+	    EndIf
+	    If (cavity >= 421) Then
+	        ajustY = ajustY + 0.1
 	    EndIf
 	EndIf
 
 
+
+	If (cavity = 421) Then
+		ajustZ = ajustZ + 0.4
+	EndIf
+
+	If (cavity = 419) Then
+'		ajustY = ajustY - 0.6
+		ajustX = ajustX + 0.2
+	EndIf
+
+
+	If caja$ = "TBLU" Then
+		ajustY = ajustY + 0.3
+	EndIf
+	
+	
+	If fusible$ = "MAXI_40" Then
+		ajustY = ajustY - 1
+	EndIf
+	
+	If (cavity = 420) Then
+		ajustY = ajustY - 0.6
+	EndIf
+	
+	If (cavity = 418) Then
+		ajustY = ajustY - 0.3
+	EndIf
+	
+	If mid = False Then
+	    If (cavity >= 412 And cavity <= 417) Then
+	        ajustY = ajustY - 0.3
+	     EndIf
+	     
+	     If (cavity >= 418 And cavity <= 420) Then
+	        ajustY = ajustY - 1.2 - 2.412
+	        ajustU = ajustU + 3
+	        ajustX = ajustX + 2.064
+	     EndIf
+		
+	EndIf
+	
+	If mid = True Then
+
+	     
+	     If (cavity >= 418 And cavity <= 420) Then
+	        ajustY = ajustY - 1.2 - 2.412
+	        ajustU = ajustU + 3
+	        ajustX = ajustX + 2.064
+	     EndIf
+		
+	EndIf
+	
+	
+'	If caja$ = "TBLU" Then
+'		Print("TBLU detectadaaaaa")
+'		If cavity = 104 Then
+'			Print("posicion 104 de TBLU")
+'			ajustY = ajustY + 2
+'			ajustZ = ajustZ + 0
+'		EndIf
+'	EndIf
+	
+	If (cavity >= 447 And cavity <= 449) Then
+	        ajustY = ajustY - 2.5
+	        ajustX = ajustX - 0.2
+	EndIf
+	
+	If caja$ = "PDCS" Then
+		If cavity = 111 Then
+			ajustY = ajustY - 1.5
+		EndIf
+	EndIf
+	
+	If caja$ = "PDCS" Then
+		If (cavity >= 112 And cavity <= 114) Then
+			ajustY = ajustY - 1.2
+		EndIf
+	EndIf
+	
+	If caja$ = "PDCS" Then
+		If (cavity >= 115 And cavity <= 116) Then
+			ajustY = ajustY - 2.0
+		EndIf
+	EndIf
+	
+	
+	If (cavity >= 437 And cavity <= 441) Then
+	        ajustY = ajustY + 0.3
+	        ajustX = ajustX - 0
+	EndIf
+	
+	
+	If (cavity >= 413 And cavity <= 414) Then
+	        ajustX = ajustX - 0.8 'debido a que pega con pestaña al bajar
+	EndIf
+	
 	Print("adjustX: " + Str$(ajustX))
 	Print("adjustY: " + Str$(ajustY))
 	Print("adjustU: " + Str$(ajustU))

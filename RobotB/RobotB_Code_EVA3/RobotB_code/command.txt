@@ -1,6 +1,217 @@
 > reset;motor On
+> go here + y(-1.5)
+> 
+> 
 > 
 > on 524
 > Move P(cavity)
 > tool 7
+> tool
+	   5
+> GetRobotInsideBox(1)
+!!Error: 3100, Syntax error.
+> PRINT(GetRobotInsideBox(2))
+ 0
+> 
+ 0
+> off 523
+> 
+> 
+> 
+> 
+> 
+> 
+> on 524
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> off 524
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> on 521
+> 
+> 
+> 
+> 
+> 
+> 
+> oN 523
+> 
+> 
+> 
+> 
+> 
+!!Error: 3100, Syntax error.
+> off 521
+> 
+> 
+> 
+> 
+> 
+> 
+> ON 521
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> off 521
+> 
+> OFF 520
+> 
+> 
+> ON 522
+> 
+> 
+> off 521
+> 
+> on 520
+> 
+> 
+> 
+> 
+> 
+> off 521
+> 
+> on 522
+> 
+> on 523
+> off 524
+> 
+> off 523
+> on 522
+> on 524
+> OFF524
+!!Error: 3100, Syntax error.
+> OFF 524
+> ON 524
+> OFF 524
+> 
+> off 524
+> 
+> on 521
+> on 524
+> off 524
+> on 524
+> 
+> 
+!!Error: 1037, Cannot execute when Remote Ethernet enabled except from the remote Ethernet device.
+> 
+> on 521
+> 
+> 
+> 
+> 
+> 
+> 
+> go ATO25_bw_up
+> 
+> 
+> off 523
+> 
+> 
+> 
+> 
+> 
+> 
+!!Error: 1037, Cannot execute when Remote Ethernet enabled except from the remote Ethernet device.
+> OFF 521
+> 
+> 
+> 
+> 
+> on 522
+> 
+> 
+> 
+!!Error: 1037, Cannot execute when Remote Ethernet enabled except from the remote Ethernet device.
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> off 524
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+!!Error: 1037, Cannot execute when Remote Ethernet enabled except from the remote Ethernet device.
+> 
+> 
+> 
+> 
+> on 523
+
+>  
+> 
+> 
+!!Error: 1037, Cannot execute when Remote Ethernet enabled except from the remote Ethernet device.
+> 
+> 
+> 
+> 
+!!Error: 1037, Cannot execute when Remote Ethernet enabled except from the remote Ethernet device.
+> 
+> 
+> 
+> 
+> tool 1
+> 
+> 
+	   5
+> tool
+	   5
+> 
+	   1
+> 
+	   2
+> 
+> 
+> go up_calibration_cA                                                                                                                                                                                                                                                                                                                                                     
+> 
+> go down_calibration_cB
+> 
+!!Error: 4031, Cannot execute a motion command when the motor is in the off state.
+> RESET;POWER ON; MOTOR On
+> 
+!!Error: 1037, Cannot execute when Remote Ethernet enabled except from the remote Ethernet device.
+> RESET;POWER ON; MOTOR On
+> 
+> GO HERE + Y(0.2)
+> 
+> GO HERE + u(0.3)
+> GO HERE + u(0.1)
+> 
 > 

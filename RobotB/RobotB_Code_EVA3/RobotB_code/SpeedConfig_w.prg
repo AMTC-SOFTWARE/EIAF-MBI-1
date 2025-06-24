@@ -25,6 +25,11 @@ Function Work_Speed
 		Speed 70;				Accel 70, 70;
 		SpeedR 30;				AccelR 30, 30;
 	EndIf
+	
+	If fusible$ = "MAXI_50" Then
+		Speed 50;				Accel 40, 40;
+		SpeedS 1000;			AccelS 5000, 5000;
+	EndIf
 	'Home_Speed '#### Quitar esta línea cuando el programa quede terminado !!! ####
 	'Extra_Low_Speed
 Fend

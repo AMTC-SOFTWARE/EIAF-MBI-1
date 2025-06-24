@@ -148,9 +148,18 @@ Function Insercion_PistonExtendido
     Loop
 
 	Check_Vacio = 0
-	'Pause
-'	Move P(cavity) +Z(14)
+
+'	Move P(cavity) +Z(40)
 '	Pause
+
+	If cavidad$ = "MF2" Then
+		Move aux_mf2 +Z(30)
+		Move aux_mf2
+		Move aux_mf2_2
+		Move aux_mf2_3
+	EndIf
+
+
 	Move P(cavity)
 	Monitoreo_Insercion
 

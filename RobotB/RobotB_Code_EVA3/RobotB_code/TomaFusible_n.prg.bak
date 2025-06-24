@@ -1,5 +1,5 @@
 Global Real Incremento
-Global Integer Gripper, cavity
+Global Integer Gripper, cavity, contador_reintentos_toma
 
 '------------------------------Funcion de toma de fusibles------------------------------------
 Function tomaFusible							'Subrutina de toma de fusible dividida /feeder bowl/in line sencillos/in linedobles
@@ -160,19 +160,15 @@ Function tomaFusibleR							'Subrutina de toma de fusible dividida /feeder bowl/
  
    	ElseIf fusible$ = "ATO_15" Then			'si el mensaje es para este fusible entonces...
 		cilindro = cilindro_b					'igualamos el valor del cilindro a cilindro correspondiente
-        
+        CA15 = 0
 		If CA15 = 0 Then						'aplica para los inlines, si es 0 toma de la cabidad A
 			Gripper = 534 						'variable del gripper, diferente para cada feeder
 			P210 = ATO15_da_up				'El punto 210 tomara el valor de los puntos de up de los feeders
 			P211 = ATO15_da_load				'El punto 211 tomara los valores de los puntos load de los feeders
-			CA15 = 1							'variable que controla el lado para tomar el fusible
-		Else									'en 1 toma de la cabidad B
-			Gripper = 535 						'variable del gripper, diferente para cada feeder
-			P210 = ATO15_db_up				'El punto 210 tomara el valor de los puntos de up de los feeders
-			P211 = ATO15_db_load				'El punto 211 tomara los valores de los puntos load de los feeders
-			CA15 = 0							'variable que controla el lado para tomar el fusible
+'			Gripper = 535 	'GRIPPER LADO B
 		EndIf
 		
+			
 	ElseIf fusible$ = "RELAY_112" Then		'si el mensaje es para este fusible entonces...
 		On switch_presion
 		cilindro = cilindro_a				'igualamos el valor del cilindro a cilindro correspondiente
@@ -211,6 +207,14 @@ Fend
 
 Function Toma2Fusible
 	
+	
+	'If cilindro = cilindro_a Then
+	'	Print #202, "ERROR_insertion"
+	'	Pause
+	'EndIf
+		
+	
+	
 	'shared_zone = True 'TESTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 	
 	Print("esperando al otro roboto")
@@ -231,10 +235,16 @@ Function Toma2Fusible
 	
 	Work_Speed;
 	
-	
+	Print("Antes de Movimiento Intermedio para MAXI50, ATOC15, MINI15, ATO7.5")
 	If fusible$ = "MAXI_50" Then
+		Print("yendo a punto MAXI50_TOMA1ermedio")
 		Go MAXI50_TOMA1
 	EndIf
+	If fusible$ = "ATOC_15" Or fusible$ = "MINI_15" Or fusible$ = "ATO_7.5" Then
+		Print("yendo a punto INTERMEDIO")
+		Go INTERMEDIO
+	EndIf
+	
 	
 	Go P210
 
@@ -245,18 +255,21 @@ Function Toma2Fusible
 	Fuse_Presence_Function
 
 
+'	Pause
+
 	Move P211							'tomar fusible
 
 	TmReset 0						 	'Timer para vacio
 	TmReset 1							'Timer para imprimir mensaje
 	Incremento = 0
 	
-	
-	Do While (Sw(vacio_ok) = 0)			'Esperar mientras se detecta que se tomo el fusible
+	contador_reintentos_toma = 0
+	Do While (Sw(vacio_ok) = 0 And contador_reintentos_toma < 4)			'Esperar mientras se detecta que se tomo el fusible
 		If Tmr(1) > 0.8 Then
 			Print "Esperando Toma de Fusible"
 			TmReset 1
 		EndIf
+		Print (contador_reintentos_toma)
 		If Tmr(0) > 4.200 Then
 			TmReset 0
 			Off vacio
@@ -265,6 +278,7 @@ Function Toma2Fusible
 			If Incremento < 0.5 Then
 				Move P211 +Z(-Incremento)
 				Incremento = Incremento + 0.1
+				contador_reintentos_toma = contador_reintentos_toma + 1
 			EndIf
 			Fuse_Presence_Function
 			On cilindro
@@ -272,11 +286,33 @@ Function Toma2Fusible
 			Wait 1.5
 		EndIf
 	Loop
-	Print "fusible tomado"
+	
+	If contador_reintentos_toma >= 3 Then
+		'CONEXION TCP/IP
+		OpenNet #203 As Client
+		WaitNet #203
+		Off 521
+		Print #203, "ERROR_insertion"
+		Print "______________________________________"
+		Print "VACIO NO OK Retirar Fusible y reintentar inserción"
+		Print "______________________________________"
+		Off cilindro
+		Pause
+	Else
 		
-	Abrir_Gripper
+		Print "fusible tomado"
+		
+		Abrir_Gripper
+	EndIf
 	
 	If fusible$ = "MAXI_40" Or fusible$ = "MAXI_30" Or fusible$ = "MAXI_50" Or fusible$ = "ATO_25" Then
+		Wait 1
+	EndIf
+	If fusible$ = "ATO_30" Then
+		Print("esperandoooooooooooooooooooo mata")
+		Wait 1
+	EndIf
+	If fusible$ = "MAXI_40" Then
 		Wait 1
 	EndIf
 
@@ -284,19 +320,23 @@ If cavidad$ = "RELX" Then
 Wait 1.5
 EndIf
 
-	If cavidad$ = "RELX" Or cavidad$ = "RELT" Then
+	If cavidad$ = "RELX" Or cavidad$ = "RELT" Or fusible$ = "MAXI_50" Or fusible$ = "ATO_7.5" Then
 		On Gripper
 		Wait 1
 	EndIf
 
 	Off cilindro						'cilindro regresando a su posicion retraida	
-	If fusible$ = "ATO_25" Then
+	If fusible$ = "ATO_25" Or fusible$ = "ATO_7.5" Then
 		Wait 1
 	EndIf
 	
 	Print("moviendose para arriba")
 	
 	Move P210 							'muevete al punto de superior
+	
+	If fusible$ = "MAXI_50" Then
+		Go MAXI50_TOMA1
+	EndIf
 	
 	Work_Speed
 	
