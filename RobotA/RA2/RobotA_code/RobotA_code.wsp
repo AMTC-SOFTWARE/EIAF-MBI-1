@@ -1,5 +1,5 @@
-ENVT0100,LM:2025/03/26 21:12:47:272,DS:0000004338,CS:03091,MA:88-A4-C2-74-1D-70,EI:           
-sActiveChild="FindHome_w.prg"
+ENVT0100,LM:2025/06/24 21:35:44:210,DS:0000004336,CS:22595,MA:50-7B-9D-2E-06-38,EI:           
+sActiveChild="TomaFusible_a.prg"
 bMdiMaximized=False
 nProgramFileCount=11
 ProgramFile1 {
@@ -9,8 +9,8 @@ ProgramFile1 {
 	Window {
 		nLeft=39
 		nTop=45
-		nWidth=741
-		nHeight=490
+		nWidth=739
+		nHeight=486
 	}
 }
 ProgramFile2 {
@@ -18,10 +18,10 @@ ProgramFile2 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=118
-		nTop=66
-		nWidth=679
-		nHeight=669
+		nLeft=46
+		nTop=49
+		nWidth=677
+		nHeight=665
 	}
 }
 ProgramFile3 {
@@ -31,8 +31,8 @@ ProgramFile3 {
 	Window {
 		nLeft=115
 		nTop=147
-		nWidth=986
-		nHeight=588
+		nWidth=985
+		nHeight=584
 	}
 }
 ProgramFile4 {
@@ -40,10 +40,10 @@ ProgramFile4 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=133
-		nTop=122
-		nWidth=975
-		nHeight=463
+		nLeft=4
+		nTop=0
+		nWidth=690
+		nHeight=459
 	}
 }
 ProgramFile5 {
@@ -53,8 +53,8 @@ ProgramFile5 {
 	Window {
 		nLeft=82
 		nTop=99
-		nWidth=917
-		nHeight=591
+		nWidth=916
+		nHeight=588
 	}
 }
 ProgramFile6 {
@@ -62,10 +62,10 @@ ProgramFile6 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=236
-		nTop=131
-		nWidth=805
-		nHeight=624
+		nLeft=50
+		nTop=48
+		nWidth=614
+		nHeight=620
 	}
 }
 ProgramFile7 {
@@ -75,8 +75,8 @@ ProgramFile7 {
 	Window {
 		nLeft=62
 		nTop=49
-		nWidth=904
-		nHeight=574
+		nWidth=903
+		nHeight=570
 	}
 }
 ProgramFile8 {
@@ -86,8 +86,8 @@ ProgramFile8 {
 	Window {
 		nLeft=63
 		nTop=28
-		nWidth=974
-		nHeight=588
+		nWidth=973
+		nHeight=584
 	}
 }
 ProgramFile9 {
@@ -97,8 +97,8 @@ ProgramFile9 {
 	Window {
 		nLeft=64
 		nTop=74
-		nWidth=964
-		nHeight=584
+		nWidth=963
+		nHeight=580
 	}
 }
 ProgramFile10 {
@@ -106,10 +106,10 @@ ProgramFile10 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=10
-		nTop=71
-		nWidth=892
-		nHeight=445
+		nLeft=54
+		nTop=77
+		nWidth=673
+		nHeight=442
 	}
 }
 ProgramFile11 {
@@ -119,8 +119,8 @@ ProgramFile11 {
 	Window {
 		nLeft=0
 		nTop=0
-		nWidth=722
-		nHeight=474
+		nWidth=721
+		nHeight=470
 	}
 }
 nIncludeFileCount=0
@@ -139,7 +139,7 @@ PointFile1 {
 nForceFileCount=0
 sActiveWindow="main.prg"
 CmdWindow {
-	bOpened=True
+	bOpened=False
 	Window {
 		nLeft=193
 		nTop=42
@@ -149,7 +149,7 @@ CmdWindow {
 	nWinState=0
 }
 RunWindow {
-	bOpened=True
+	bOpened=False
 	Window {
 		nLeft=380
 		nTop=112
@@ -231,12 +231,12 @@ Macros {
 	}
 }
 RobotMgr {
-	bOpened=True
+	bOpened=False
 	Window {
-		nLeft=447
-		nTop=66
-		nWidth=747
-		nHeight=518
+		nLeft=9
+		nTop=105
+		nWidth=748
+		nHeight=521
 	}
 }
 UserErrorEditor {

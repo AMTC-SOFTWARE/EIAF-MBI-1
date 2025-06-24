@@ -1,4 +1,4 @@
-ENVT0100,LM:2025/06/09 16:32:29:809,DS:0000036401,CS:26204,MA:88-A4-C2-74-1D-70,EI:           
+ENVT0100,LM:2025/06/09 16:34:11:133,DS:0000036401,CS:26206,MA:88-A4-C2-74-1D-70,EI:           
 sVersion="2.0.0"
 bDisplayR=False
 bDisplayS=False
@@ -922,7 +922,7 @@ Point36 {
 	nUndefined=0
 	rX=-513.332
 	rY=-142.029
-	rZ=-131.276
+	rZ=-133.276
 	rU=58.084
 	rV=0
 	rW=0

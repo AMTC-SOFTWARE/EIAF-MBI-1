@@ -1,4 +1,4 @@
-ENVT0100,LM:2025/02/18 23:46:01:567,DS:0000004497,CS:27248,MA:88-A4-C2-74-1D-70,EI:           
+ENVT0100,LM:2025/06/24 22:26:08:183,DS:0000004492,CS:15429,MA:50-7B-9D-2E-06-38,EI:           
 sActiveChild="TomaFusible_n.prg"
 bMdiMaximized=False
 nProgramFileCount=12
@@ -7,10 +7,10 @@ ProgramFile1 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=4
-		nTop=-8
-		nWidth=1082
-		nHeight=762
+		nLeft=1
+		nTop=7
+		nWidth=751
+		nHeight=758
 	}
 }
 ProgramFile2 {
@@ -18,10 +18,10 @@ ProgramFile2 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=-56
-		nTop=-64
-		nWidth=719
-		nHeight=463
+		nLeft=67
+		nTop=64
+		nWidth=717
+		nHeight=459
 	}
 }
 ProgramFile3 {
@@ -40,10 +40,10 @@ ProgramFile4 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=68
-		nTop=21
-		nWidth=710
-		nHeight=668
+		nLeft=48
+		nTop=42
+		nWidth=709
+		nHeight=664
 	}
 }
 ProgramFile5 {
@@ -52,9 +52,9 @@ ProgramFile5 {
 	nWinState=0
 	Window {
 		nLeft=0
-		nTop=0
-		nWidth=720
-		nHeight=644
+		nTop=160
+		nWidth=719
+		nHeight=640
 	}
 }
 ProgramFile6 {
@@ -62,10 +62,10 @@ ProgramFile6 {
 	bOpened=True
 	nWinState=0
 	Window {
-		nLeft=156
-		nTop=-64
-		nWidth=1068
-		nHeight=874
+		nLeft=9
+		nTop=10
+		nWidth=1067
+		nHeight=870
 	}
 }
 ProgramFile7 {
@@ -74,9 +74,9 @@ ProgramFile7 {
 	nWinState=0
 	Window {
 		nLeft=200
-		nTop=5
-		nWidth=717
-		nHeight=459
+		nTop=165
+		nWidth=715
+		nHeight=456
 	}
 }
 ProgramFile8 {
@@ -85,20 +85,20 @@ ProgramFile8 {
 	nWinState=0
 	Window {
 		nLeft=234
-		nTop=32
-		nWidth=1007
-		nHeight=721
+		nTop=192
+		nWidth=1005
+		nHeight=718
 	}
 }
 ProgramFile9 {
 	sName="Revisar_vacio.prg"
 	bOpened=True
-	nWinState=1
+	nWinState=0
 	Window {
-		nLeft=209
-		nTop=186
-		nWidth=719
-		nHeight=463
+		nLeft=30
+		nTop=100
+		nWidth=717
+		nHeight=459
 	}
 }
 ProgramFile10 {
@@ -107,9 +107,9 @@ ProgramFile10 {
 	nWinState=0
 	Window {
 		nLeft=38
-		nTop=-156
-		nWidth=709
-		nHeight=655
+		nTop=4
+		nWidth=708
+		nHeight=651
 	}
 }
 ProgramFile11 {
@@ -118,9 +118,9 @@ ProgramFile11 {
 	nWinState=0
 	Window {
 		nLeft=42
-		nTop=-21
-		nWidth=710
-		nHeight=738
+		nTop=139
+		nWidth=709
+		nHeight=734
 	}
 }
 ProgramFile12 {
@@ -129,20 +129,20 @@ ProgramFile12 {
 	nWinState=0
 	Window {
 		nLeft=11
-		nTop=-13
-		nWidth=712
-		nHeight=779
+		nTop=147
+		nWidth=711
+		nHeight=775
 	}
 }
 nIncludeFileCount=0
 nPointFileCount=1
 PointFile1 {
 	sName="robot1.pts"
-	bOpened=True
+	bOpened=False
 	nWinState=0
 	Window {
-		nLeft=130
-		nTop=56
+		nLeft=0
+		nTop=160
 		nWidth=0
 		nHeight=0
 	}
@@ -244,10 +244,10 @@ Macros {
 RobotMgr {
 	bOpened=False
 	Window {
-		nLeft=171
-		nTop=99
-		nWidth=747
-		nHeight=518
+		nLeft=-10
+		nTop=146
+		nWidth=748
+		nHeight=521
 	}
 }
 UserErrorEditor {

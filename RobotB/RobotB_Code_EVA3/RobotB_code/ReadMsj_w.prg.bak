@@ -146,7 +146,7 @@ Function dividir_lectura
 	
 	mid = False
 	If caja$ = "PDCRMID" Then
-		'mid = True
+		mid = True
 		caja$ = "PDCR"
 	EndIf
 	

@@ -72,7 +72,7 @@ Function RevisarMensaje_w
 		Else
 			dividir_lectura
 		
-			If (caja$ = "PDCD" Or caja$ = "PDCP") Then
+			If (caja$ = "PDCD" Or caja$ = "PDCP" Or Left$(caja$, 4) = "PDCS") Then
 				If PDef(P(cavity)) Then
 				Else
 					Print "cavidad no válida"
@@ -126,6 +126,25 @@ Function dividir_lectura
 			
 	If cavity = 0 Then 'si cavity = 0 entonces es un string
 		cavidad$ = Right$(remanente$, Len(remanente$) - pos)
+	EndIf
+	
+	Print (lectura$)
+	
+	If caja$ = "PDCS" Then
+		Print("PDC-S DETECTADA")
+		P(111) = PDCS21_F111
+		P(116) = PDCS21_F116
+		Compute_Cavity(111, 116)
+	ElseIf caja$ = "PDCS21" Then
+		Print("PDC-S21 DETECTADA")
+		P(111) = PDCS21_F111
+		P(116) = PDCS21_F116
+		Compute_Cavity(111, 116)
+	ElseIf caja$ = "PDCS17" Then
+		Print("PDC-S17 DETECTADA")
+		P(111) = PDCS17_F111
+		P(116) = PDCS17_F116
+		Compute_Cavity(111, 116)
 	EndIf
 Fend
 

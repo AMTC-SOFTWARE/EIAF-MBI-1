@@ -35,13 +35,7 @@ Function ActualizarMensaje_w
 					TmReset 1
 				EndIf
 	Loop
-		
-	Print("//////////////////////////////////////////////////////")
-	Tiempo_Envio_Mensaje = (Tmr(5))
-	
-	Print #202, "TIEMPO_ENVIO_MENSAJE: " + Str$((Tmr(5))) + " s"
-	TmReset 5
-	
+
 	Read #202, lectura$, ChkNet(202)
 	Print "Mensaje anterior: " + lectura_anterior$
 	Print "Nuevo mensaje: " + lectura$
@@ -78,7 +72,7 @@ Function RevisarMensaje_w
 		Else
 			dividir_lectura
 		
-			If (caja$ = "PDCD" Or caja$ = "PDCP") Then
+			If (caja$ = "PDCD" Or caja$ = "PDCP" Or Left$(caja$, 4) = "PDCS") Then
 				If PDef(P(cavity)) Then
 				Else
 					Print "cavidad no válida"

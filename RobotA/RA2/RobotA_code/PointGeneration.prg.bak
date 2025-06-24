@@ -13,7 +13,7 @@ Function generar_puntos
 	
 	P(39) = PDCP_MF1
 	P(40) = PDCP_MF2
-	P(40) = MF2_2
+
 	'---------------MINI-----------------------
 	
 	P(301) = PDCP_F301

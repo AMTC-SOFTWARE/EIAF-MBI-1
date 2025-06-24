@@ -33,10 +33,31 @@ Function insertarFusible
 		GoSub insertar
 		'-----------------------------------------------------------'
 		
-	ElseIf caja$ = "F96_box" Then
+	ElseIf caja$ = "PDCS19" Then
+	'-----------------------INSERCION---------------------
+		GoSub insertar
+	'-----------------------------------------------------------'	
+	ElseIf caja$ = "PDCS20" Then
+		'-----------------------INSERCION---------------------
+		GoSub insertar
+		'-----------------------------------------------------------'	
+	'PDCS21 es la que orignialmente conocemos como PDCS'
+	ElseIf caja$ = "PDCS21" Then
 		'-----------------------INSERCION---------------------
 		GoSub insertar
 		'-----------------------------------------------------------'
+	ElseIf caja$ = "PDCS9" Then
+		'-----------------------INSERCION---------------------
+		GoSub insertar
+	
+	ElseIf Left$(caja$, 3) = "F96" Then
+		'-----------------------INSERCION---------------------
+		GoSub insertar
+		'-----------------------------------------------------------'
+'	ElseIf caja$ = "F96_box" Then
+'		'-----------------------INSERCION---------------------
+'		GoSub insertar
+'		'-----------------------------------------------------------'
 		
 	Else
 		Print "Error, caja incorrecta"

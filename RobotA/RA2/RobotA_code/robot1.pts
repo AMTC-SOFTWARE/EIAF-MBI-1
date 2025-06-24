@@ -1,10 +1,10 @@
-ENVT0100,LM:2025/04/09 14:12:23:775,DS:0000020852,CS:13411,MA:88-A4-C2-74-1D-70,EI:           
+ENVT0100,LM:2025/06/24 21:28:42:276,DS:0000022084,CS:15977,MA:50-7B-9D-2E-06-38,EI:           
 sVersion="2.0.0"
 bDisplayR=False
 bDisplayS=False
 bDisplayT=False
 nNumberOfJoints=4
-nNumberOfPoints=66
+nNumberOfPoints=70
 Point1 {
 	nNumber=0
 	sLabel="HOME_R"
@@ -1436,6 +1436,110 @@ Point55 {
 	bSimVisible=False
 }
 Point56 {
+	nNumber=400
+	sLabel="PDCS17_F111"
+	sDescription=""
+	nUndefined=448
+	rX=8.216
+	rY=245.93
+	rZ=-29.424
+	rU=-167.382
+	rV=0
+	rW=0
+	rR=0
+	rS=0
+	rT=0
+	nLocal=0
+	nHand=1
+	nElbow=1
+	nWrist=1
+	nJ1Flag=0
+	nJ2Flag=0
+	nJ4Flag=0
+	nJ6Flag=0
+	rJ1Angle=0
+	rJ4Angle=0
+	bSimVisible=False
+}
+Point57 {
+	nNumber=401
+	sLabel="PDCS17_F116"
+	sDescription=""
+	nUndefined=448
+	rX=8.216
+	rY=245.93
+	rZ=-29.424
+	rU=-167.382
+	rV=0
+	rW=0
+	rR=0
+	rS=0
+	rT=0
+	nLocal=0
+	nHand=1
+	nElbow=1
+	nWrist=1
+	nJ1Flag=0
+	nJ2Flag=0
+	nJ4Flag=0
+	nJ6Flag=0
+	rJ1Angle=0
+	rJ4Angle=0
+	bSimVisible=False
+}
+Point58 {
+	nNumber=402
+	sLabel="PDCS21_F111"
+	sDescription=""
+	nUndefined=448
+	rX=8.216
+	rY=245.93
+	rZ=-29.424
+	rU=-167.382
+	rV=0
+	rW=0
+	rR=0
+	rS=0
+	rT=0
+	nLocal=0
+	nHand=1
+	nElbow=1
+	nWrist=1
+	nJ1Flag=0
+	nJ2Flag=0
+	nJ4Flag=0
+	nJ6Flag=0
+	rJ1Angle=0
+	rJ4Angle=0
+	bSimVisible=False
+}
+Point59 {
+	nNumber=403
+	sLabel="PDCS21_F116"
+	sDescription=""
+	nUndefined=448
+	rX=8.216
+	rY=245.93
+	rZ=-29.424
+	rU=-167.382
+	rV=0
+	rW=0
+	rR=0
+	rS=0
+	rT=0
+	nLocal=0
+	nHand=1
+	nElbow=1
+	nWrist=1
+	nJ1Flag=0
+	nJ2Flag=0
+	nJ4Flag=0
+	nJ6Flag=0
+	rJ1Angle=0
+	rJ4Angle=0
+	bSimVisible=False
+}
+Point60 {
 	nNumber=500
 	sLabel="up_calibration_cB"
 	sDescription="\r"
@@ -1461,7 +1565,7 @@ Point56 {
 	rJ4Angle=0
 	bSimVisible=False
 }
-Point57 {
+Point61 {
 	nNumber=501
 	sLabel="down_calibration_cB"
 	sDescription="\r"
@@ -1487,7 +1591,7 @@ Point57 {
 	rJ4Angle=0
 	bSimVisible=False
 }
-Point58 {
+Point62 {
 	nNumber=502
 	sLabel="calibrate_position_cB"
 	sDescription="\r"
@@ -1513,7 +1617,7 @@ Point58 {
 	rJ4Angle=0
 	bSimVisible=False
 }
-Point59 {
+Point63 {
 	nNumber=503
 	sLabel="up_calibration_cA"
 	sDescription="\r"
@@ -1539,7 +1643,7 @@ Point59 {
 	rJ4Angle=0
 	bSimVisible=False
 }
-Point60 {
+Point64 {
 	nNumber=504
 	sLabel="down_calibration_cA"
 	sDescription="\r"
@@ -1565,7 +1669,7 @@ Point60 {
 	rJ4Angle=0
 	bSimVisible=False
 }
-Point61 {
+Point65 {
 	nNumber=505
 	sLabel="calibrate_position_cA"
 	sDescription=""
@@ -1591,7 +1695,7 @@ Point61 {
 	rJ4Angle=0
 	bSimVisible=False
 }
-Point62 {
+Point66 {
 	nNumber=777
 	sLabel="RETROCEDER"
 	sDescription=""
@@ -1617,7 +1721,7 @@ Point62 {
 	rJ4Angle=0
 	bSimVisible=False
 }
-Point63 {
+Point67 {
 	nNumber=800
 	sLabel="MF2_1"
 	sDescription=""
@@ -1643,7 +1747,7 @@ Point63 {
 	rJ4Angle=0
 	bSimVisible=False
 }
-Point64 {
+Point68 {
 	nNumber=801
 	sLabel="MF2_2"
 	sDescription=""
@@ -1669,7 +1773,7 @@ Point64 {
 	rJ4Angle=0
 	bSimVisible=False
 }
-Point65 {
+Point69 {
 	nNumber=900
 	sLabel="up"
 	sDescription=""
@@ -1695,7 +1799,7 @@ Point65 {
 	rJ4Angle=0
 	bSimVisible=False
 }
-Point66 {
+Point70 {
 	nNumber=901
 	sLabel="down"
 	sDescription=""

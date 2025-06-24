@@ -150,5 +150,39 @@ Function dividir_lectura
 		caja$ = "PDCR"
 	EndIf
 	
+	If caja$ = "PDCS" Then
+		Print("PDC-S DETECTADA")
+		P(111) = PDCS_F111
+		P(116) = PDCS_F116
+		Compute_Cavity(111, 116)
+	ElseIf caja$ = "PDCS21" Then
+		Print("PDC-S21 DETECTADA")
+		P(111) = PDCS_F111
+		P(116) = PDCS_F116
+		Compute_Cavity(111, 116)
+	ElseIf caja$ = "PDCS19" Then
+		Print("PDC-S19 DETECTADA")
+		P(111) = PDCS19_F111
+		P(116) = PDCS19_F116
+		Compute_Cavity(111, 116)
+	ElseIf caja$ = "PDCS20" Then
+		Print("PDC-S20 DETECTADA")
+		P(111) = PDCS20_F111
+		P(116) = PDCS20_F116
+		Compute_Cavity(111, 116)
+	ElseIf caja$ = "PDCS9" Then
+		Print("PDC-S9 DETECTADA")
+		P(111) = PDCS9_F111
+		P(116) = PDCS9_F116
+		Compute_Cavity(111, 116)
+	EndIf
+	If caja$ = "F961" Then
+		Print("F961 DETECTADA")
+		P(96) = F961_F96
+	ElseIf caja$ = "F96" Then
+		Print("F96 DETECTADA")
+		P(96) = F96_BOX_F96
+	EndIf
+	
 Fend
 
