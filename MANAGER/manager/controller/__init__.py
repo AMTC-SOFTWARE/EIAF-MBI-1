@@ -528,6 +528,8 @@ class MyThread(QThread):
                             cavity = "F11" + cavity[-1]
                         if "_clear" in fuse[2]:
                             fuse[0] = fuse[0] + "C"
+                        if "Clear" in fuse[2]:
+                            fuse[0] = fuse[0] + "C"
 
                         box = box.replace("-","")
                         command = {"trigger": f"{fuse[0]}_{fuse[1]},{box},{cavity}"} ############## #mensaje final que se enviará al robot
@@ -655,6 +657,8 @@ class MyThread(QThread):
                         if "PDC-S" in box:
                             cavity = "F11" + cavity[-1]
                         if "_clear" in fuse[2]:
+                            fuse[0] = fuse[0] + "C"
+                        if "Clear" in fuse[2]:
                             fuse[0] = fuse[0] + "C"
 
                         box = box.replace("-","")

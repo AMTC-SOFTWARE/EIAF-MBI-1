@@ -773,7 +773,8 @@ class Receiver(QState):
             print("Receiver exception: ", ex)
             command = {
                 "lbl_result" : {"text": f"ERROR: {ex.args}", "color": "red"},
-                "lbl_steps" : {"text": f"Presionar boton o girar llave", "color": "black"}
+                "lbl_steps" : {"text": f"Presionar boton o girar llave", "color": "black"},
+                "lineEditKey_focus": True #line edit de "QR Key"
                 }
             publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
             self.model.robots[self.module]["error"] = ex.args

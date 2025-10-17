@@ -79,6 +79,7 @@ class Model (object):
 
         #variable para determinar que hubo un problema de publish de trazabilidad en la salida
         self.problema_trazabilidad = False
+        self.disable_key = False #Llave habilitada
 
         self.cajas_arnes=[]
         self.modo_manual_activado=False

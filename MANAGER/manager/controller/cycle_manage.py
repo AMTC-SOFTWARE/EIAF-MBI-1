@@ -214,6 +214,7 @@ class StartCycle (QState):
             Timer(1, self.robots_home).start()
         Timer(0.05, self.model.log, args = ("IDLE",)).start() 
         command = {
+            "lineEditKey": True,
             "popout_relay" : {"text": "close", "color": "red"},
             "lbl_info1" : {"text": "", "color": "black"},
             #"lbl_info2" : {"text": "", "color": "green"},
@@ -998,13 +999,15 @@ class QrRework (QState):
         command = {
             "lbl_result" : {"text": "Datamatrix procesado anteriormente", "color": "red"},
             "lbl_steps" : {"text": "Escanea otro código o gira la llave para continuar", "color": "black"},
-            "show":{"scanner": True}
+            "show":{"scanner": True},
+            "lineEditKey_focus": True #line edit de "QR Key"
             }
         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
 
     def onExit(self, QEvent):
         command = {
-            "show":{"scanner": False}
+            "show":{"scanner": False},
+            "lineEditKey_focus": False #line edit de "QR Key"
             }
         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
 

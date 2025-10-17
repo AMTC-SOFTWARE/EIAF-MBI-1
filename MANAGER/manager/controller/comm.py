@@ -239,6 +239,7 @@ class MqttClient (QObject):
 
                 if "key" in payload:
                     if payload["key"] == True:
+                        print("fus manual ",self.model.fusible_manual)
                         # si la variable es True, quiere decir que ya pasaron varios reintentos y se requiere llave de calidad para continua
                         if self.model.fusible_manual == True:
 
@@ -253,7 +254,7 @@ class MqttClient (QObject):
                             
                         # si la variable es False, quiere decir que estás en otra parte del proceso y la llave reiniciará el ciclo
                         elif self.model.fusible_manual == False:
-                            command = {"popOut":"¿Seguro que desea dar llave al CICLO?\nPresione Esc. para salir,\nSpace/Start para continuar..."}
+                            command = {"popOut":"¿Seguro que desea dar llave al CICLO?\nPresione Esc. para salir,\nClick derecho/Start para continuar..."}
                             self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
                             #variable de la clase MQTT para habilitar las funciones del teclado
                             self.llave = True
@@ -1018,25 +1019,20 @@ class MqttClient (QObject):
 
                 #print("key: ",self.keyboard_key)
                 #print("value: ",self.keyboard_value)
-
-                if self.llave == True:
-
+                ################## LLAVE MEDIANTE LAS FUNCIONES DE EL TECLADO Y MOUSE ################## 
+                if self.model.disable_key == False and self.llave == True:
                     if self.keyboard_key == "keyboard_esc":
                         command = {"popOut":"close"}
                         self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
-                        print("key no emit")
-                    elif self.keyboard_key == "keyboard_space":
+                        self.llave = False
+                    elif self.keyboard_key == "click_derecho":
                         command = {"popOut":"close"}
                         self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
                         self.key.emit()
                         self.thread_triggers_off()
                         print("key emit")
-                    else:
-                        command = {"popOut":"Mensaje no recibido, gire la llave nuevamente"}
-                        self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
-
-
-                    self.llave = False
+                        self.llave = False
+                    
 
                 #if self.keyboard_key == "keyboard_F1":
                 #    print("Enviando robot a Home")
@@ -1119,7 +1115,7 @@ class MqttClient (QObject):
                     else:
                         print("CTRL deshabilitado, espere 2 segundos")
                 
-            if message.topic == self.model.sub_topics["gui"]:
+            if message.topic == self.model.sub_topics["gui"]: 
                 if "request" in payload:
                     self.model.gui["request"] = payload["request"]
                     if payload["request"] == "login":
@@ -1134,6 +1130,25 @@ class MqttClient (QObject):
                 if "code" in payload:
                     self.model.gui["code"] = payload["code"].upper()
                     self.code.emit()
+                if "codeQR" in payload:
+                    #CENTERLLAVE AMTC
+                    if "CENTERLLAVE" in str(payload):
+                        print("CENTERLLAVE RECIVED")
+                        if self.model.disable_key == False:
+                            self.key.emit()
+                        else:
+                            print("Llave no emitida self.model.disable_key == True")
+
+                    #CENTERKEY CALIDAD
+                    if "CENTERKEY" in str(payload):
+                        print("CENTERKEY RECIVED")
+                        if self.model.disable_key == False:
+                            command = {"popOut":"¿Seguro que desea dar llave al CICLO?\nPresione Esc. para salir,\nClick derecho/Start para continuar..."}
+                            self.client.publish(self.model.pub_topics["gui"],json.dumps(command), qos = 2)
+                            self.llave = True
+                        else:
+                            print("Llave no emitida, self.model.disable_key == True")
+
                 if "visible" in payload:
                     self.model.gui["visible"] = payload["visible"]
                     self.visible.emit()

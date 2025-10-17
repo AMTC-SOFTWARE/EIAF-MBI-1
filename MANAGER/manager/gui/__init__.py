@@ -67,6 +67,11 @@ class MainWindow (QMainWindow):
         self.ui.lbl_info4.setText("") #se inicializa la etiqueta que no se usa en vacío
         self.setWindowTitle(self.model.name)
 
+        self.ui.lineEditKey.setPlaceholderText("QR Key")
+        self.ui.lineEditKey.setFocus(True)
+        self.ui.lineEditKey.setVisible(False)
+        self.ui.lineEditKey.setEchoMode(QLineEdit.Password)
+
         menu = self.ui.menuMenu
         actionLogin = QAction("Login",self)
         actionLogout = QAction("Logout",self)
@@ -80,6 +85,7 @@ class MainWindow (QMainWindow):
         menu.setEnabled(menuMode)
 
         self.ui.btn_hxh.setFocusPolicy(Qt.NoFocus)
+        self.ui.lineEditKey.returnPressed.connect(self.QR)
         self.qw_login.ui.lineEdit.returnPressed.connect( self.login)
         self.qw_login.ui.btn_ok.clicked.connect(self.login)
         self.qw_scanner.ui.btn_ok.clicked.connect(self.scanner)
@@ -91,7 +97,6 @@ class MainWindow (QMainWindow):
 
         #self.timer.timeout.connect(self.status)
         #self.timer.start(200)
-
         self.allow_close        = True
         self.cycle_started      = False
         self.shutdown           = False
@@ -106,6 +111,7 @@ class MainWindow (QMainWindow):
         # Utilizar una expresión regular para encontrar y reemplazar números enteros
         resultado = re.sub(r'\d+', '', cadena)
         return resultado
+    
     def horaxhora(self):
         #self.qw_Tabla_horas.show()
         print("vamos a calcular los hora por hora")
@@ -389,6 +395,18 @@ class MainWindow (QMainWindow):
         except Exception as ex:
             print("scanner exception:", ex)
 
+    @pyqtSlot()
+    def QR (self):
+        try:
+            text = self.ui.lineEditKey.text().upper()
+            text = text.replace("\n","")
+            if len(text) > 0: 
+                self.output.emit({"codeQR":text})
+            self.ui.lineEditKey.clear()
+
+        except Exception as ex:
+            print("QR exception:", ex)
+
     @pyqtSlot(dict)
     def input(self, message):
         try:
@@ -409,6 +427,7 @@ class MainWindow (QMainWindow):
             if "request" in message:
                 if message["request"] == "status":
                     QTimer.singleShot(100, self.sendStatus)
+
             if "popout_relay" in message:
 
                 if "text" in message["popout_relay"]:
@@ -450,6 +469,25 @@ class MainWindow (QMainWindow):
                         self.pop_out_manual.move(400,20) # posiciónX, posiciónY
                         self.pop_out_manual.show()
                         self.pop_out_manual.setFocusPolicy(Qt.StrongFocus)
+
+            if "lineEditKey" in message:
+                    
+                if "lineEditKey_focus" in message:
+                    self.activateWindow()
+                    self.raise_()
+                    self.show()
+                    self.ui.lineEditKey.setFocus(True)
+                else:
+                    if message["lineEditKey"] == True:
+                        self.ui.lineEditKey.setVisible(True)
+                        
+                    if message["lineEditKey"] == False:
+                        self.ui.lineEditKey.setVisible(False)
+            if "lineEditKey_focus" in message:
+                self.activateWindow()
+                self.raise_()
+                self.show()
+                self.ui.lineEditKey.setFocus(True)
 
             if "lbl_info0" in message:
                 self.ui.lbl_info0.setText(message["lbl_info0"]["text"])
@@ -841,9 +879,9 @@ class PopOutManual (QDialog):
         #self.button(QMessageBox.Ok).setVisible(False)
 
     def closeEvent(self, event):
+        print("PopOut Manual")
         event.ignore() 
-
-
+        
 class PopOut (QMessageBox):
     def __init__(self, parent = None):
         super().__init__(parent)
@@ -854,8 +892,8 @@ class PopOut (QMessageBox):
         self.setStandardButtons(QMessageBox.Ok)
         self.button(QMessageBox.Ok).setVisible(False)
 
-
     def closeEvent(self, event):
+        print("PopOut Normal")
         event.ignore() 
 
     def keyPressEvent(self, event):
