@@ -78,13 +78,7 @@ fuses_types = {
     'PDC-S9': {
         '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
     }, 
-    'PDC-S10': {
-        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
-    }, 
     'PDC-S21': {
-        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
-    }, 
-    'PDC-S18': {
         '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
     }, 
     'PDC-S17': {
@@ -107,18 +101,92 @@ fuses_types = {
     }
 }
 
+fuses_value = {
+    'PDC-P': {
+        'MF1': '', 'MF2': '', 'F300': '', 'F301': '', 'F302': '', 'F303': '', 'F304': '', 'F305': '', 'F318': '', 
+        'F319': '', 'F320': '', 'F321': '', 'F322': '', 'F323': '', 'F324': '', 'F325': '', 'F326': '', 'F327': '', 
+        'F328': '', 'F329': '', 'F330': '', 'F331': '', 'F332': '', 'F333': '', 'F334': '', 'F335': '', 'E21': '', 
+        'E22': ''
+    },
+    'PDC-D': {
+        'F200': '', 'F201': '', 'F202': '', 'F203': '', 'F204': '', 'F205': '', 'F206': '', 'F207': '', 'F208': '', 
+        'F209': '', 'F210': '', 'F211': '', 'F212': '', 'F213': '', 'F214': '', 'F215': '', 'F216': '', 'F217': '', 
+        'F218': '', 'F219': '', 'F220': '', 'F221': '', 'F222': '', 'F223': '', 'F224': '', 'F225': '', 'F226': '', 
+        'F227': '', 'F228': '', 'F229': '', 'F230': '', 'F231': '', 'F232': ''
+    },
+    'PDC-R': {
+        'F400': '', 'F401': '', 'F402': '', 'F403': '', 'F404': '', 'F405': '', 'F411': '', 'F410': '', 'F409': '', 
+        'F408': '', 'F407': '', 'F406': '', 'F412': '', 'F413': '', 'F414': '', 'F415': '', 'F416': '', 'F417': '', 
+        'F420': '', 'F419': '', 'F418': '', 'F421': '', 'F422': '', 'F423': '', 'F424': '', 'F425': '', 'F426': '', 
+        'F427': '', 'F428': '', 'F429': '', 'F430': '', 'F431': '', 'F437': '', 'F438': '', 'F439': '', 'F440': '', 
+        'F441': '', 'F432': '', 'F433': '', 'F434': '', 'F435': '', 'F436': '', 'F442': '', 'F443': '', 'F444': '', 
+        'F445': '', 'F446': '', 'F449': '', 'F448': '', 'F447': '', 'F450': '', 'F451': '', 'F452': '', 'F453': '', 
+        'F454': '', 'F455': '', 'F456': '', 'F457': '', 'F458': '', 'F459': '', 'F460': '', 'F461': '', 'F462': '', 
+        'F463': '', 'F464': '', 'F465': '', 'F466': '', 'F467': '', 'F468': '', 'F469': '', 'F470': '', 'F471': '', 
+        'F472': '', 'F473': '', 'F474': '', 'F475': '', 'F476': '', 'F477': '', 'F478': '', 'F479': '', 'F480': '', 
+        'F481': '', 'F482': '', 'RELX': '', 'RELU': '', 'RELT': ''
+    },
+    'PDC-RMID': {
+        'F400': '', 'F401': '', 'F402': '', 'F403': '', 'F404': '', 'F405': '', 'F411': '', 'F410': '', 'F409': '', 
+        'F408': '', 'F407': '', 'F406': '', 'F412': '', 'F413': '', 'F414': '', 'F415': '', 'F416': '', 'F417': '', 
+        'F420': '', 'F419': '', 'F418': '', 'F421': '', 'F422': '', 'F423': '', 'F424': '', 'F425': '', 'F426': '', 
+        'F427': '', 'F428': '', 'F429': '', 'F430': '', 'F431': '', 'F437': '', 'F438': '', 'F439': '', 'F440': '', 
+        'F441': '', 'F432': '', 'F433': '', 'F434': '', 'F435': '', 'F436': '', 'F442': '', 'F443': '', 'F444': '', 
+        'F445': '', 'F446': '', 'F450': '', 'F451': '', 'F452': '', 'F453': '', 'F454': '', 'F455': '', 'F456': '', 
+        'F457': '', 'F458': '', 'F459': '', 'F460': '', 'F461': '', 'RELX': '', 'RELU': '', 'RELT': '', 'F449': '', 
+        'F448': '', 'F447': '', 'F96': ''
+    },
+    'PDC-RS': {
+        'F400': '', 'F401': '', 'F402': '', 'F403': '', 'F404': '', 'F405': '', 'F411': '', 'F410': '', 'F409': '', 
+        'F408': '', 'F407': '', 'F406': '', 'F412': '', 'F413': '', 'F414': '', 'F415': '', 'F416': '', 'F417': '', 
+        'F420': '', 'F419': '', 'F418': '', 'F421': '', 'F422': '', 'F423': '', 'F424': '', 'F425': '', 'F426': '', 
+        'F427': '', 'F428': '', 'F429': '', 'F430': '', 'F431': '', 'F437': '', 'F438': '', 'F439': '', 'F440': '', 
+        'F441': '', 'F432': '', 'F433': '', 'F434': '', 'F435': '', 'F436': '', 'F442': '', 'F443': '', 'F444': '', 
+        'F445': '', 'F446': '', 'F450': '', 'F451': '', 'F452': '', 'F453': '', 'F454': '', 'F455': '', 'F456': '', 
+        'F457': '', 'F458': '', 'F459': '', 'F460': '', 'F461': '', 'RELX': '', 'RELU': '', 'RELT': '', 'F449': '', 
+        'F448': '', 'F447': ''
+    },
+    'F96': {'F96': ''},    
+    'PDC-S': {
+        '1': '', '2': '', '3': '', '4': '', '5': '', '6': ''
+    },
+    'PDC-S9': {
+        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
+    }, 
+    'PDC-S21': {
+        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
+    }, 
+    'PDC-S17': {
+        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
+    }, 
+    'PDC-S19': {
+        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
+    },
+    'PDC-S20': {
+        '1': "ATO", '2': "ATO", '3': "ATO", '4': "ATO", '5': "ATO", '6': "ATO"
+    },
+    'F96-1': {
+        'F96': "ATO"
+    },
+    'TBLU': {
+        '9': '', '8': '', '7': '', '6': '', '5': '', '4': '', '3': '', '2': '', '1': ''
+    }
+}
+
 fuses_color = {
-    "1":    "black",
-    "5":    "beige",
-    "7.5":  "brown",
-    "10":   "red",
-    "15":   "blue",
-    "20":   "yellow",
-    "25":   "white",
-    "30":   "green",
-    "40":   "amber",
-    "50":   "red",
-    "60":   "blue"
+    #"1":    "negro", HMTEST ILX296270B1031517 EL.
+    "5":    {"N000000008698":"beige", "N000000008708":"beige", "N000000004202":"beigeClear", "N000000006465":"beige"},
+    "7.5":  {"N000000008699":"brown", "N000000008709":"brown", "N000000006466":"brown"},
+    "10":   {"N000000008700":"red", "N000000008710":"red", "N000000004204":"redClear"},
+    "15":   {"N000000008701":"blue", "N000000008711":"blue"},
+    "20":   {"N000000008702":"yellow"},
+    "25":   {"N000000008703":"white"},
+    "30":   {"N000000008704": "green", "N000000007658":"green"},
+    "40":   {"N000000007659": "amber"},
+    "50":   {"N000000007660":"red"},
+    "60":   {"A0009821923":"red"},
+    "70":   {"A0025429419":"gray"}
+    # "60":   "azul"
     }
 
 ##################################### Modules management #################################
@@ -147,7 +215,7 @@ def makeModules(data):
                 file = openpyxl.load_workbook(filename = dir_path + file_name, data_only=True)
                 sheets = file.sheetnames
                 for sheet in sheets:
-                    if "Acomodos Modularidades" in sheet or "MFB" in sheet:
+                    if "Acomodos Modularidades" in sheet or "MFB" in sheet or "BATTERY" in sheet:
                         continue
                     currentSheet = file[sheet]
                     for column in range(8, currentSheet.max_column + 1):
@@ -160,11 +228,14 @@ def makeModules(data):
                             if value == "x" or value == "X":
                                 box = currentSheet.cell(row = row, column = 1).value
                                 box = box.strip()
+                                mercedes =  currentSheet.cell(row = row, column = 4).value
                                 if box =="Fuse Box F55":
                                     box = "TBLU"
+                                    #print("mercedes ", mercedes)
                                 fuse = currentSheet.cell(row = row, column = 2).value
                                 if box == "TBLU":
                                     fuse = fuse.replace("A", "")
+                                #     #print("mercedes ", mercedes)
                                 if "PDC-S" in  box or "F96" in box:
                                     
                                         #print('BOX', box)
@@ -215,7 +286,9 @@ def makeModules(data):
                                 amp = currentSheet.cell(row = row, column = 7).value
                                 if not(box in modules[module]):
                                     modules[module][box] = {}
-                                modules[module][box][fuse] = amp[:-1]
+                                modules[module][box][fuse] = [amp[:-1], mercedes]
+                                
+
                 os.remove(root+'\\'+ file_name)
 
     structured_data = []
@@ -244,20 +317,19 @@ def makeModules(data):
             for fuse in modules[module][box]:
                 try:
                     Type    = fuses_types[box][fuse]
-                    amp     = modules[module][box][fuse]
+                    amp     = modules[module][box][fuse][0]
+                    mercedes     = modules[module][box][fuse][1]
                     print('TYPE',Type)
                     print('AMP',amp)
                     # #print(fuses_types['PDC-S21']['3'])
                     color = ""
-                    if Type == "RELAY":
-                         if amp == "60":
-                             color = "red"
-                         elif amp == "70":
-                             color = "gray"
-                    else:
-                         color   = fuses_color[amp]
-                    if box == "TBLU":
-                         color = color + "_clear"
+                    # if Type == "RELAY":
+                    #      if amp == "60":
+                    #          color = "red"
+                    #      elif amp == "70":
+                    #          color = "gray"
+                    # else:
+                    color   = fuses_color[amp][mercedes]
                     temp[box][fuse] = Type + "," + amp + "," + color
                 except Exception as ex:
                     print("\nexception in [",module,"] [",box,"] [",fuse,"]")
@@ -479,6 +551,7 @@ def makeDeterminantes(data,usuario):
                             module = currentSheet.cell(column = col, row = row).value
                             if not(module in determinantes[variante]):
                                 if module != None:
+                                    #print("FILA: ", row, " COLUMNA: ", col)
                                     determinantes[variante].append(module)
                                     #print("Modulo: ", module)
                 print("Arreglo final de determinantes: ",determinantes)
