@@ -1272,7 +1272,8 @@ class Finish (QState):
         print("current state: Finish (cycle_manage)")
         command = {
                     "lbl_result" : {"text": "Guardando Información", "color": "navy"},
-                    "lbl_steps" : {"text": 'Espere un momento', "color": "black"}
+                    "lbl_steps" : {"text": 'Espere un momento', "color": "black"},
+                    "lineEditKey": False
                     }
         publish.single(self.model.pub_topics["gui"],json.dumps(command),hostname='127.0.0.1', qos = 2)
         Timer(0.05, self.save_info).start()
