@@ -493,6 +493,7 @@ def newEvent():
     historial["DATETIME"] = data["DATETIME"]
     historial["DBEVENT"] = event_name
     print(data)
+    escaped_event_name = f"`{event_name}`"
 
     if "ACTIVO" in data:
         activo["ACTIVO"] = data["ACTIVO"]
@@ -507,8 +508,8 @@ def newEvent():
         return {"exception": ex.args}
     try:
         with connection.cursor() as cursor:
-            items = cursor.execute("create database "+event_name)
-            sql = "use "+event_name
+            items = cursor.execute("create database "+escaped_event_name)
+            sql = "use "+escaped_event_name
             cursor.execute(sql)
             definicionesTable = """CREATE TABLE definiciones (
             ID int primary key AUTO_INCREMENT,
